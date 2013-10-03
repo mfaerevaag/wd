@@ -1,16 +1,15 @@
 #!/bin/zsh
 
 # variables
-CONT=""
-WARP_ARG=""
-
 FILENAME=".warprc"
-CONF=$HOME/$FILENAME
+CONFIG=$HOME/$FILENAME
+CONT=""
+
 
 # if not exists
-if [[ ! -e $CONF ]]
+if [[ ! -e $CONFIG ]]
 then
-    touch $CONF
+    touch $CONFIG
     print "No config file found so one was created"
 fi
 
@@ -19,18 +18,12 @@ typeset -A points
 # read config
 while read line
 do
-    #print "line: \t" $line
-
     arr=(${(s,:,)line})
     key=${arr[1]}
     val=${arr[2]}
 
-    #print "arr: \t" $arr
-
     points[$key]=$val
-
-    #print $key ':' ${points[$key]}
-done < $CONF
+done < $CONFIG
 
 
 # functions
@@ -49,7 +42,7 @@ add()
 {
     if [[ ${points[$1]} == "" ]]
     then
-        echo "$1:$PWD" >> $CONF
+        echo "$1:$PWD" >> $CONFIG
         print Warp point added
     else
         print Warp point by that name alredy exists
@@ -61,10 +54,10 @@ remove()
     if [[ ${points[$1]} != "" ]]
     then
         TMP=mktemp
-        sed "/$1:/d" $CONF > $TMP
+        sed "/$1:/d" $CONFIG > $TMP
         if [ $? -eq 0 ]
         then
-            cat $TMP > $CONF
+            cat $TMP > $CONFIG
             rm -f $TMP
             print Warp point removed
         else
@@ -85,7 +78,7 @@ list_all()
         val=${arr[2]}
 
         print "\t" $key "\t -> \t" $val
-    done < $CONF
+    done < $CONFIG
 }
 
 
@@ -101,9 +94,6 @@ else
     CONT="true"
 fi
 
-#print $args
-#tmp=(${(s,--,)args})
-#print $#tmp
 
 # run
 if [ $CONT ]
@@ -116,27 +106,23 @@ then
 		        in
 			      -a|--add)
                 add $2
-                WARP_ARG="$2"
 				        shift
                 shift
                 break
                 ;;
 			      -r|--remove)
 				        remove $2
-                WARP_ARG="$2"
                 shift
 				        shift
                 break
                 ;;
 			      -l|--list)
 				        list_all
-                sflags="l$sflags"
 				        shift
                 break
                 ;;
             *)
                 warp $i
-                WARP_ARG="$2"
                 shift
                 break
                 ;;
@@ -144,14 +130,9 @@ then
 				        shift; break;;
 		    esac
     done
-
-    #print single-char flags: "'"$sflags"'"
-    #print WARP_ARG is "'"$WARP_ARG"'"
-
 fi # exit
 
 
 # clean
-sflags=""
-WARP_ARG=""
 points=""
+CONT=""
