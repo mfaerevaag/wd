@@ -18,7 +18,7 @@ CONT=""
 if [[ ! -e $CONFIG ]]
 then
     touch $CONFIG
-    print "No config file found so one was created"
+    print "* No config file found so one was created"
 fi
 
 typeset -A points
@@ -37,12 +37,12 @@ done < $CONFIG
 # functions
 warp()
 {
-    echo Warping...
+    print "* Warping..."
     if [[ ${points[$1]} != "" ]]
     then
         cd ${points[$1]}
     else
-        print Unkown warp point $i
+        print "* Unkown warp point $i"
     fi
 }
 
@@ -51,9 +51,9 @@ add()
     if [[ ${points[$1]} == "" ]]
     then
         echo "$1:$PWD" >> $CONFIG
-        print Warp point added
+        print "* Warp point added"
     else
-        print Warp point by that name alredy exists
+        print "* Warp point by that name alredy exists"
     fi
 }
 
@@ -67,18 +67,18 @@ remove()
         then
             cat $TMP > $CONFIG
             rm -f $TMP
-            print Warp point removed
+            print "* Warp point removed"
         else
-            print Warp point unsuccessfully removed
+            print "* Warp point unsuccessfully removed"
         fi
     else
-        print Warp point was not found
+        print "* Warp point was not found"
     fi
 }
 
 list_all()
 {
-    echo All warp points:
+    print "* All warp points:"
     while read line
     do
         arr=(${(s,:,)line})
