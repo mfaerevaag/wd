@@ -29,7 +29,7 @@ do
 
     points[$key]=$val
 
-    print $key ':' ${points[$key]}
+    #print $key ':' ${points[$key]}
 done < $FILE
 
 
@@ -43,6 +43,19 @@ warp()
     else
         print Unkown warp point $i
     fi
+}
+
+list_all()
+{
+    echo All warp points:
+    while read line
+    do
+        arr=(${(s,:,)line})
+        key=${arr[1]}
+        val=${arr[2]}
+
+        print "\t" $key "\t -> \t" $val
+    done < $FILE
 }
 
 
@@ -86,7 +99,7 @@ then
                 break
                 ;;
 			      -l|--list)
-				        echo list!
+				        list_all
                 sflags="l$sflags"
 				        shift
                 break
