@@ -3,9 +3,9 @@ warp
 
 ###Setup
 
-In .profile (or .bashrc/.zshrc):
+Add alias to .profile (or .bashrc/.zshrc):
 
-    alias wrp='. /path/to/warp'
+    echo "alias wrp='. /path/to/warp'" >> ~/.profile
 
 
 ###Usage
@@ -16,11 +16,11 @@ Add warp point to current working directory:
 
 From other directory, warp to dev with:
 
-    warp -t dev
+    warp dev
 
-Delete warp point dev point:
+Remove warp point dev point:
 
-    warp -d dev
+    warp -r dev
 
 List all warp points (stored in `~/.warprc`):
 
