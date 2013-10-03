@@ -5,12 +5,12 @@ CONT=""
 WARP_ARG=""
 
 FILENAME=".warprc"
-FILE=$HOME/$FILENAME
+CONF=$HOME/$FILENAME
 
 # if not exists
-if [[ ! -e $FILE ]]
+if [[ ! -e $CONF ]]
 then
-    touch $FILE
+    touch $CONF
     print "No config file found so one was created"
 fi
 
@@ -30,7 +30,7 @@ do
     points[$key]=$val
 
     #print $key ':' ${points[$key]}
-done < $FILE
+done < $CONF
 
 
 # functions
@@ -49,10 +49,29 @@ add()
 {
     if [[ ${points[$1]} == "" ]]
     then
-        echo "$1:$PWD" >> $FILE
+        echo "$1:$PWD" >> $CONF
         print Warp point added
     else
         print Warp point by that name alredy exists
+    fi
+}
+
+remove()
+{
+    if [[ ${points[$1]} != "" ]]
+    then
+        TMP=mktemp
+        sed "/$1:/d" $CONF > $TMP
+        if [ $? -eq 0 ]
+        then
+            cat $TMP > $CONF
+            rm -f $TMP
+            print Warp point removed
+        else
+            print Warp point unsuccessfully removed
+        fi
+    else
+        print Warp point was not found
     fi
 }
 
@@ -66,7 +85,7 @@ list_all()
         val=${arr[2]}
 
         print "\t" $key "\t -> \t" $val
-    done < $FILE
+    done < $CONF
 }
 
 
@@ -103,7 +122,7 @@ then
                 break
                 ;;
 			      -r|--remove)
-				        echo remove!
+				        remove $2
                 WARP_ARG="$2"
                 shift
 				        shift
@@ -135,3 +154,4 @@ fi # exit
 # clean
 sflags=""
 WARP_ARG=""
+points=""
