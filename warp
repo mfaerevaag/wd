@@ -1,22 +1,71 @@
 #!/bin/zsh
 
-
+# variables
 CONT=""
 WARP_ARG=""
 
+FILENAME=".warprc"
+FILE=$HOME/$FILENAME
+
+# if not exists
+if [[ ! -e $FILE ]]
+then
+    touch $FILE
+    print "No config file found so one was created"
+fi
+
+typeset -A points
+
+# read config
+while read line
+do
+    #print "line: \t" $line
+
+    arr=(${(s,:,)line})
+    key=${arr[1]}
+    val=${arr[2]}
+
+    #print "arr: \t" $arr
+
+    points[$key]=$val
+
+    print $key ':' ${points[$key]}
+done < $FILE
+
+
+# functions
+warp()
+{
+    echo Warping...
+    if [[ ${points[$1]} != "" ]]
+    then
+        cd ${points[$1]}
+    else
+        print Unkown warp point $i
+    fi
+}
+
+
+# get opts
 args=`getopt -o a:r:l -l add:,remove:,list -- $*`
 
-if [ $? -ne 0 ]
+if [[ $? -ne 0 || $#* -eq 0 ]]
 then
 		echo 'Usage: ...'
 else
+    # can't exit, as this would exit the excecuting shell
+    # e.i. your terminal
     CONT="true"
 fi
+
+#print $args
+#tmp=(${(s,--,)args})
+#print $#tmp
 
 # run
 if [ $CONT ]
 then
-    #set -- $args
+    #set -- $args # WTF
 
     for i
     do
@@ -42,6 +91,12 @@ then
 				        shift
                 break
                 ;;
+            *)
+                warp $i
+                WARP_ARG="$2"
+                shift
+                break
+                ;;
 			      --)
 				        shift; break;;
 		    esac
@@ -50,37 +105,9 @@ then
     #print single-char flags: "'"$sflags"'"
     #print WARP_ARG is "'"$WARP_ARG"'"
 
-    FILENAME=".warprc"
-    FILE=$HOME/$FILENAME
-
-# if not exists
-    if [[ ! -e $FILE ]]
-    then
-        touch $FILE
-        print "No config file found so one was created"
-    fi
-
-    typeset -A points
-
-# read config
-    while read line
-    do
-    #print "line: \t" $line
-
-        arr=(${(s,:,)line})
-        key=${arr[1]}
-        val=${arr[2]}
-
-    #print "arr: \t" $arr
-
-        points[$key]=$val
-
-        print $key ':' ${points[$key]}
-    done < $FILE
+fi # exit
 
 
 # clean
-    sflags=""
-    WARP_ARG=""
-
-fi # exit
+sflags=""
+WARP_ARG=""
