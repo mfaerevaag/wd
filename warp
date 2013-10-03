@@ -95,7 +95,11 @@ args=`getopt -o a:r:l -l add:,remove:,list -- $*`
 
 if [[ $? -ne 0 || $#* -eq 0 ]]
 then
-		echo 'Usage: ...'
+		print "Usage: wrp [-a|--add] [-r|--remove] [-l|--list] <point>"
+    print "\nCommands:"
+    print "\t add \t Adds the current working directory to your warp points"
+    print "\t remove  Removes the given warp point"
+    print "\t list \t Outputs all stored warp points"
 else
     # can't exit, as this would exit the excecuting shell
     # e.i. your terminal
