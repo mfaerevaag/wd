@@ -45,6 +45,17 @@ warp()
     fi
 }
 
+add()
+{
+    if [[ ${points[$1]} == "" ]]
+    then
+        echo "$1:$PWD" >> $FILE
+        print Warp point added
+    else
+        print Warp point by that name alredy exists
+    fi
+}
+
 list_all()
 {
     echo All warp points:
@@ -85,7 +96,7 @@ then
 		    case "$i"
 		        in
 			      -a|--add)
-                echo add!
+                add $2
                 WARP_ARG="$2"
 				        shift
                 shift
