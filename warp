@@ -1,5 +1,13 @@
 #!/bin/zsh
 
+# WARP
+# ====
+# Jump to custom directories in terminal
+# because `cd` takes too long...
+#
+# @ github.com/mfaerevaag/warp
+
+
 # variables
 FILENAME=".warprc"
 CONFIG=$HOME/$FILENAME
@@ -133,6 +141,8 @@ then
 fi # exit
 
 
-# clean
+# garbage collection
+# if not, next time warp will pick up present $CONT
+# remember, there's no sub shell
 points=""
 CONT=""
