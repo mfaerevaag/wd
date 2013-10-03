@@ -1,56 +1,86 @@
 #!/bin/zsh
 
-FILENAME=".warprc"
-FILE=$HOME/$FILENAME
 
-# if not exists
-if [[ ! -e $FILE ]]
+CONT=""
+WARP_ARG=""
+
+args=`getopt -o a:r:l -l add:,remove:,list -- $*`
+
+if [ $? -ne 0 ]
 then
-    touch $FILE
-    print "No config file found so one was created"
+		echo 'Usage: ...'
+else
+    CONT="true"
 fi
 
-typeset -A points
+# run
+if [ $CONT ]
+then
+    #set -- $args
+
+    for i
+    do
+		    case "$i"
+		        in
+			      -a|--add)
+                echo add!
+                WARP_ARG="$2"
+				        shift
+                shift
+                break
+                ;;
+			      -r|--remove)
+				        echo remove!
+                WARP_ARG="$2"
+                shift
+				        shift
+                break
+                ;;
+			      -l|--list)
+				        echo list!
+                sflags="l$sflags"
+				        shift
+                break
+                ;;
+			      --)
+				        shift; break;;
+		    esac
+    done
+
+    #print single-char flags: "'"$sflags"'"
+    #print WARP_ARG is "'"$WARP_ARG"'"
+
+    FILENAME=".warprc"
+    FILE=$HOME/$FILENAME
+
+# if not exists
+    if [[ ! -e $FILE ]]
+    then
+        touch $FILE
+        print "No config file found so one was created"
+    fi
+
+    typeset -A points
 
 # read config
-while read line
-do
+    while read line
+    do
     #print "line: \t" $line
 
-    arr=(${(s,:,)line})
-    key=${arr[1]}
-    val=${arr[2]}
+        arr=(${(s,:,)line})
+        key=${arr[1]}
+        val=${arr[2]}
 
     #print "arr: \t" $arr
 
-    points[$key]=$val
+        points[$key]=$val
 
-    print $key ':' ${points[$key]}
-done < $FILE
+        print $key ':' ${points[$key]}
+    done < $FILE
 
-print
 
-# parse opts
-while getopts "a:d:l" opt
-do
-    case $opt in
-        a)
-            print "-a was triggered, Parameter: $OPTARG"
-            ;;
-        d)
-            print "-d was triggered, Parameter: $OPTARG"
-            ;;
-        l)
-            print "-l was triggered"
-            ;;
-        \?)
-            print "Usage: $0 [-s] [-d seplist] file ..."
-            #"Invalid option: -$OPTARG" >&2
-            exit 1
-            ;;
-        :)
-            print "Option -$OPTARG requires an argument."
-            exit 1
-            ;;
-    esac
-done
+# clean
+    sflags=""
+    WARP_ARG=""
+
+fi # exit
