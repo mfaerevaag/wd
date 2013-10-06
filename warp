@@ -12,12 +12,19 @@
 FILENAME=".warprc"
 CONFIG=$HOME/$FILENAME
 
+# colors
+BLUE="\033[96m"
+GREEN="\033[92m"
+YELLOW="\033[93m"
+RED="\033[91m"
+NOC="\033[m"
+
 
 # if not exists
 if [[ ! -e $CONFIG ]]
 then
     touch $CONFIG
-    print "* No config file found so one was created"
+    print " $YELLOW*$NOC No config file found so one was created"
 fi
 
 typeset -A points
@@ -36,12 +43,12 @@ done < $CONFIG
 # functions
 warp()
 {
-    print "* Warping..."
+    print " $BLUE*$NOC Warping..."
     if [[ ${points[$1]} != "" ]]
     then
         cd ${points[$1]}
     else
-        print "* Unkown warp point $i"
+        print " $RED*$NOC Unkown warp point '$1'"
     fi
 }
 
@@ -50,9 +57,9 @@ add()
     if [[ ${points[$1]} == "" ]]
     then
         echo "$1:$PWD" >> $CONFIG
-        print "* Warp point added"
+        print " $GREEN*$NOC Warp point added"
     else
-        print "* Warp point by that name alredy exists"
+        print " $YELLOW*$NOC Warp point '$1' alredy exists"
     fi
 }
 
@@ -66,18 +73,18 @@ remove()
         then
             cat $TMP > $CONFIG
             rm -f $TMP
-            print "* Warp point removed"
+            print " $GREEN*$NOC Warp point removed"
         else
-            print "* Warp point unsuccessfully removed"
+            print " $RED*$NOC Warp point unsuccessfully removed. Sorry!"
         fi
     else
-        print "* Warp point was not found"
+        print " $RED*$NOC Warp point was not found"
     fi
 }
 
 list_all()
 {
-    print "* All warp points:"
+    print " $BLUE*$NOC All warp points:"
     while read line
     do
         arr=(${(s,:,)line})
