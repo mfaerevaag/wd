@@ -1,7 +1,7 @@
 warp
 ====
 
-Warp lets jump to custom directories in your terminal, without using cd. Why? Because cd seems ineffecient when the folder is for example frequently visited.
+Warp lets jump to custom directories in zsh, without using cd. Why? Because cd seems ineffecient when the folder is for example frequently visited.
 
 ###Setup
 
