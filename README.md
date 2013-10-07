@@ -5,7 +5,7 @@ Warp lets jump to custom directories in zsh, without using cd. Why? Because cd s
 
 ### Setup
 
-Add `wd` alias (warp directory) to .profile (or .bashrc/.zshrc):
+Add `wd` alias (warp directory) to `.zshrc``:
 
     echo "alias wd='. /path/to/warp'" >> ~/.profile
 
