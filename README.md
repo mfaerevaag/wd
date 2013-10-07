@@ -14,7 +14,7 @@ Add `wd` alias (warp directory) to `.zshrc``:
 
 Add warp point to current working directory:
 
-    wd -a dev
+    wd add dev
 
 From other directory, warp to dev with:
 
@@ -22,10 +22,10 @@ From other directory, warp to dev with:
 
 Remove warp point dev point:
 
-    wd -r dev
+    wd rm dev
 
 List all warp points (stored in `~/.warprc`):
 
-    wd -l
+    wd ls
 
 Print usage with no opts.

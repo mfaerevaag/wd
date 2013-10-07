@@ -117,19 +117,19 @@ else
     do
 		    case "$i"
 		        in
-			      -a|--add)
+			      -a|--add|add)
                 add $2
 				        shift
                 shift
                 break
                 ;;
-			      -r|--remove)
+			      -r|--remove|rm)
 				        remove $2
                 shift
 				        shift
                 break
                 ;;
-			      -l|--list)
+			      -l|--list|ls)
 				        list_all
 				        shift
                 break
