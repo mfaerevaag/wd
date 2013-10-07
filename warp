@@ -158,3 +158,4 @@ fi # exit
 # if not, next time warp will pick up present $CONT
 # remember, there's no sub shell
 points=""
+unhash -d val # fixes issue #1
