@@ -54,12 +54,13 @@ warp()
 
 add()
 {
-    if [[ ${points[$1]} == "" ]]
+    if [[ ${points[$1]} == "" || $2 == "F" ]]
     then
-        echo "$1:$PWD" >> $CONFIG
+        remove $1 > /dev/null
+        print "$1:$PWD" >> $CONFIG
         print " $GREEN*$NOC Warp point added"
     else
-        print " $YELLOW*$NOC Warp point '$1' alredy exists"
+        print " $YELLOW*$NOC Warp point '$1' alredy exists. Use 'add!' to overwrite."
     fi
 }
 
@@ -119,6 +120,12 @@ else
 		        in
 			      -a|--add|add)
                 add $2
+				        shift
+                shift
+                break
+                ;;
+            -a!|--add!|add!)
+                add $2 "F"
 				        shift
                 shift
                 break

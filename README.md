@@ -16,6 +16,8 @@ Add warp point to current working directory:
 
     wd add dev
 
+If a previous warp point exists, use `add!` to overwrite it.
+
 From other directory, warp to dev with:
 
     wd dev
