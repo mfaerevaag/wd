@@ -3,29 +3,29 @@ warp
 
 Warp lets jump to custom directories in zsh, without using cd. Why? Because cd seems ineffecient when the folder is for example frequently visited.
 
-###Setup
+### Setup
 
-Add alias to .profile (or .bashrc/.zshrc):
+Add `wd` alias (warp directory) to .profile (or .bashrc/.zshrc):
 
-    echo "alias wrp='. /path/to/warp'" >> ~/.profile
+    echo "alias wd='. /path/to/warp'" >> ~/.profile
 
 
-###Usage
+### Usage
 
 Add warp point to current working directory:
 
-    warp -a dev
+    wd -a dev
 
 From other directory, warp to dev with:
 
-    warp dev
+    wd dev
 
 Remove warp point dev point:
 
-    warp -r dev
+    wd -r dev
 
 List all warp points (stored in `~/.warprc`):
 
-    warp -l
+    wd -l
 
 Print usage with no opts.
