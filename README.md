@@ -1,13 +1,13 @@
-warp
-====
+wd
+==
 
-Warp lets jump to custom directories in zsh, without using `cd`. Why? Because `cd` seems ineffecient when the folder is frequently visited or has a long path.
+`wd` (warp directory) lets jump to custom directories in zsh, without using `cd`. Why? Because `cd` seems ineffecient when the folder is frequently visited or has a long path.
 
 ### Setup
 
-Add `wd` alias (warp directory) to `.zshrc``:
+Add `wd` alias to `.zshrc``:
 
-    echo "alias wd='. /path/to/warp'" >> ~/.profile
+    echo "alias wd='. /path/to/wd.sh'" >> ~/.profile
 
 
 ### Usage
