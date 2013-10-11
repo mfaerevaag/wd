@@ -5,29 +5,29 @@ wd
 
 ### Setup
 
-Add `wd` alias to `.zshrc``:
+ * Add `wd` alias to `.zshrc`:
 
-    echo "alias wd='. /path/to/wd.sh'" >> ~/.profile
+        echo "alias wd='. /path/to/wd.sh'" >> ~/.profile
 
 
 ### Usage
 
-Add warp point to current working directory:
+ * Add warp point to current working directory:
 
-    wd add dev
+        wd add dev
 
-If a previous warp point exists, use `add!` to overwrite it.
+    If a previous warp point exists, use `add!` to overwrite it.
 
-From other directory, warp to dev with:
+ * From other directory, warp to dev with:
 
-    wd dev
+        wd dev
 
-Remove warp point dev point:
+ * Remove warp point dev point:
 
-    wd rm dev
+        wd rm dev
 
-List all warp points (stored in `~/.warprc`):
+ * List all warp points (stored in `~/.warprc`):
 
-    wd ls
+        wd ls
 
-Print usage with no opts.
+ * Print usage with no opts.
