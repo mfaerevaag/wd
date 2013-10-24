@@ -43,9 +43,19 @@ done < $CONFIG
 # functions
 warp()
 {
-    print_msg $BLUE "Warping..."
-    if [[ ${points[$1]} != "" ]]
+    if [[ $1 =~ ^[\.]+$ ]]
     then
+        if [[ $#1 < 2 ]]
+        then
+            print_msg $YELLOW "Warping to current directory?"
+        else
+            (( n = $#1 - 1 ))
+            print_msg $BLUE "Warping..."
+            cd -$n > /dev/null
+        fi
+    elif [[ ${points[$1]} != "" ]]
+    then
+        print_msg $BLUE "Warping..."
         cd ${points[$1]}
     else
         print_msg $RED "Unkown warp point '$1'"
@@ -54,7 +64,10 @@ warp()
 
 add()
 {
-    if [[ ${points[$1]} == "" || $2 == "F" ]]
+    if [[ $1 =~ ^\.+$ ]]
+    then
+        print_msg $RED "Illeagal warp point (see README)."
+    elif [[ ${points[$1]} == "" || $2 == "F" ]]
     then
         remove $1 > /dev/null
         print "$1:$PWD" >> $CONFIG

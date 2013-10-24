@@ -22,6 +22,14 @@ wd
 
         wd dev
 
+ * You can warp back to previous directory, and so on with multiple puncticulations:
+
+        wd ..
+        wd ...
+
+    This is a wrapper for zsh `dirs` function.
+    You might need `setopt AUTO_PUSHD` in your `.zshrc` if you hare not using [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh)).
+
  * Remove warp point dev point:
 
         wd rm dev
