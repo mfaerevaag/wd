@@ -24,7 +24,7 @@ NOC="\033[m"
 if [[ ! -e $CONFIG ]]
 then
     touch $CONFIG
-    print " $YELLOW*$NOC No config file found so one was created"
+    print_msg $YELLOW "No config file found so one was created"
 fi
 
 typeset -A points
@@ -43,12 +43,12 @@ done < $CONFIG
 # functions
 warp()
 {
-    print " $BLUE*$NOC Warping..."
+    print_msg $BLUE "Warping..."
     if [[ ${points[$1]} != "" ]]
     then
         cd ${points[$1]}
     else
-        print " $RED*$NOC Unkown warp point '$1'"
+        print_msg $RED "Unkown warp point '$1'"
     fi
 }
 
@@ -58,9 +58,9 @@ add()
     then
         remove $1 > /dev/null
         print "$1:$PWD" >> $CONFIG
-        print " $GREEN*$NOC Warp point added"
+        print_msg $GREEN "Warp point added"
     else
-        print " $YELLOW*$NOC Warp point '$1' alredy exists. Use 'add!' to overwrite."
+        print_msg $YELLOW "Warp point '$1' alredy exists. Use 'add!' to overwrite."
     fi
 }
 
@@ -74,18 +74,18 @@ remove()
         then
             cat $TMP > $CONFIG
             rm -f $TMP
-            print " $GREEN*$NOC Warp point removed"
+            print_msg $GREEN "Warp point removed"
         else
-            print " $RED*$NOC Warp point unsuccessfully removed. Sorry!"
+            print_msg $RED "Warp point unsuccessfully removed. Sorry!"
         fi
     else
-        print " $RED*$NOC Warp point was not found"
+        print_msg $RED "Warp point was not found"
     fi
 }
 
 list_all()
 {
-    print " $BLUE*$NOC All warp points:"
+    print_msg $BLUE "All warp points:"
     while read line
     do
         arr=(${(s,:,)line})
@@ -94,6 +94,16 @@ list_all()
 
         print "\t" $key "\t -> \t" $val
     done < $CONFIG
+}
+
+print_msg()
+{
+    if [[ $1 == "" || $2 == "" ]]
+    then
+        print " $RED*$NOC Could not print message. Sorry!"
+    else
+        print " $1*$NOC $2"
+    fi
 }
 
 
@@ -155,7 +165,7 @@ fi # exit
 
 
 # garbage collection
-# if not, next time warp will pick up present $CONT
+# if not, next time warp will pick up variables from this run
 # remember, there's no sub shell
 points=""
 unhash -d val # fixes issue #1
