@@ -119,19 +119,25 @@ print_msg()
     fi
 }
 
-
-# get opts
-args=`getopt -o a:r:l -l add:,remove:,list -- $*`
-
-# run
-if [[ $? -ne 0 || $#* -eq 0 ]]
-then
+print_usage()
+{
 		print "Usage: wd [add|-a|--add] [rm|-r|--remove] [ls|-l|--list] <point>"
     print "\nCommands:"
     print "\t add \t Adds the current working directory to your warp points"
     print "\t add! \t Overwrites existing warp point"
     print "\t remove  Removes the given warp point"
     print "\t list \t Outputs all stored warp points"
+    print "\t help \t Show this extremely helpful text"
+}
+
+
+# get opts
+args=`getopt -o a:r:lh -l add:,remove:,list,help -- $*`
+
+# run
+if [[ $? -ne 0 || $#* -eq 0 ]]
+then
+    print_usage
 else
     # can't exit, as this would exit the excecuting shell
     # e.i. your terminal
@@ -162,6 +168,11 @@ else
                 ;;
 			      -l|--list|ls)
 				        list_all
+				        shift
+                break
+                ;;
+			      -h|--help|help)
+				        print_usage
 				        shift
                 break
                 ;;
