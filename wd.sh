@@ -5,14 +5,14 @@
 # Jump to custom directories in terminal
 # because `cd` takes too long...
 #
-# @ github.com/mfaerevaag/warp
+# @github.com/mfaerevaag/warp
 
 
-# variables
+## variables
 FILENAME=".warprc"
 CONFIG=$HOME/$FILENAME
 
-# colors
+## colors
 BLUE="\033[96m"
 GREEN="\033[92m"
 YELLOW="\033[93m"
@@ -20,13 +20,14 @@ RED="\033[91m"
 NOC="\033[m"
 
 
-# if not exists
+## if not exists
 if [[ ! -e $CONFIG ]]
 then
     touch $CONFIG
-    print_msg $YELLOW "No config file found so one was created"
+    wd_print_msg $YELLOW "No config file found so one was created"
 fi
 
+# hash with warp points
 typeset -A points
 
 # read config
@@ -40,44 +41,46 @@ do
 done < $CONFIG
 
 
-# functions
-warp()
+## functions
+# prepended wd_ to not conflict with your environment (no sub shell)
+
+wd_warp()
 {
-    if [[ $1 =~ ^[\.]+$ ]]
+    if [[ $1 =~ "^\.+$" ]]
     then
         if [[ $#1 < 2 ]]
         then
-            print_msg $YELLOW "Warping to current directory?"
+            wd_print_msg $YELLOW "Warping to current directory?"
         else
             (( n = $#1 - 1 ))
-            print_msg $BLUE "Warping..."
+            wd_print_msg $BLUE "Warping..."
             cd -$n > /dev/null
         fi
     elif [[ ${points[$1]} != "" ]]
     then
-        print_msg $BLUE "Warping..."
+        wd_print_msg $BLUE "Warping..."
         cd ${points[$1]}
     else
-        print_msg $RED "Unkown warp point '$1'"
+        wd_print_msg $RED "Unkown warp point '$1'"
     fi
 }
 
-add()
+wd_add()
 {
-    if [[ $1 =~ ^\.+$ ]]
+    if [[ $1 =~ "^\.+$" ]]
     then
-        print_msg $RED "Illeagal warp point (see README)."
-    elif [[ ${points[$1]} == "" || $2 == "F" ]]
+        wd_print_msg $RED "Illeagal warp point (see README)."
+    elif [[ ${points[$1]} == "" ]] || $2
     then
-        remove $1 > /dev/null
+        wd_remove $1 > /dev/null
         print "$1:$PWD" >> $CONFIG
-        print_msg $GREEN "Warp point added"
+        wd_print_msg $GREEN "Warp point added"
     else
-        print_msg $YELLOW "Warp point '$1' alredy exists. Use 'add!' to overwrite."
+        wd_print_msg $YELLOW "Warp point '$1' alredy exists. Use 'add!' to overwrite."
     fi
 }
 
-remove()
+wd_remove()
 {
     if [[ ${points[$1]} != "" ]]
     then
@@ -87,18 +90,18 @@ remove()
         then
             cat $TMP > $CONFIG
             rm -f $TMP
-            print_msg $GREEN "Warp point removed"
+            wd_print_msg $GREEN "Warp point removed"
         else
-            print_msg $RED "Warp point unsuccessfully removed. Sorry!"
+            wd_print_msg $RED "Warp point unsuccessfully removed. Sorry!"
         fi
     else
-        print_msg $RED "Warp point was not found"
+        wd_print_msg $RED "Warp point was not found"
     fi
 }
 
-list_all()
+wd_list_all()
 {
-    print_msg $BLUE "All warp points:"
+    wd_print_msg $BLUE "All warp points:"
     while read line
     do
         arr=(${(s,:,)line})
@@ -109,7 +112,7 @@ list_all()
     done < $CONFIG
 }
 
-print_msg()
+wd_print_msg()
 {
     if [[ $1 == "" || $2 == "" ]]
     then
@@ -119,7 +122,7 @@ print_msg()
     fi
 }
 
-print_usage()
+wd_print_usage()
 {
 		print "Usage: wd [add|-a|--add] [rm|-r|--remove] [ls|-l|--list] <point>"
     print "\nCommands:"
@@ -131,13 +134,14 @@ print_usage()
 }
 
 
+## run
+
 # get opts
 args=`getopt -o a:r:lh -l add:,remove:,list,help -- $*`
 
-# run
 if [[ $? -ne 0 || $#* -eq 0 ]]
 then
-    print_usage
+    wd_print_usage
 else
     # can't exit, as this would exit the excecuting shell
     # e.i. your terminal
@@ -149,35 +153,35 @@ else
 		    case "$i"
 		        in
 			      -a|--add|add)
-                add $2
+                wd_add $2 false
 				        shift
                 shift
                 break
                 ;;
             -a!|--add!|add!)
-                add $2 "F"
+                wd_add $2 true
 				        shift
                 shift
                 break
                 ;;
 			      -r|--remove|rm)
-				        remove $2
+				        wd_remove $2
                 shift
 				        shift
                 break
                 ;;
 			      -l|--list|ls)
-				        list_all
+				        wd_list_all
 				        shift
                 break
                 ;;
 			      -h|--help|help)
-				        print_usage
+				        wd_print_usage
 				        shift
                 break
                 ;;
             *)
-                warp $i
+                wd_warp $i
                 shift
                 break
                 ;;
@@ -185,11 +189,12 @@ else
 				        shift; break;;
 		    esac
     done
-fi # exit
+fi
 
 
-# garbage collection
+## garbage collection
 # if not, next time warp will pick up variables from this run
 # remember, there's no sub shell
 points=""
+args=""
 unhash -d val # fixes issue #1
