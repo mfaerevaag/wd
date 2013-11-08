@@ -34,6 +34,10 @@ wd
 
         wd rm test
 
+ * List warp points to current directory (stored in `~/.warprc`):
+
+        wd show
+
  * List all warp points (stored in `~/.warprc`):
 
         wd ls

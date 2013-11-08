@@ -99,6 +99,12 @@ wd_remove()
     fi
 }
 
+wd_show()
+{
+    wd_print_msg $BLUE "Warp points to current directory:"
+    wd_list_all | grep $PWD$
+}
+
 wd_list_all()
 {
     wd_print_msg $BLUE "All warp points:"
@@ -137,7 +143,7 @@ wd_print_usage()
 ## run
 
 # get opts
-args=`getopt -o a:r:lh -l add:,remove:,list,help -- $*`
+args=`getopt -o a:r:lhs -l add:,remove:,list,help,show -- $*`
 
 if [[ $? -ne 0 || $#* -eq 0 ]]
 then
@@ -177,6 +183,11 @@ else
                 ;;
 			      -h|--help|help)
 				        wd_print_usage
+				        shift
+                break
+                ;;
+			      -s|--show|show)
+				        wd_show
 				        shift
                 break
                 ;;
