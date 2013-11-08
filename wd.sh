@@ -85,7 +85,7 @@ wd_remove()
     if [[ ${points[$1]} != "" ]]
     then
         TMP=mktemp
-        sed "/$1:/d" $CONFIG > $TMP
+        sed "/^$1:/d" $CONFIG > $TMP
         if [ $? -eq 0 ]
         then
             cat $TMP > $CONFIG
