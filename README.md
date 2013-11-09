@@ -3,7 +3,20 @@ wd
 
 `wd` (*warp directory*) lets you jump to custom directories in zsh, without using `cd`. Why? Because `cd` seems ineffecient when the folder is frequently visited or has a long path.
 
+
 ### Setup
+
+#### Automatic
+
+Run either in terminal:
+
+ * `curl -L https://github.com/mfaerevaag/wd/raw/master/install.sh | sh`
+
+ * `wget --no-check-certificate https://github.com/mfaerevaag/wd/raw/master/install.sh -O - | sh`
+
+#### Manual
+
+ * Clone repo to your liking
 
  * Add `wd` alias to `.zshrc` (or .profile etc.):
 
