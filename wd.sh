@@ -5,12 +5,11 @@
 # Jump to custom directories in terminal
 # because `cd` takes too long...
 #
-# @github.com/mfaerevaag/warp
+# @github.com/mfaerevaag/wd
 
 
 ## variables
-FILENAME=".warprc"
-CONFIG=$HOME/$FILENAME
+CONFIG=$HOME/.warprc
 
 ## colors
 BLUE="\033[96m"
@@ -20,17 +19,15 @@ RED="\033[91m"
 NOC="\033[m"
 
 
-## if not exists
-if [[ ! -e $CONFIG ]]
+## lazy mk config 
+if [ ! -e $CONFIG ]
 then
     touch $CONFIG
     wd_print_msg $YELLOW "No config file found so one was created"
 fi
 
-# hash with warp points
+## load warp points
 typeset -A points
-
-# read config
 while read line
 do
     arr=(${(s,:,)line})
@@ -84,12 +81,10 @@ wd_remove()
 {
     if [[ ${points[$1]} != "" ]]
     then
-        TMP=mktemp
-        sed "/^$1:/d" $CONFIG > $TMP
-        if [ $? -eq 0 ]
+        wd_tmp=""
+        if sed "/^$1:/d" $CONFIG > $wd_tmp
         then
-            cat $TMP > $CONFIG
-            rm -f $TMP
+            cat $wd_tmp > $CONFIG
             wd_print_msg $GREEN "Warp point removed"
         else
             wd_print_msg $RED "Warp point unsuccessfully removed. Sorry!"
@@ -208,4 +203,4 @@ fi
 # remember, there's no sub shell
 points=""
 args=""
-unhash -d val # fixes issue #1
+unhash -d val &> /dev/null # fixes issue #1
