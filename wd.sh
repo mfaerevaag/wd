@@ -81,10 +81,9 @@ wd_remove()
 {
     if [[ ${points[$1]} != "" ]]
     then
-        wd_tmp=""
-        if sed "/^$1:/d" $CONFIG > $wd_tmp
+        if wd_tmp=`sed "/^$1:/d" $CONFIG`
         then
-            cat $wd_tmp > $CONFIG
+            echo $wd_tmp > $CONFIG
             wd_print_msg $GREEN "Warp point removed"
         else
             wd_print_msg $RED "Warp point unsuccessfully removed. Sorry!"
@@ -105,11 +104,14 @@ wd_list_all()
     wd_print_msg $BLUE "All warp points:"
     while read line
     do
-        arr=(${(s,:,)line})
-        key=${arr[1]}
-        val=${arr[2]}
+        if [[ $line != "" ]]
+        then
+            arr=(${(s,:,)line})
+            key=${arr[1]}
+            val=${arr[2]}
 
-        print "\t" $key "\t -> \t" $val
+            print "\t" $key "\t -> \t" $val
+        fi
     done < $CONFIG
 }
 
