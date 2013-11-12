@@ -19,13 +19,6 @@ RED="\033[91m"
 NOC="\033[m"
 
 
-## lazy mk config 
-if [ ! -e $CONFIG ]
-then
-    touch $CONFIG
-    wd_print_msg $YELLOW "No config file found so one was created"
-fi
-
 ## load warp points
 typeset -A points
 while read line

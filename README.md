@@ -41,7 +41,7 @@ Run either in terminal:
         wd ...
 
     This is a wrapper for the zsh `dirs` function.
-    You might need `setopt AUTO_PUSHD` in your `.zshrc` if you hare not using [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh)).
+    (You might need `setopt AUTO_PUSHD` in your `.zshrc` if you hare not using [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh)).
 
  * Remove warp point test point:
 
