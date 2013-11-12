@@ -18,7 +18,7 @@ RED="\033[91m"
 NOC="\033[m"
 
 # make temporary log file
-LOG="$(mktemp -t wd_install)" || exit 1
+LOG="$(mktemp -t wd_install.XXXXXXXXXX)" || exit 1
 exec 2> $LOG
 
 # check if already exists
