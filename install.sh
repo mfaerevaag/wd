@@ -41,19 +41,19 @@ then
     rm -rf $LOG
 
     # finish
-    echo "\033[96m"'              _ '
-    echo "\033[96m"'             | |'
-    echo "\033[96m"' __      ____| |'
-    echo "\033[96m"' \ \ /\ / / _` |'
-    echo "\033[96m"'  \ V  V / (_| |'
-    echo "\033[96m"'   \_/\_/ \__,_|'
-    echo "\033[96m"'                '
-    echo '... is now installed.'"\033[m"
+    echo "\033[96m"'              _ '"\033[m"
+    echo "\033[96m"'             | |'"\033[m"
+    echo "\033[96m"' __      ____| |'"\033[m"
+    echo "\033[96m"' \ \ /\ / / _` |'"\033[m"
+    echo "\033[96m"'  \ V  V / (_| |'"\033[m"
+    echo "\033[96m"'   \_/\_/ \__,_|'"\033[m"
+    echo "\033[96m"'                '"\033[m"
+    echo "\033[96m... is now installed. \033[m"
     echo "Remember to open new zsh to load alias."
     echo "For more information on usage, see README. Enjoy!"
 else
     # ops
-    echo "\033[91m\n"'Ops! An error occured: '"\033[m"
+    echo "\033[91m \nOps! An error occured: \033[m"
     cat $LOG
     echo "\nIt would be great of you to file an issue"
     echo "at GitHub so I can fix it asap. Sorry!"
