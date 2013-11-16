@@ -6,6 +6,8 @@ wd
 
 ### Setup
 
+There's a few alternatives. Don't miss the [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh) plugin!
+
 #### Automatic
 
 Run either in terminal:
@@ -14,11 +16,20 @@ Run either in terminal:
 
  * `wget --no-check-certificate https://github.com/mfaerevaag/wd/raw/master/install.sh -O - | sh`
 
+#### oh-my-zsh
+
+ * Clone to your plugins folder (likely `~/.oh-my-zsh/plugins`).
+
+ * Add the plugin in your `~/.zshrc` file:
+
+        plugins=(... wd)
+
+
 #### Manual
 
  * Clone repo to your liking
 
- * Add `wd` alias to `.zshrc` (or .profile etc.):
+ * Add `wd` alias to `.zshrc` (or `.profile` etc.):
 
         echo "alias wd='. /path/to/wd.sh'" >> ~/.zshrc
 
