@@ -6,4 +6,4 @@
 #
 # @github.com/mfaerevaag/wd
 
-alias wd='. ~/.oh-my-zsh/plugins/wd/wd.sh'
+alias wd='. $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/wd.sh'
