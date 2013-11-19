@@ -19,6 +19,13 @@ RED="\033[91m"
 NOC="\033[m"
 
 
+# check if config file exists
+if [[ ! -a $CONFIG ]]
+then
+  # if not: create config file
+  touch $CONFIG
+fi
+
 ## load warp points
 typeset -A points
 while read line
@@ -131,6 +138,13 @@ wd_print_usage()
 
 
 ## run
+
+# check if config file is writeable
+if [[ ! -w $CONFIG ]]
+then
+  wd_print_msg $RED "\'$CONFIG\' is not writeable. Exiting."
+  exit 1
+fi
 
 # get opts
 args=`getopt -o a:r:lhs -l add:,remove:,list,help,show -- $*`
