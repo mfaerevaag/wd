@@ -139,23 +139,25 @@ wd_print_usage()
 
 ## run
 
+# get opts
+args=`getopt -o a:r:lhs -l add:,remove:,list,help,show -- $*`
+args_result=$?
+
 # check if config file is writeable
 if [[ ! -w $CONFIG ]]
 then
   wd_print_msg $RED "\'$CONFIG\' is not writeable. Exiting."
-  exit 1
-fi
+  # do nothing => exit
+  # can't run `exit`, as this would exit the executing shell
+  # i.e. your terminal
 
-# get opts
-args=`getopt -o a:r:lhs -l add:,remove:,list,help,show -- $*`
-
-if [[ $? -ne 0 || $#* -eq 0 ]]
+# check if no arguments were given
+elif [[ $args_result -ne 0 || $#* -eq 0 ]]
 then
     wd_print_usage
-else
-    # can't exit, as this would exit the excecuting shell
-    # e.i. your terminal
+    # do nothing => exit
 
+else
     #set -- $args # WTF
 
     for i
