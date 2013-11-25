@@ -132,6 +132,7 @@ wd_print_usage()
     print "\t add \t Adds the current working directory to your warp points"
     print "\t add! \t Overwrites existing warp point"
     print "\t remove  Removes the given warp point"
+    print "\t show \t Outputs warp points to current directory"
     print "\t list \t Outputs all stored warp points"
     print "\t help \t Show this extremely helpful text"
 }
