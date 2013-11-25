@@ -16,6 +16,7 @@ Then just add the plugin in your `~/.zshrc` file:
 
         plugins=(... wd)
 
+
 #### Automatic
 
 Run either in terminal:
@@ -32,6 +33,18 @@ Run either in terminal:
  * Add `wd` alias to `.zshrc` (or `.profile` etc.):
 
         echo "alias wd='. /path/to/wd.sh'" >> ~/.zshrc
+
+
+#### Completion
+
+If you're NOT using [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh) and you want to utelize the zsh-completion feature, you will also need to add the path to your `wd` installation (`~/bin/wd` if you used the automatic installer) to your `fpath`. E.g. in your `~/.zshrc`:
+
+    fpath=(~/bin/wd $fpath)
+
+Also, you may have to force a rebuild of `zcompdump` by running:
+
+    rm -f ~/.zcompdump; compinit
+
 
 
 ### Usage
