@@ -211,6 +211,6 @@ fi
 ## garbage collection
 # if not, next time warp will pick up variables from this run
 # remember, there's no sub shell
-points=""
-args=""
-unhash -d val &> /dev/null # fixes issue #1
+unset points
+unset args
+unset val &> /dev/null # fixes issue #1
