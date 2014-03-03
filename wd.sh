@@ -143,7 +143,7 @@ wd_print_usage()
 ## run
 
 # get opts
-args=`getopt -o a:r:lhs -l add:,remove:,ls,help,show -- $*`
+args=`getopt -o a:r:lhs -l add:,rm:,ls,help,show -- $*`
 
 # check if no arguments were given
 if [[ $? -ne 0 || $#* -eq 0 ]]
