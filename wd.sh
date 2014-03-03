@@ -166,45 +166,36 @@ else
         case "$i"
             in
             -a|--add|add)
-                shift
-                shift
                 wd_add false $2
                 break
                 ;;
             -a!|--add!|add!)
-                shift
-                shift
                 wd_add true $2
                 break
                 ;;
             -r|--remove|rm)
                 wd_remove $2
-                shift
-                shift
                 break
                 ;;
             -l|--list|ls)
                 wd_list_all
-                shift
                 break
                 ;;
             -h|--help|help)
                 wd_print_usage
-                shift
                 break
                 ;;
             -s|--show|show)
                 wd_show
-                shift
                 break
                 ;;
             *)
                 wd_warp $i
-                shift
                 break
                 ;;
             --)
-                shift; break;;
+                break
+                ;;
         esac
     done
 fi
