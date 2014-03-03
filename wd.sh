@@ -83,7 +83,9 @@ wd_remove()
     then
         if wd_tmp=`sed "/^$1:/d" $CONFIG`
         then
-            echo $wd_tmp > $CONFIG
+            # `>!` forces overwrite
+            # we need this if people use `setopt NO_CLOBBER`
+            echo $wd_tmp >! $CONFIG
             wd_print_msg $GREEN "Warp point removed"
         else
             wd_print_msg $RED "Warp point unsuccessfully removed. Sorry!"
