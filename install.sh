@@ -34,8 +34,10 @@ fi
 if git clone $REPO $DIR
 then
     # add alias
-    echo "Adding alias to your config..."
-    echo "alias wd='. $DIR/wd.sh'" >> $ZSHRC
+    echo "Adding wd function to your config..."
+    echo "wd() {"         >> $ZSHRC
+    echo "  . $DIR/wd.sh" >> $ZSHRC
+    echo "}"              >> $ZSHRC
 
     # remove log
     rm -rf $LOG
