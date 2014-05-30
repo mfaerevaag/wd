@@ -82,6 +82,11 @@ Also, you may have to force a rebuild of `zcompdump` by running:
  * Print usage with no opts or the `help` argument.
 
 
+### License
+
+The project is licensed under the [MIT-license](https://github.com/mfaerevaag/wd/blob/master/LICENSE).
+
+
 ### Finally
 
 If you have issues, feedback or improvements, don't hesitate to report it, fork or submit a pull request.
