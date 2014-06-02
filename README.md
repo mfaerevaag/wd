@@ -10,9 +10,7 @@ wd
 
 `wd` comes bundles with [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh)!
 
-If it haven't been updated yet, clone to your plugins folder (likely `~/.oh-my-zsh/plugins`).
-
-Then just add the plugin in your `~/.zshrc` file:
+Just add the plugin in your `~/.zshrc` file:
 
         plugins=(... wd)
 
