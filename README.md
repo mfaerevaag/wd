@@ -12,7 +12,7 @@ wd
 
 Just add the plugin in your `~/.zshrc` file:
 
-        plugins=(... wd)
+    plugins=(... wd)
 
 
 #### Automatic
@@ -26,25 +26,25 @@ Run either in terminal:
 
 #### Manual
 
- * Clone repo to your liking
+ * Clone this repo to your liking
 
  * Add `wd` function to `.zshrc` (or `.profile` etc.):
- 
+
 
         wd() {
-            . ~/paht/to/wd.sh
+            . ~/paht/to/wd/wd.sh
         }
 
 
 #### Completion
 
-If you're NOT using [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh) and you want to utelize the zsh-completion feature, you will also need to add the path to your `wd` installation (`~/bin/wd` if you used the automatic installer) to your `fpath`. E.g. in your `~/.zshrc`:
+If you're NOT using [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) and you want to utelize the zsh-completion feature, you will also need to add the path to your `wd` installation (`~/bin/wd` if you used the automatic installer) to your `fpath`. E.g. in your `~/.zshrc`:
 
-    fpath=(~/bin/wd $fpath)
+    fpath=(~/path/to/wd $fpath)
 
 Also, you may have to force a rebuild of `zcompdump` by running:
 
-    rm -f ~/.zcompdump; compinit
+    $ rm -f ~/.zcompdump; compinit
 
 
 
@@ -52,33 +52,35 @@ Also, you may have to force a rebuild of `zcompdump` by running:
 
  * Add warp point to current working directory:
 
-        wd add test
+        $ wd add foo
 
     If a warp point with the same name exists, use `add!` to overwrite it.
 
- * From an other directory, warp to test with:
+    Note, a warp point cannot contain colons, or only consist of only spaces and dots. The first will conflict in how `wd` stores the warp points, and the second will conflict other features, as below.
 
-        wd test
+ * From an other directory (not necessarily), warp to `foo` with:
 
- * You can warp back to previous directory, and so on, with the puncticulation syntax:
+        $ wd foo
 
-        wd ..
-        wd ...
+ * You can warp back to previous directory, and so on, with this dot syntax:
+
+        $ wd ..
+        $ wd ...
 
     This is a wrapper for the zsh `dirs` function.
     (You might need `setopt AUTO_PUSHD` in your `.zshrc` if you hare not using [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh)).
 
  * Remove warp point test point:
 
-        wd rm test
-
- * List warp points to current directory (stored in `~/.warprc`):
-
-        wd show
+        $ wd rm foo
 
  * List all warp points (stored in `~/.warprc`):
 
-        wd ls
+        $ wd ls
+
+ * List warp points to current directory
+
+        $ wd show
 
  * Print usage with no opts or the `help` argument.
 
@@ -90,7 +92,7 @@ The project is licensed under the [MIT-license](https://github.com/mfaerevaag/wd
 
 ### Finally
 
-If you have issues, feedback or improvements, don't hesitate to report it, fork or submit a pull request.
+If you have issues, feedback or improvements, don't hesitate to report it or submit a pull-request.
 
 Credit to [altschuler](https://github.com/altschuler) for awesome idea.
 
