@@ -68,10 +68,19 @@ wd_add()
     local force=$1
     local point=$2
 
-    if [[ "$point" =~ "^\.+$" || "$point" =~ "^\s*$" ]]
+    if [[ $point =~ "^[\.]+$" ]]
     then
-        wd_print_msg $RED "Illegal warp point (see README)."
-    elif [[ ${points[$point]} == "" ]] || $force
+        wd_print_msg $RED "Warp point cannot be just dots"
+    elif [[ $point =~ "(\s|\ )+" ]]
+    then
+        wd_print_msg $RED "Warp point should not contain whitespace"
+    elif [[ $point == *:* ]]
+    then
+        wd_print_msg $RED "Warp point cannot contain colons"
+    elif [[ $point == "" ]]
+    then
+        wd_print_msg $RED "Warp point cannot be empty"
+    elif [[ ${points[$2]} == "" ]] || $force
     then
         wd_remove $point > /dev/null
         printf "%q:%q\n" "${point}" "${PWD}" >> $CONFIG
