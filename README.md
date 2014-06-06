@@ -28,9 +28,12 @@ Run either in terminal:
 
  * Clone repo to your liking
 
- * Add `wd` alias to `.zshrc` (or `.profile` etc.):
+ * Add `wd` function to `.zshrc` (or `.profile` etc.):
+ 
 
-        echo "alias wd='. /path/to/wd.sh'" >> ~/.zshrc
+        wd() {
+            . ~/paht/to/wd.sh
+        }
 
 
 #### Completion
