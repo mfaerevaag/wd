@@ -22,7 +22,7 @@ readonly NOC="\033[m"
 ## init
 
 # check if config file exists
-if [ ! -a $CONFIG ]
+if [ ! -e $CONFIG ]
 then
     # if not, create config file
     touch $CONFIG
