@@ -22,7 +22,7 @@ readonly NOC="\033[m"
 ## init
 
 # check if config file exists
-if [ ! -a $CONFIG ]
+if [ ! -e $CONFIG ]
 then
     # if not, create config file
     touch $CONFIG
@@ -97,7 +97,7 @@ wd_remove()
 
     if [[ ${points[$point]} != "" ]]
     then
-        if sed -i.bak "s,^${point}f:.*$,,g" $CONFIG
+        if sed -i.bak "s,^${point}:.*$,,g" $CONFIG
         then
             wd_print_msg $GREEN "Warp point removed"
         else
