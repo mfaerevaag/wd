@@ -10,6 +10,7 @@
 
 ## variables
 readonly CONFIG=$HOME/.warprc
+readonly CONFIG_TMP=$CONFIG.tmp
 
 # colors
 readonly BLUE="\033[96m"
@@ -97,7 +98,7 @@ wd_remove()
 
     if [[ ${points[$point]} != "" ]]
     then
-        if sed -i.bak "s,^${point}:.*$,,g" $CONFIG
+        if sed -n "/^${point}:.*$/!p" $CONFIG > $CONFIG_TMP && mv $CONFIG_TMP $CONFIG
         then
             wd_print_msg $GREEN "Warp point removed"
         else
