@@ -7,6 +7,9 @@
 #
 # @github.com/mfaerevaag/wd
 
+# version
+readonly WD_VERSION=0.2.0
+
 # colors
 readonly BLUE="\033[96m"
 readonly GREEN="\033[92m"
@@ -145,13 +148,21 @@ local CONFIG=$HOME/.warprc
 local CONFIG_TMP=$CONFIG.tmp
 local QUIET=0
 
-# parse 'meta' options first to avoid the need to have them before
-# other commands
+# Parse 'meta' options first to avoid the need to have them before
+# other commands. The `-D` flag consumes recognized options so that
+# the actual command parsing won't be affected.
 
-zparseopts -D -E -A meta_opts c: -config: q=wd_quiet_mode
+zparseopts -D -E -A meta_opts \
+    c: -config: \
+    q=wd_quiet_mode -quiet=wd_quiet_mode \
+    v=wd_print_version -version=wd_print_version
 
 if [[ ! -z $wd_quiet_mode ]] then
     QUIET=1
+fi
+
+if [[ ! -z $wd_print_version ]] then
+    echo "wd version $WD_VERSION"
 fi
 
 if [[ ! -z $meta_opts[-c] ]] then
