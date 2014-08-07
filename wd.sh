@@ -7,39 +7,12 @@
 #
 # @github.com/mfaerevaag/wd
 
-
-## variables
-readonly CONFIG=$HOME/.warprc
-readonly CONFIG_TMP=$CONFIG.tmp
-
 # colors
 readonly BLUE="\033[96m"
 readonly GREEN="\033[92m"
 readonly YELLOW="\033[93m"
 readonly RED="\033[91m"
 readonly NOC="\033[m"
-
-
-## init
-
-# check if config file exists
-if [ ! -e $CONFIG ]
-then
-    # if not, create config file
-    touch $CONFIG
-fi
-
-# load warp points
-typeset -A points
-while read -r line
-do
-    arr=(${(s,:,)line})
-    key=${arr[1]}
-    val=${arr[2]}
-
-    points[$key]=$val
-done < $CONFIG
-
 
 ## functions
 
@@ -136,14 +109,16 @@ wd_show()
 
 wd_print_msg()
 {
-    local color=$1
-    local msg=$2
+    if [[ $QUIET -eq 0 ]] then
+        local color=$1
+        local msg=$2
 
-    if [[ $color == "" || $msg == "" ]]
-    then
-        print " ${RED}*${NOC} Could not print message. Sorry!"
-    else
-        print " ${color}*${NOC} ${msg}"
+        if [[ $color == "" || $msg == "" ]]
+        then
+            print " ${RED}*${NOC} Could not print message. Sorry!"
+        else
+            print " ${color}*${NOC} ${msg}"
+        fi
     fi
 }
 
@@ -165,9 +140,47 @@ EOF
 
 ## run
 
-# get opts
-args=$(getopt -o a:r:lhs -l add:,rm:,ls,help,show -- $*)
+# initialize config file
+local CONFIG=$HOME/.warprc
+local CONFIG_TMP=$CONFIG.tmp
+local QUIET=0
 
+# parse 'meta' options first to avoid the need to have them before
+# other commands
+
+zparseopts -D -E -A meta_opts c: -config: q=wd_quiet_mode
+
+if [[ ! -z $wd_quiet_mode ]] then
+    QUIET=1
+fi
+
+if [[ ! -z $meta_opts[-c] ]] then
+    CONFIG=$meta_opts[-c]
+    CONFIG_TMP=$CONFIG.tmp
+fi
+
+# check if config file exists
+if [ ! -e $CONFIG ]
+then
+    # if not, create config file
+    touch $CONFIG
+fi
+
+# load warp points
+typeset -A points
+while read -r line
+do
+    arr=(${(s,:,)line})
+    key=${arr[1]}
+    val=${arr[2]}
+
+    points[$key]=$val
+done < $CONFIG
+
+
+
+# get opts
+args=$(getopt -o a:r:lhsq -l add:,rm:,ls,help,show,quiet -- $*)
 # check if no arguments were given
 if [[ $? -ne 0 || $#* -eq 0 ]]
 then
@@ -181,6 +194,8 @@ then
     wd_print_msg $RED "\'$CONFIG\' is not writeable."
 
 else
+
+    # parse rest of options
     for o
     do
         case "$o"
