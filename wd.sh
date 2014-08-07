@@ -19,6 +19,24 @@ readonly NOC="\033[m"
 
 ## functions
 
+# helpers
+wd_exit_fail()
+{
+    local msg=$1
+
+    wd_print_msg $RED $1
+    EXIT_CODE=1
+}
+
+wd_exit_warn()
+{
+    local msg=$1
+
+    wd_print_msg $YELLOW $msg
+    EXIT_CODE=1
+}
+
+# core
 wd_warp()
 {
     local point=$1
@@ -27,7 +45,7 @@ wd_warp()
     then
         if [ $#1 < 2 ]
         then
-            wd_print_msg $YELLOW "Warping to current directory?"
+            wd_exit_warn "Warping to current directory?"
         else
             (( n = $#1 - 1 ))
             cd -$n > /dev/null
@@ -36,7 +54,7 @@ wd_warp()
     then
         cd ${points[$point]}
     else
-        wd_print_msg $RED "Unknown warp point '${point}'"
+        wd_exit_fail "Unknown warp point '${point}'"
     fi
 }
 
@@ -47,24 +65,28 @@ wd_add()
 
     if [[ $point =~ "^[\.]+$" ]]
     then
-        wd_print_msg $RED "Warp point cannot be just dots"
+        wd_exit_fail "Warp point cannot be just dots"
     elif [[ $point =~ "(\s|\ )+" ]]
     then
-        wd_print_msg $RED "Warp point should not contain whitespace"
+        wd_exit_fail "Warp point should not contain whitespace"
     elif [[ $point == *:* ]]
     then
-        wd_print_msg $RED "Warp point cannot contain colons"
+        wd_exit_fail "Warp point cannot contain colons"
     elif [[ $point == "" ]]
     then
-        wd_print_msg $RED "Warp point cannot be empty"
+        wd_exit_fail "Warp point cannot be empty"
     elif [[ ${points[$2]} == "" ]] || $force
     then
         wd_remove $point > /dev/null
         printf "%q:%q\n" "${point}" "${PWD}" >> $CONFIG
 
         wd_print_msg $GREEN "Warp point added"
+
+        # override exit code in case wd_remove did not remove any points
+        # TODO: we should handle this kind of logic better
+        EXIT_CODE=0
     else
-        wd_print_msg $YELLOW "Warp point '${point}' already exists. Use 'add!' to overwrite."
+        wd_exit_warn "Warp point '${point}' already exists. Use 'add!' to overwrite."
     fi
 }
 
@@ -78,10 +100,10 @@ wd_remove()
         then
             wd_print_msg $GREEN "Warp point removed"
         else
-            wd_print_msg $RED "Something bad happened! Sorry."
+            wd_exit_fail "Something bad happened! Sorry."
         fi
     else
-        wd_print_msg $RED "Warp point was not found"
+        wd_exit_fail "Warp point was not found"
     fi
 }
 
@@ -143,10 +165,9 @@ EOF
 
 ## run
 
-# initialize config file
 local CONFIG=$HOME/.warprc
-local CONFIG_TMP=$CONFIG.tmp
 local QUIET=0
+local EXIT_CODE=0
 
 # Parse 'meta' options first to avoid the need to have them before
 # other commands. The `-D` flag consumes recognized options so that
@@ -204,7 +225,7 @@ elif [ ! -w $CONFIG ]
 then
     # do nothing
     # can't run `exit`, as this would exit the executing shell
-    wd_print_msg $RED "\'$CONFIG\' is not writeable."
+    wd_exit_fail "\'$CONFIG\' is not writeable."
 
 else
 
@@ -263,3 +284,5 @@ unset wd_print_usage
 unset args
 unset points
 unset val &> /dev/null # fixes issue #1
+
+exit $EXIT_CODE
