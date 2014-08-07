@@ -44,12 +44,6 @@ wp_exists()
     echo $?
 }
 
-wp_exists()
-{
-    wd ls | grep -q "$1[[:space:]]*->"
-    echo $?
-}
-
 
 ### Tests
 
@@ -63,6 +57,9 @@ test_empty_config()
 test_simple_add_remove()
 {
     wd -q add foo
+    assertTrue "should successfully add wp 'foo'" \
+        $pipestatus
+
     assertEquals "should have 1 wps" \
         1 $(total_wps)
 
@@ -74,6 +71,62 @@ test_simple_add_remove()
         0 $(total_wps)
 }
 
+test_no_duplicates()
+{
+    wd -q add foo
+    assertTrue "should successfully add 'foo'" \
+        $pipestatus
+
+    wd -q add foo
+    assertFalse "should fail when adding duplicate of 'foo'" \
+        $pipestatus
+}
+
+
+test_valid_identifiers()
+{
+    wd -q add .
+    assertFalse "should not allow only dots" \
+        $pipestatus
+
+    wd -q add ..
+    assertFalse "should not allow only dots" \
+        $pipestatus
+
+    wd -q add hej.
+    assertTrue "should allow dots in name" \
+        $pipestatus
+
+    wd -q add "foo bar"
+    assertFalse "should not allow whitespace" \
+        $pipestatus
+
+    wd -q add "foo:bar"
+    assertFalse "should not allow colons" \
+        $pipestatus
+
+    wd -q add ":foo"
+    assertFalse "should not allow colons" \
+        $pipestatus
+
+    wd -q add
+    assertFalse "should not allow empty name" \
+        $pipestatus
+}
+
+
+test_removal()
+{
+    wd -q add foo
+
+    wd -q rm bar
+    assertFalse "should fail when removing non-existing point" \
+        $pipestatus
+
+    wd -q rm foo
+    assertTrue "should remove existing point" \
+        $pipestatus
+}
 
 # Go go gadget
 . ./shunit2/shunit2
