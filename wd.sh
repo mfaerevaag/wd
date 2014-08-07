@@ -96,7 +96,8 @@ wd_remove()
 
     if [[ ${points[$point]} != "" ]]
     then
-        if sed -n "/^${point}:.*$/!p" $CONFIG > $CONFIG_TMP && mv $CONFIG_TMP $CONFIG
+        local config_tmp=$CONFIG.tmp
+        if sed -n "/^${point}:.*$/!p" $CONFIG > $config_tmp && mv $config_tmp $CONFIG
         then
             wd_print_msg $GREEN "Warp point removed"
         else
@@ -173,8 +174,8 @@ local EXIT_CODE=0
 # other commands. The `-D` flag consumes recognized options so that
 # the actual command parsing won't be affected.
 
-zparseopts -D -E -A meta_opts \
-    c: -config: \
+zparseopts -D -E \
+    c:=wd_alt_config -config:=wd_alt_config \
     q=wd_quiet_mode -quiet=wd_quiet_mode \
     v=wd_print_version -version=wd_print_version
 
@@ -188,10 +189,9 @@ then
     echo "wd version $WD_VERSION"
 fi
 
-if [[ ! -z $meta_opts[-c] ]]
+if [[ ! -z $wd_alt_config ]]
 then
-    CONFIG=$meta_opts[-c]
-    CONFIG_TMP=$CONFIG.tmp
+    CONFIG=$wd_alt_config[2]
 fi
 
 # check if config file exists
@@ -213,7 +213,7 @@ do
 done < $CONFIG
 
 # get opts
-args=$(getopt -o a:r:lhsq -l add:,rm:,ls,help,show,quiet -- $*)
+args=$(getopt -o a:r:lhs -l add:,rm:,ls,help,show -- $*)
 
 # check if no arguments were given
 if [[ $? -ne 0 || $#* -eq 0 ]]
