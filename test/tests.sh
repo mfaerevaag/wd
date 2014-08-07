@@ -14,32 +14,38 @@ setopt shwordsplit
 SHUNIT_PARENT=$0
 
 # reset config for each test
-setUp() {
+setUp()
+{
     cat /dev/null > $WD_TEST_CONFIG
 }
 
-oneTimeTearDown() {
+oneTimeTearDown()
+{
     rm $WD_TEST_CONFIG
 }
 
 ### Helpers
 
-wd() {
+wd()
+{
     # run the local wd with the test config
     ../wd.sh -c $WD_TEST_CONFIG "$@"
 }
 
-total_wps() {
+total_wps()
+{
     # total wps is the number of (non-empty) lines in the config
     echo $(cat $WD_TEST_CONFIG | sed '/^\s*$/d' | wc -l)
 }
 
-wp_exists() {
+wp_exists()
+{
     wd ls | grep -q "$1[[:space:]]*->"
     echo $?
 }
 
-wp_exists() {
+wp_exists()
+{
     wd ls | grep -q "$1[[:space:]]*->"
     echo $?
 }
@@ -47,12 +53,15 @@ wp_exists() {
 
 ### Tests
 
-test_empty_config() {
+# basic functionality
+test_empty_config()
+{
     assertEquals "should initially be an empty config" \
         0 $(total_wps)
 }
 
-test_simple_add_remove() {
+test_simple_add_remove()
+{
     wd -q add foo
     assertEquals "should have 1 wps" \
         1 $(total_wps)
@@ -64,6 +73,7 @@ test_simple_add_remove() {
     assertEquals "wps should be empty" \
         0 $(total_wps)
 }
+
 
 # Go go gadget
 . ./shunit2/shunit2

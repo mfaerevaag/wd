@@ -157,15 +157,18 @@ zparseopts -D -E -A meta_opts \
     q=wd_quiet_mode -quiet=wd_quiet_mode \
     v=wd_print_version -version=wd_print_version
 
-if [[ ! -z $wd_quiet_mode ]] then
+if [[ ! -z $wd_quiet_mode ]]
+then
     QUIET=1
 fi
 
-if [[ ! -z $wd_print_version ]] then
+if [[ ! -z $wd_print_version ]]
+then
     echo "wd version $WD_VERSION"
 fi
 
-if [[ ! -z $meta_opts[-c] ]] then
+if [[ ! -z $meta_opts[-c] ]]
+then
     CONFIG=$meta_opts[-c]
     CONFIG_TMP=$CONFIG.tmp
 fi
@@ -188,10 +191,9 @@ do
     points[$key]=$val
 done < $CONFIG
 
-
-
 # get opts
 args=$(getopt -o a:r:lhsq -l add:,rm:,ls,help,show,quiet -- $*)
+
 # check if no arguments were given
 if [[ $? -ne 0 || $#* -eq 0 ]]
 then
