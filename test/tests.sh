@@ -128,5 +128,22 @@ test_removal()
         $pipestatus
 }
 
+
+test_list()
+{
+    wd -q add foo
+
+    [ $(wd -q ls | wc -l) -eq 1 ]
+    assertTrue "should only be one warp point" \
+        $pipestatus
+
+    wd -q add bar
+
+    [ $(wd -q ls | wc -l) -eq 1 ]
+    assertFalse "should be more than one warp point" \
+        $pipestatus
+}
+
+
 # Go go gadget
 . ./shunit2/shunit2
