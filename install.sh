@@ -11,6 +11,7 @@ BIN=$HOME/bin
 DIR=$BIN/wd
 REPO=https://github.com/mfaerevaag/wd.git
 ZSHRC=$HOME/.zshrc
+MANLOCATION=$(manpath | grep -o "^[^:]*")
 
 # make temporary log file
 LOG="$(mktemp -t wd_install.XXXXXXXXXX)" || exit 1
@@ -41,6 +42,9 @@ then
 
     # remove log
     rm -rf $LOG
+
+    # install man page
+    cp "$DIR/wd.1" "$MANLOCATION"
 
     # finish
     echo "\033[96m"'              _ '"\033[m"
