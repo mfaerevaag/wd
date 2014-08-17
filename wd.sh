@@ -151,7 +151,7 @@ wd_print_msg()
 wd_print_usage()
 {
     cat <<- EOF
-Usage: wd [add|-a|--add] [rm|-r|--remove] <point>
+Usage: wd [command] <point>
 
 Commands:
 	add	Adds the current working directory to your warp points

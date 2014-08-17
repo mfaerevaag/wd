@@ -1,0 +1,55 @@
+.TH wd "1" "August 2014" "wd 0.4" "wd Manual"
+.
+.SH NAME
+wd \- Quickly warp to custom directories in zsh
+.
+.
+.SH SYNOPSIS
+.B
+wd [\fICOMMAND\fP] [\fINAME\fP]
+.
+.
+.SH DESCRIPTION
+\fBwd\fP (warp directory) lets you quickly jump to custom directories in zsh, without using \fBcd\fP. Why? Because \fBcd\fP is slow for  paths that are visited frequently or has a long path.
+.
+.
+.SH COMMANDS
+.IP "add, -a, --add <name>"
+Add a new warp point which will warp to the current working directory with \fI name\fR as identifier.
+.
+.IP "add! <name>"
+Like \fBadd\fP but will overwrite existing point with the same \fIname\fP.
+.
+.IP "rm, -r, --remove <name>"
+Add a new warp point with \fIname\fP as identifier.
+.
+.IP "ls, -l"
+List all registered warp points.
+.
+.IP "show"
+Show which warp points are registered to the current working directory.
+.
+.
+.SH EXAMPLES
+.
+.IP "\fBwd add! foo\fP"
+Add warp point named "foo" to current warping directory, overwriting any existing points named "foo".
+.
+.IP "\fBwd -r foo\fP"
+Remove any warp point named \fIfoo\fP.
+.
+.
+.SH BUGS
+Issue tracking on GitHub:
+.nf
+https://github.com/mfaerevaag/wd/issues
+.
+.
+.SH AUTHORS
+Created and maintained by Markus Færgevaag, with the help of various contributors:
+.nf
+https://github.com/mfaerevaag/wd/graphs/contributors.
+.
+.
+.SH LICENSE
+wd is licensed under the MIT license.
