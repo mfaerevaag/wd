@@ -162,6 +162,17 @@ test_show()
     then
         fail "should show 2 warp points 'foo bar'"
     fi
+
+    # test with optional name argument
+    if [[ ! $(wd show foo) =~ 'Warp point:' ]]
+    then
+        fail "should show warp point 'foo'"
+    fi
+
+    if [[ ! $(wd show qux) =~ 'No warp point named' ]]
+    then
+        fail "should not show warp point 'qux'"
+    fi
 }
 
 

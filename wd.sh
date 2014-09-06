@@ -127,23 +127,35 @@ wd_list_all()
 
 wd_show()
 {
-    # hax to create a local empty array
-    local wd_matches
-    wd_matches=()
-    # do a reverse lookup to check whether PWD is in $points
-    if [[ ${points[(r)$PWD]} == $PWD ]]
+    local name_arg=$1
+    # if there's an argument we look up the value
+    if [[ ! -z $name_arg ]]
     then
-        for name in ${(k)points}
-        do
-            if [[ $points[$name] == $PWD ]]
-            then
-                wd_matches[$(($#wd_matches+1))]=$name
-            fi
-        done
-
-        wd_print_msg $WD_BLUE "$#wd_matches warp point(s) to current directory: ${WD_GREEN}$wd_matches${WD_NOC}"
+        if [[ -z $points[$name_arg] ]]
+        then
+            wd_print_msg $WD_BLUE "No warp point named $name_arg"
+        else
+            wd_print_msg $WD_GREEN "Warp point: ${WD_GREEN}$name_arg${WD_NOC} -> $points[$name_arg]"
+        fi
     else
-        wd_print_msg $WD_BLUE "No warp points to $cwd"
+        # hax to create a local empty array
+        local wd_matches
+        wd_matches=()
+        # do a reverse lookup to check whether PWD is in $points
+        if [[ ${points[(r)$PWD]} == $PWD ]]
+        then
+            for name in ${(k)points}
+            do
+                if [[ $points[$name] == $PWD ]]
+                then
+                    wd_matches[$(($#wd_matches+1))]=$name
+                fi
+            done
+
+            wd_print_msg $WD_BLUE "$#wd_matches warp point(s) to current directory: ${WD_GREEN}$wd_matches${WD_NOC}"
+        else
+            wd_print_msg $WD_BLUE "No warp points to $cwd"
+        fi
     fi
 }
 
@@ -267,7 +279,7 @@ else
                 break
                 ;;
             -s|--show|show)
-                wd_show
+                wd_show $2
                 break
                 ;;
             *)
