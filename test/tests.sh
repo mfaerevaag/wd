@@ -133,15 +133,14 @@ test_list()
 {
     wd -q add foo
 
-    [ $(wd -q ls | wc -l) -eq 1 ]
-    assertTrue "should only be one warp point" \
-        $pipestatus
+    assertEquals "should only be one warp point" \
+        $(wd -q ls | wc -l) 1
 
     wd -q add bar
 
-    [ $(wd -q ls | wc -l) -eq 1 ]
-    assertFalse "should be more than one warp point" \
-        $pipestatus
+    assertEquals "should be more than one warp point" \
+        $(wd -q ls | wc -l) 2
+}
 
 test_show()
 {

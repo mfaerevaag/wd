@@ -149,7 +149,7 @@ wd_show()
 
 wd_print_msg()
 {
-    if [[ $WD_QUIET -eq 0 ]]
+    if [[ -z $wd_quiet_mode ]]
     then
         local color=$1
         local msg=$2
@@ -194,12 +194,7 @@ zparseopts -D -E \
     c:=wd_alt_config -config:=wd_alt_config \
     q=wd_quiet_mode -quiet=wd_quiet_mode \
     v=wd_print_version -version=wd_print_version \
-    d=wd_debug_mode -debug=wd_debug_mode \
-
-if [[ ! -z $wd_quiet_mode ]]
-then
-    WD_QUIET=1
-fi
+    d=wd_debug_mode -debug=wd_debug_mode
 
 if [[ ! -z $wd_print_version ]]
 then
@@ -237,7 +232,7 @@ if [[ $? -ne 0 || $#* -eq 0 ]]
 then
     wd_print_usage
 
-# check if config file is writeable
+    # check if config file is writeable
 elif [ ! -w $WD_CONFIG ]
 then
     # do nothing
@@ -299,6 +294,7 @@ unset wd_print_msg
 unset wd_print_usage
 unset wd_alt_config
 unset wd_quiet_mode
+unset wd_print_version
 
 unset args
 unset points
@@ -307,4 +303,6 @@ unset val &> /dev/null # fixes issue #1
 if [[ ! -z $wd_debug_mode ]]
 then
     exit $WD_EXIT_CODE
+else
+    unset wd_debug_mode
 fi
