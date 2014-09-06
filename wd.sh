@@ -193,7 +193,8 @@ local WD_DEBUG=0
 zparseopts -D -E \
     c:=wd_alt_config -config:=wd_alt_config \
     q=wd_quiet_mode -quiet=wd_quiet_mode \
-    v=wd_print_version -version=wd_print_version
+    v=wd_print_version -version=wd_print_version \
+    d=wd_debug_mode -debug=wd_debug_mode \
 
 if [[ ! -z $wd_quiet_mode ]]
 then
@@ -296,9 +297,14 @@ unset wd_show
 unset wd_list_all
 unset wd_print_msg
 unset wd_print_usage
+unset wd_alt_config
+unset wd_quiet_mode
 
 unset args
 unset points
 unset val &> /dev/null # fixes issue #1
 
-exit $EXIT_CODE
+if [[ ! -z $wd_debug_mode ]]
+then
+    exit $WD_EXIT_CODE
+fi

@@ -29,7 +29,7 @@ oneTimeTearDown()
 wd()
 {
     # run the local wd with the test config
-    ../wd.sh -c $WD_TEST_CONFIG "$@"
+    ../wd.sh -d -c $WD_TEST_CONFIG "$@"
 }
 
 total_wps()
