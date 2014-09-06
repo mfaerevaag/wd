@@ -127,10 +127,24 @@ wd_list_all()
 
 wd_show()
 {
-    local cwd=$(print $PWD | sed "s:^${HOME}:~:")
+    # hax to create a local empty array
+    local wd_matches
+    wd_matches=()
+    # do a reverse lookup to check whether PWD is in $points
+    if [[ ${points[(r)$PWD]} == $PWD ]]
+    then
+        for name in ${(k)points}
+        do
+            if [[ $points[$name] == $PWD ]]
+            then
+                wd_matches[$(($#wd_matches+1))]=$name
+            fi
+        done
 
-    wd_print_msg $BLUE "Warp points to current directory:"
-    wd_list_all | grep -e "${cwd}$"
+        wd_print_msg $BLUE "$#wd_matches warp point(s) to current directory: ${GREEN}$wd_matches${NOC}"
+    else
+        wd_print_msg $BLUE "No warp points to $cwd"
+    fi
 }
 
 wd_print_msg()

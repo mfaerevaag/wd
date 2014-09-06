@@ -142,6 +142,27 @@ test_list()
     [ $(wd -q ls | wc -l) -eq 1 ]
     assertFalse "should be more than one warp point" \
         $pipestatus
+
+test_show()
+{
+    if [[ ! $(wd show) =~ "No warp points" ]]
+    then
+        fail "should show no warp points"
+    fi
+
+    wd -q add foo
+
+    if [[ ! $(wd show) =~ '1 warp point.*foo' ]]
+    then
+        fail "should show 1 warp point 'foo'"
+    fi
+
+    wd -q add bar
+
+    if [[ ! $(wd show) =~ '2 warp point.*foo bar' ]]
+    then
+        fail "should show 2 warp points 'foo bar'"
+    fi
 }
 
 
