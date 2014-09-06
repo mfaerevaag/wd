@@ -11,11 +11,11 @@
 readonly WD_VERSION=0.2.0
 
 # colors
-readonly BLUE="\033[96m"
-readonly GREEN="\033[92m"
-readonly YELLOW="\033[93m"
-readonly RED="\033[91m"
-readonly NOC="\033[m"
+readonly WD_BLUE="\033[96m"
+readonly WD_GREEN="\033[92m"
+readonly WD_YELLOW="\033[93m"
+readonly WD_RED="\033[91m"
+readonly WD_NOC="\033[m"
 
 ## functions
 
@@ -24,16 +24,16 @@ wd_exit_fail()
 {
     local msg=$1
 
-    wd_print_msg $RED $1
-    EXIT_CODE=1
+    wd_print_msg $WD_RED $1
+    WD_EXIT_CODE=1
 }
 
 wd_exit_warn()
 {
     local msg=$1
 
-    wd_print_msg $YELLOW $msg
-    EXIT_CODE=1
+    wd_print_msg $WD_YELLOW $msg
+    WD_EXIT_CODE=1
 }
 
 # core
@@ -78,13 +78,13 @@ wd_add()
     elif [[ ${points[$2]} == "" ]] || $force
     then
         wd_remove $point > /dev/null
-        printf "%q:%q\n" "${point}" "${PWD}" >> $CONFIG
+        printf "%q:%q\n" "${point}" "${PWD}" >> $WD_CONFIG
 
-        wd_print_msg $GREEN "Warp point added"
+        wd_print_msg $WD_GREEN "Warp point added"
 
         # override exit code in case wd_remove did not remove any points
         # TODO: we should handle this kind of logic better
-        EXIT_CODE=0
+        WD_EXIT_CODE=0
     else
         wd_exit_warn "Warp point '${point}' already exists. Use 'add!' to overwrite."
     fi
@@ -96,10 +96,10 @@ wd_remove()
 
     if [[ ${points[$point]} != "" ]]
     then
-        local config_tmp=$CONFIG.tmp
-        if sed -n "/^${point}:.*$/!p" $CONFIG > $config_tmp && mv $config_tmp $CONFIG
+        local config_tmp=$WD_CONFIG.tmp
+        if sed -n "/^${point}:.*$/!p" $WD_CONFIG > $config_tmp && mv $config_tmp $WD_CONFIG
         then
-            wd_print_msg $GREEN "Warp point removed"
+            wd_print_msg $WD_GREEN "Warp point removed"
         else
             wd_exit_fail "Something bad happened! Sorry."
         fi
@@ -110,7 +110,7 @@ wd_remove()
 
 wd_list_all()
 {
-    wd_print_msg $BLUE "All warp points:"
+    wd_print_msg $WD_BLUE "All warp points:"
 
     while IFS= read -r line
     do
@@ -122,7 +122,7 @@ wd_list_all()
 
             printf "%20s  ->  %s\n" $key $val
         fi
-    done <<< $(sed "s:${HOME}:~:g" $CONFIG)
+    done <<< $(sed "s:${HOME}:~:g" $WD_CONFIG)
 }
 
 wd_show()
@@ -141,23 +141,24 @@ wd_show()
             fi
         done
 
-        wd_print_msg $BLUE "$#wd_matches warp point(s) to current directory: ${GREEN}$wd_matches${NOC}"
+        wd_print_msg $WD_BLUE "$#wd_matches warp point(s) to current directory: ${WD_GREEN}$wd_matches${WD_NOC}"
     else
-        wd_print_msg $BLUE "No warp points to $cwd"
+        wd_print_msg $WD_BLUE "No warp points to $cwd"
     fi
 }
 
 wd_print_msg()
 {
-    if [[ $QUIET -eq 0 ]] then
+    if [[ $WD_QUIET -eq 0 ]]
+    then
         local color=$1
         local msg=$2
 
         if [[ $color == "" || $msg == "" ]]
         then
-            print " ${RED}*${NOC} Could not print message. Sorry!"
+            print " ${WD_RED}*${WD_NOC} Could not print message. Sorry!"
         else
-            print " ${color}*${NOC} ${msg}"
+            print " ${color}*${WD_NOC} ${msg}"
         fi
     fi
 }
@@ -180,9 +181,10 @@ EOF
 
 ## run
 
-local CONFIG=$HOME/.warprc
-local QUIET=0
-local EXIT_CODE=0
+local WD_CONFIG=$HOME/.warprc
+local WD_QUIET=0
+local WD_EXIT_CODE=0
+local WD_DEBUG=0
 
 # Parse 'meta' options first to avoid the need to have them before
 # other commands. The `-D` flag consumes recognized options so that
@@ -195,7 +197,7 @@ zparseopts -D -E \
 
 if [[ ! -z $wd_quiet_mode ]]
 then
-    QUIET=1
+    WD_QUIET=1
 fi
 
 if [[ ! -z $wd_print_version ]]
@@ -205,14 +207,14 @@ fi
 
 if [[ ! -z $wd_alt_config ]]
 then
-    CONFIG=$wd_alt_config[2]
+    WD_CONFIG=$wd_alt_config[2]
 fi
 
 # check if config file exists
-if [ ! -e $CONFIG ]
+if [ ! -e $WD_CONFIG ]
 then
     # if not, create config file
-    touch $CONFIG
+    touch $WD_CONFIG
 fi
 
 # load warp points
@@ -224,7 +226,7 @@ do
     val=${arr[2]}
 
     points[$key]=$val
-done < $CONFIG
+done < $WD_CONFIG
 
 # get opts
 args=$(getopt -o a:r:lhs -l add:,rm:,ls,help,show -- $*)
@@ -235,11 +237,11 @@ then
     wd_print_usage
 
 # check if config file is writeable
-elif [ ! -w $CONFIG ]
+elif [ ! -w $WD_CONFIG ]
 then
     # do nothing
     # can't run `exit`, as this would exit the executing shell
-    wd_exit_fail "\'$CONFIG\' is not writeable."
+    wd_exit_fail "\'$WD_CONFIG\' is not writeable."
 
 else
 
