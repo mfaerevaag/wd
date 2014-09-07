@@ -26,10 +26,12 @@ oneTimeTearDown()
 
 ### Helpers
 
+WD_PATH=${PWD}/..
+
 wd()
 {
     # run the local wd with the test config
-    ../wd.sh -d -c $WD_TEST_CONFIG "$@"
+    ${WD_PATH}/wd.sh -d -c $WD_TEST_CONFIG "$@"
 }
 
 total_wps()
@@ -196,6 +198,27 @@ test_quiet()
     if [[ ! $(wd -q rm foo) == "" ]]
     then
         fail "should suppress all output from rm"
+    fi
+}
+
+test_clean()
+{
+    dir=test_dir
+
+    # create test dir
+    mkdir $dir
+    cd $dir
+
+    # add warp point
+    wd -q add test
+
+    # remove test dir
+    cd ..
+    rmdir $dir
+
+    if [[ ! $(wd clean!) =~ "Removing: test.*1 warp point\(s\) removed" ]]
+    then
+        fail "should remove one warp point"
     fi
 }
 
