@@ -20,7 +20,7 @@ readonly WD_NOC="\033[m"
 ## functions
 
 # helpers
-yesorno()
+wd_yesorno()
 {
     # variables
     local question="${1}"
@@ -262,7 +262,7 @@ wd_clean() {
     then
         wd_print_msg $WD_BLUE "No warp points to clean, carry on!"
     else
-        if $force || yesorno "Removing ${count} warp points. Continue? (Y/n)"
+        if $force || wd_yesorno "Removing ${count} warp points. Continue? (Y/n)"
         then
             echo $wd_tmp >! $WD_CONFIG
             wd_print_msg $WD_GREEN "Cleanup complete. ${count} warp point(s) removed"
@@ -390,6 +390,7 @@ unset wd_remove
 unset wd_show
 unset wd_list_all
 unset wd_print_msg
+unset wd_yesorno
 unset wd_print_usage
 unset wd_alt_config
 unset wd_quiet_mode
