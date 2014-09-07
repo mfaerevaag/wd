@@ -8,7 +8,7 @@
 # @github.com/mfaerevaag/wd
 
 # version
-readonly WD_VERSION=0.2.0
+readonly WD_VERSION=0.3.1
 
 # colors
 readonly WD_BLUE="\033[96m"
@@ -273,8 +273,8 @@ done < $WD_CONFIG
 # get opts
 args=$(getopt -o a:r:c:lhs -l add:,rm:,clean\!,ls,help,show -- $*)
 
-# check if no arguments were given
-if [[ $? -ne 0 || $#* -eq 0 ]]
+# check if no arguments were given, and that version is not set
+if [[ ($? -ne 0 || $#* -eq 0) && -z $wd_print_version ]]
 then
     wd_print_usage
 
