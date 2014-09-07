@@ -90,6 +90,12 @@ Also, you may have to force a rebuild of `zcompdump` by running:
 
         $ wd show
 
+ * Remove warp points to non-existent directories.
+
+        $ wd clean
+
+    Use `clean!` to not be prompted with confirmation (force).
+
  * Print usage with no opts or the `help` argument:
 
         $ wd help

@@ -18,7 +18,7 @@ wd [\fICOMMAND\fP] [\fINAME\fP]
 Add a new warp point which will warp to the current working directory with \fI name\fR as identifier.
 .
 .IP "add! <name>"
-Like \fBadd\fP but will overwrite existing point with the same \fIname\fP.
+Like \fBadd\fP, but will overwrite existing point with the same \fIname\fP.
 .
 .IP "rm, -r, --remove <name>"
 Add a new warp point with \fIname\fP as identifier.
@@ -31,6 +31,12 @@ Show which warp points are registered to the current working directory.
 .
 .IP "show <name>"
 Show path to given warp point.
+.
+.IP "clean"
+Remove warp points to non-existent directories.
+.
+.IP "clean"
+Like \fBclean\fP, but will not prompt for confirmation (force).
 .
 .IP "help"
 Show help message with usage and commands.
