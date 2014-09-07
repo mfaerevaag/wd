@@ -49,7 +49,7 @@ Commands:
 	show		Print warp points to current directory
 	show <point>	Print path to given warp point
 	ls		Print all stored warp points
-	clean!	Remove obsolete warp points (with nonexistent directory)
+	clean!		Remove points warping to nonexistent directories
 
 	-v | --version	Print version
 	-d | --debug	Exit after execution with exit codes (for testing)
