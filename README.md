@@ -32,10 +32,16 @@ Run either in terminal:
 
  * Add `wd` function to `.zshrc` (or `.profile` etc.):
 
-
         wd() {
             . ~/paht/to/wd/wd.sh
         }
+
+ * Install manpage. From `wd`'s base directory (requires root permissions):
+
+        # cp wd.1 /usr/share/man/man1/wd.1
+        # chmod 644 /usr/share/man/man1/wd.1
+
+    Note, when pulling and updating `wd`, you'll need to do this again in case of changes to the manpage.
 
 
 #### Completion
