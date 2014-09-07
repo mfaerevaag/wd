@@ -32,7 +32,7 @@ wd_print_msg()
         then
             print " ${WD_RED}*${WD_NOC} Could not print message. Sorry!"
         else
-  print " ${color}*${WD_NOC} ${msg}"
+            print " ${color}*${WD_NOC} ${msg}"
         fi
     fi
 }
@@ -161,7 +161,10 @@ wd_list_all()
             key=${arr[1]}
             val=${arr[2]}
 
-            printf "%20s  ->  %s\n" $key $val
+            if [[ -z $wd_quiet_mode ]]
+            then
+                printf "%20s  ->  %s\n" $key $val
+            fi
         fi
     done <<< $(sed "s:${HOME}:~:g" $WD_CONFIG)
 }

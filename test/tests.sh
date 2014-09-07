@@ -133,13 +133,14 @@ test_list()
 {
     wd -q add foo
 
+    # add one to expected number of lines, because of header msg
     assertEquals "should only be one warp point" \
-        $(wd -q ls | wc -l) 1
+        $(wd ls | wc -l) 2
 
     wd -q add bar
 
     assertEquals "should be more than one warp point" \
-        $(wd -q ls | wc -l) 2
+        $(wd ls | wc -l) 3
 }
 
 test_show()
@@ -172,6 +173,29 @@ test_show()
     if [[ ! $(wd show qux) =~ 'No warp point named' ]]
     then
         fail "should not show warp point 'qux'"
+    fi
+}
+
+test_quiet()
+{
+    if [[ ! $(wd -q add foo) == "" ]]
+    then
+        fail "should suppress all output from add"
+    fi
+
+    if [[ ! $(wd -q show foo) == "" ]]
+    then
+        fail "should suppress all output from show"
+    fi
+
+    if [[ ! $(wd --quiet ls) == "" ]]
+    then
+        fail "should suppress all output from ls"
+    fi
+
+    if [[ ! $(wd -q rm foo) == "" ]]
+    then
+        fail "should suppress all output from rm"
     fi
 }
 
