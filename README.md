@@ -78,11 +78,38 @@ Also, you may have to force a rebuild of `zcompdump` by running:
 
         $ wd ls
 
- * List warp points to current directory
+ * List warp points to current directory, or optionally, path to given warp point:
 
         $ wd show
 
- * Print usage with no opts or the `help` argument.
+ * Print usage with no opts or the `help` argument:
+
+        $ wd help
+
+ * Print the running version of `wd`:
+
+        $ wd --version
+
+ * Specifically set the config file (default `~/.warprc`), which is useful when testing:
+
+        $ wd --config ./file <action>
+
+ * Force `exit` with return code after running. This is not default, as it will *exit your terminal*, though required when testing/debugging.
+
+        $ wd --debug <action>
+
+ * Silence all output:
+
+        $ wd --quiet <action>
+
+
+### Testing
+
+`wd` comes with a small test suite, run with [shunit2](https://code.google.com/p/shunit2/). This can be used to confirm that things are working as it should on your setup, or to demonstrate an issue.
+
+To run, simply `cd` into the `test` directory and run the `tests.sh`.
+
+    $ ./tests.sh
 
 
 ### License
@@ -92,7 +119,7 @@ The project is licensed under the [MIT-license](https://github.com/mfaerevaag/wd
 
 ### Finally
 
-If you have issues, feedback or improvements, don't hesitate to report it or submit a pull-request.
+If you have issues, feedback or improvements, don't hesitate to report it or submit a pull-request. In the case of an issue, we would much appreciate if you would include a failing test in `test/tests.sh`. Explanation on how to run the tests, read the section "Testing" in this README.
 
 Credit to [altschuler](https://github.com/altschuler) for awesome idea.
 

@@ -20,6 +20,45 @@ readonly WD_NOC="\033[m"
 ## functions
 
 # helpers
+
+wd_print_msg()
+{
+    if [[ -z $wd_quiet_mode ]]
+    then
+        local color=$1
+        local msg=$2
+
+        if [[ $color == "" || $msg == "" ]]
+        then
+            print " ${WD_RED}*${WD_NOC} Could not print message. Sorry!"
+        else
+  print " ${color}*${WD_NOC} ${msg}"
+        fi
+    fi
+}
+
+wd_print_usage()
+{
+    cat <<- EOF
+Usage: wd [command] <point>
+
+Commands:
+	add <point>	Adds the current working directory to your warp points
+	add! <point>	Overwrites existing warp point
+	rm <point>	Removes the given warp point
+	show		Print warp points to current directory
+	show <point>	Print path to given warp point
+	ls		Print all stored warp points
+
+	-v | --version	Print version
+	-d | --debug	Exit after execution with exit codes (for testing)
+	-c | --config	Specify config file (default ~/.warprc)
+	--quiet		Suppress all output
+
+	help		Show this extremely helpful text
+EOF
+}
+
 wd_exit_fail()
 {
     local msg=$1
@@ -37,6 +76,7 @@ wd_exit_warn()
 }
 
 # core
+
 wd_warp()
 {
     local point=$1
@@ -157,37 +197,6 @@ wd_show()
             wd_print_msg $WD_BLUE "No warp points to $cwd"
         fi
     fi
-}
-
-wd_print_msg()
-{
-    if [[ -z $wd_quiet_mode ]]
-    then
-        local color=$1
-        local msg=$2
-
-        if [[ $color == "" || $msg == "" ]]
-        then
-            print " ${WD_RED}*${WD_NOC} Could not print message. Sorry!"
-        else
-            print " ${color}*${WD_NOC} ${msg}"
-        fi
-    fi
-}
-
-wd_print_usage()
-{
-    cat <<- EOF
-Usage: wd [command] <point>
-
-Commands:
-	add	Adds the current working directory to your warp points
-	add!	Overwrites existing warp point
-	rm	Removes the given warp point
-	show	Outputs warp points to current directory
-	ls	Outputs all stored warp points
-	help	Show this extremely helpful text
-EOF
 }
 
 
