@@ -29,13 +29,31 @@ List all registered warp points.
 .IP "show"
 Show which warp points are registered to the current working directory.
 .
+.IP "show <name>"
+Show path to given warp point.
+.
+.IP "help"
+Show help message with usage and commands.
+.
+.IP "-v, --version"
+Print the running version.
+.
+.IP "-c, --config"
+Specifically set the config file (default `~/.warprc`), which is useful when testing.
+.
+.IP "-d, --debug"
+Force `exit` with return code after running. This is not default, as it will *exit your terminal*, though required when testing/debugging.
+.
+.IP "-q, --quiet"
+Silence all output.
+.
 .
 .SH EXAMPLES
 .
 .IP "\fBwd add! foo\fP"
-Add warp point named "foo" to current warping directory, overwriting any existing points named "foo".
+Add warp point named "foo" to current working directory, overwriting any existing points named "foo".
 .
-.IP "\fBwd -r foo\fP"
+.IP "\fBwd rm foo\fP"
 Remove any warp point named \fIfoo\fP.
 .
 .
@@ -46,7 +64,7 @@ https://github.com/mfaerevaag/wd/issues
 .
 .
 .SH AUTHORS
-Created and maintained by Markus Færgevaag, with the help of various contributors:
+Created and maintained by Markus Færevaag and Simon Altschuler, with the help of various contributors:
 .nf
 https://github.com/mfaerevaag/wd/graphs/contributors.
 .
