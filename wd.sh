@@ -204,8 +204,9 @@ wd_show()
 }
 
 wd_clean() {
-    count=0
-    wd_tmp=""
+    local count=0
+    local wd_tmp=""
+
     while read line
     do
         if [[ $line != "" ]]
@@ -218,13 +219,15 @@ wd_clean() {
             then
                 wd_tmp=$wd_tmp"\n"`echo $line`
             else
-                wd_print_msg $YELLOW "remove: $key -> $val"
+                wd_print_msg $WD_YELLOW "Removing: ${key} -> ${val}"
                 count=$((count+1))
             fi
         fi
-    done < $CONFIG
-    echo $wd_tmp >! $CONFIG
-    wd_print_msg $BLUE "Cleanup complete. $count warp points removed"
+    done < $WD_CONFIG
+
+    echo $wd_tmp >! $WD_CONFIG
+
+    wd_print_msg $WD_GREEN "Cleanup complete. ${count} warp point(s) removed"
 }
 
 local WD_CONFIG=$HOME/.warprc
