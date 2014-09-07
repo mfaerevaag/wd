@@ -216,9 +216,33 @@ test_clean()
     cd ..
     rmdir $dir
 
-    if [[ ! $(wd clean!) =~ "Removing: test.*1 warp point\(s\) removed" ]]
+    if [[ ! $(echo "n" | wd clean) =~ "Cleanup aborted" ]]
     then
-        fail "should remove one warp point"
+        fail "should be able to abort cleanup"
+    fi
+
+    if [[ ! $(echo "y" | wd clean) =~ ".*1 warp point\(s\) removed" ]]
+    then
+        fail "should remove one warp point when answering yes"
+    fi
+
+    # recreate the test dir
+    dir=test_dir
+
+    # create test dir
+    mkdir $dir
+    cd $dir
+
+    # add warp point
+    wd -q add test
+
+    # remove test dir
+    cd ..
+    rmdir $dir
+
+    if [[ ! $(wd clean!) =~ ".*1 warp point\(s\) removed" ]]
+    then
+        fail "should remove one warp point when using force"
     fi
 }
 

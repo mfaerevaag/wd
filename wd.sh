@@ -20,6 +20,38 @@ readonly WD_NOC="\033[m"
 ## functions
 
 # helpers
+yesorno()
+{
+    # variables
+    local question="${1}"
+    local prompt="${question} "
+    local yes_RETVAL="0"
+    local no_RETVAL="3"
+    local RETVAL=""
+    local answer=""
+
+    # read-eval loop
+    while true ; do
+        printf $prompt
+        read -r answer
+
+        case ${answer:=${default}} in
+            Y|y|YES|yes|Yes )
+                RETVAL=${yes_RETVAL} && \
+                    break
+                ;;
+            N|n|NO|no|No )
+                RETVAL=${no_RETVAL} && \
+                    break
+                ;;
+            * )
+                echo "Please provide a valid answer (y or n)"
+                ;;
+        esac
+    done
+
+    return ${RETVAL}
+}
 
 wd_print_msg()
 {
@@ -204,6 +236,7 @@ wd_show()
 }
 
 wd_clean() {
+    local force=$1
     local count=0
     local wd_tmp=""
 
@@ -219,15 +252,24 @@ wd_clean() {
             then
                 wd_tmp=$wd_tmp"\n"`echo $line`
             else
-                wd_print_msg $WD_YELLOW "Removing: ${key} -> ${val}"
+                wd_print_msg $WD_YELLOW "Nonexistent directory: ${key} -> ${val}"
                 count=$((count+1))
             fi
         fi
     done < $WD_CONFIG
 
-    echo $wd_tmp >! $WD_CONFIG
-
-    wd_print_msg $WD_GREEN "Cleanup complete. ${count} warp point(s) removed"
+    if [[ $count -eq 0 ]]
+    then
+        wd_print_msg $WD_BLUE "No warp points to clean, carry on!"
+    else
+        if $force || yesorno "Removing ${count} warp points. Continue? (Y/n)"
+        then
+            echo $wd_tmp >! $WD_CONFIG
+            wd_print_msg $WD_GREEN "Cleanup complete. ${count} warp point(s) removed"
+        else
+            wd_print_msg $WD_BLUE "Cleanup aborted"
+        fi
+    fi
 }
 
 local WD_CONFIG=$HOME/.warprc
@@ -319,8 +361,12 @@ else
                 wd_show $2
                 break
                 ;;
+            -c|--clean|clean)
+                wd_clean false
+                break
+                ;;
             -c!|--clean!|clean!)
-                wd_clean
+                wd_clean true
                 break
                 ;;
             *)
