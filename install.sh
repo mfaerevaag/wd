@@ -11,7 +11,7 @@ BIN=$HOME/bin
 DIR=$BIN/wd
 REPO=https://github.com/mfaerevaag/wd.git
 ZSHRC=$HOME/.zshrc
-MANLOCATION=$(manpath | grep -o "^[^:]*")
+MANLOC=/usr/share/man/man1
 
 # make temporary log file
 LOG="$(mktemp -t wd_install.XXXXXXXXXX)" || exit 1
@@ -35,16 +35,37 @@ fi
 if git clone $REPO $DIR
 then
     # add alias
-    echo "Adding wd function to your config..."
+    echo "Adding wd function to your ~/.zshrc..."
     echo "wd() {"         >> $ZSHRC
     echo "  . $DIR/wd.sh" >> $ZSHRC
     echo "}"              >> $ZSHRC
 
+    # install man page
+    while true
+    do
+        echo "Would you like to install the man page? (requires root access) (Y/n)"
+        read -r answer
+
+        case "$answer" in
+            Y|y|YES|yes|Yes )
+                echo "Installing man page to ${MANLOC}/wd.1"
+                sudo mkdir -p ${MANLOC}
+                sudo cp -f ${DIR}/wd.1 ${MANLOC}/wd.1
+                sudo chmod 644 ${MANLOC}/wd.1
+                break
+                ;;
+            N|n|NO|no|No )
+                echo "If you change your mind, see README for instructions"
+                break
+                ;;
+            * )
+                echo "Please provide a valid answer (y or n)"
+                ;;
+        esac
+    done
+
     # remove log
     rm -rf $LOG
-
-    # install man page
-    cp "$DIR/wd.1" "$MANLOCATION"
 
     # finish
     echo "\033[96m"'              _ '"\033[m"
@@ -55,7 +76,7 @@ then
     echo "\033[96m"'   \_/\_/ \__,_|'"\033[m"
     echo "\033[96m"'                '"\033[m"
     echo "\033[96m... is now installed. \033[m"
-    echo "Remember to open new zsh to load alias."
+    echo "Remember to open new zsh to load wd."
     echo "For more information on usage, see README. Enjoy!"
 else
     # ops
