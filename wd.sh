@@ -54,7 +54,7 @@ Commands:
 	-v | --version	Print version
 	-d | --debug	Exit after execution with exit codes (for testing)
 	-c | --config	Specify config file (default ~/.warprc)
-	--quiet		Suppress all output
+	-q | --quiet	Suppress all output
 
 	help		Show this extremely helpful text
 EOF
