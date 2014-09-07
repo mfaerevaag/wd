@@ -49,6 +49,7 @@ Commands:
 	show		Print warp points to current directory
 	show <point>	Print path to given warp point
 	ls		Print all stored warp points
+	clean!	Remove obsolete warp points (with nonexistent directory)
 
 	-v | --version	Print version
 	-d | --debug	Exit after execution with exit codes (for testing)
@@ -199,8 +200,29 @@ wd_show()
     fi
 }
 
+wd_clean() {
+    count=0
+    wd_tmp=""
+    while read line
+    do
+        if [[ $line != "" ]]
+        then
+            arr=(${(s,:,)line})
+            key=${arr[1]}
+            val=${arr[2]}
 
-## run
+            if [ -d "$val" ]
+            then
+                wd_tmp=$wd_tmp"\n"`echo $line`
+            else
+                wd_print_msg $YELLOW "remove: $key -> $val"
+                count=$((count+1))
+            fi
+        fi
+    done < $CONFIG
+    echo $wd_tmp >! $CONFIG
+    wd_print_msg $BLUE "Cleanup complete. $count warp points removed"
+}
 
 local WD_CONFIG=$HOME/.warprc
 local WD_QUIET=0
@@ -246,7 +268,7 @@ do
 done < $WD_CONFIG
 
 # get opts
-args=$(getopt -o a:r:lhs -l add:,rm:,ls,help,show -- $*)
+args=$(getopt -o a:r:c:lhs -l add:,rm:,clean\!,ls,help,show -- $*)
 
 # check if no arguments were given
 if [[ $? -ne 0 || $#* -eq 0 ]]
@@ -289,6 +311,10 @@ else
                 ;;
             -s|--show|show)
                 wd_show $2
+                break
+                ;;
+            -c!|--clean!|clean!)
+                wd_clean
                 break
                 ;;
             *)
