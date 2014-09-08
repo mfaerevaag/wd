@@ -147,7 +147,7 @@ test_list()
 
 test_show()
 {
-    if [[ ! $(wd show) =~ "No warp points" ]]
+    if [[ ! $(wd show) =~ "No warp point to $(echo $PWD | sed "s:$HOME:~:")" ]]
     then
         fail "should show no warp points"
     fi
