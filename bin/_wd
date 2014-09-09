@@ -2,4 +2,4 @@
 
 require 'wd'
 
-puts Wd.hello
+puts Wd.run
