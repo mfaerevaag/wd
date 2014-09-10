@@ -6,7 +6,9 @@ require 'wd/helpers'
 module Wd
   class Options
 
-    CONFIG_FILE_DEFAULT = "#{ENV['HOME']}/.wdrc"
+    DEFAULTS = {
+      config: "#{ENV['HOME']}/.wdrc"
+    }
 
     def initialize
       @opts = Slop.new(strict: true) do
@@ -14,7 +16,7 @@ module Wd
 
         on :c, :config=,
         "Specify config file",
-        default: CONFIG_FILE_DEFAULT
+        default: DEFAULTS[:config]
 
         on :q, :quiet,
         "Silence all output",
@@ -25,7 +27,11 @@ module Wd
         end
 
         on '-h', '--help', 'Print this message' do
-          Wd::print_and_exit self.help
+          Wd::print_and_exit help
+        end
+
+        add_callback(:empty) do
+          Wd::print_and_exit help
         end
 
         command :add do
@@ -97,9 +103,19 @@ module Wd
       rescue Slop::Error => e
         Wd::print_and_exit "Error: #{e}"
       end
-
-      p @opts.to_hash(true)
     end
+
+    def all
+      @opts.to_hash(true)
+    end
+
+    # def set_command(cmd)
+    #   unless @command.nil?
+    #     print_and_exit "Error: multiple commands given (got #{@command.to_s} and #{cmd.to_s})"
+    #   else
+    #     @command = cmd
+    #   end
+    # end
 
     private
 
