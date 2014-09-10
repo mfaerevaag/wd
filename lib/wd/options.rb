@@ -37,7 +37,9 @@ module Wd
           default: false
 
           run do |opts, args|
-            self
+            unless args.length == 1
+              raise Slop::InvalidArgumentError.new 'add expects one and only one argument'
+            end
           end
         end
 
@@ -46,7 +48,9 @@ module Wd
           banner 'Usage: wd rm <point> [<point>...]'
 
           run do |opts, args|
-            puts "Ran 'rm' with options #{opts.to_hash} and args: #{args.inspect}"
+            unless args.length > 0
+              raise Slop::InvalidArgumentError.new 'rm expects one or more arguments'
+            end
           end
         end
 
@@ -55,7 +59,9 @@ module Wd
           banner 'Usage: wd ls'
 
           run do |opts, args|
-            puts "Ran 'ls' with options #{opts.to_hash} and args: #{args.inspect}"
+            if args.length > 0
+              raise Slop::InvalidArgumentError.new 'ls takes no arguments'
+            end
           end
         end
 
@@ -64,7 +70,9 @@ module Wd
           banner 'Usage: wd show [<point>]'
 
           run do |opts, args|
-            puts "Ran 'show' with options #{opts.to_hash} and args: #{args.inspect}"
+            if args.length > 1
+              raise Slop::InvalidArgumentError.new 'show takes only one (optional) argument'
+            end
           end
         end
 
@@ -77,7 +85,9 @@ module Wd
           default: false
 
           run do |opts, args|
-            puts "Ran 'clean' with options #{opts.to_hash} and args: #{args.inspect}"
+            if args.length > 0
+              raise Slop::InvalidArgumentError.new 'clean takes no arguments'
+            end
           end
         end
       end
@@ -85,7 +95,7 @@ module Wd
       begin
         @opts.parse!
       rescue Slop::Error => e
-        Wd::print_and_exit e
+        Wd::print_and_exit "Error: #{e}"
       end
 
       p @opts.to_hash(true)
