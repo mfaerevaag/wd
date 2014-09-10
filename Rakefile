@@ -5,7 +5,7 @@ task :build do
 end
 
 task :install => :build do
-  system "gem install wd-#{Wd::VERSION}.gem"
+  system "gem install --no-rdoc --no-ri wd-#{Wd::VERSION}.gem"
 end
 
 task :default => :install

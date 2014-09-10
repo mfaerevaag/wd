@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.files       = Dir.glob "{lib}/**/*.rb"
   s.executables << '_wd'
 
-  s.add_runtime_dependency 'slop', ['~> 3.6.0']
+  s.add_dependency 'slop', '~> 3.6', '>= 3.6.0'
 end
