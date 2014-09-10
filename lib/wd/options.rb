@@ -1,60 +1,98 @@
-require 'optparse'
-require 'ostruct'
+require 'slop'
+
+require 'wd/version'
 
 module Wd
   class Options
 
+    CONFIG_FILE_DEFAULT = "#{ENV['HOME']}/.wdrc"
+
     def initialize
-      @options = OpenStruct.new
+      @options = Slop.parse(help: true) do
+        banner 'Usage: wd [options] <command> [<point>]'
 
-      @options.config_file = '~/.warprc'
+        on :c, :config=,
+        "Specify config file",
+        default: CONFIG_FILE_DEFAULT
 
-      opt_parser = OptionParser.new do |opts|
-        opts.banner = "Usage: wd [options] [point]"
+        on :q, :quiet,
+        "Silence all output",
+        default: false
 
-        opts.on("-c", "--config FILE", "Specify config file") do |file|
-          @options.config_file = file
-        end
-
-        opts.on("-v", "--version", "Print version") do
+        on '-v', '--version', 'Print version' do
           puts "wd v#{Wd::VERSION}"
           exit 1
         end
 
-        opts.on_tail("-h", "--help", "Show this message") do
-          puts opts
-          exit 1
+        command :add do
+          description 'Add warp point'
+          banner 'Usage: wd [--force] add <point>'
+
+          on :f, :force,
+          'Force overwriting existing warp point',
+          default: false
+
+          run do |opts, args|
+            puts "Ran 'add' with options #{opts.to_hash} and args: #{args.inspect}"
+          end
+        end
+
+        command :rm do
+          description 'Remove warp point(s)'
+          banner 'Usage: wd rm <point> [<point>...]'
+
+          run do |opts, args|
+            puts "Ran 'rm' with options #{opts.to_hash} and args: #{args.inspect}"
+          end
+        end
+
+        command :ls do
+          description 'List warp points'
+          banner 'Usage: wd ls'
+
+          run do |opts, args|
+            puts "Ran 'ls' with options #{opts.to_hash} and args: #{args.inspect}"
+          end
+        end
+
+        command :show do
+          description 'Show warp points to current directory or path to given warp point'
+          banner 'Usage: wd show [<point>]'
+
+          run do |opts, args|
+            puts "Ran 'show' with options #{opts.to_hash} and args: #{args.inspect}"
+          end
+        end
+
+        command :clean do
+          description 'Remove orphaned warp points (to non-existent directories)'
+          banner 'Usage: wd [--force] clean'
+
+          on :f, :force,
+          'Do not prompt with confirmation',
+          default: false
+
+          run do |opts, args|
+            puts "Ran 'clean' with options #{opts.to_hash} and args: #{args.inspect}"
+          end
         end
       end
 
-      begin
-        opt_parser.parse!
-        @options.point = ARGV.shift
-
-        if @options.point.nil?
-          puts opt_parser
-        end
-      rescue OptionParser::MissingArgument => e
-        puts e
-        exit 1
-      rescue OptionParser::InvalidOption => e
-        puts e
-        exit 1
-      end
+      p @options.to_hash(true)
     end
 
     private
 
     def method_missing(meth, *args, &block)
-      if @options.respond_to? meth
-        @options.send meth
+      unless @options.to_hash(true)[meth].nil?
+        @options.to_hash(true)[meth]
       else
         super
       end
     end
 
     def respond_to?(meth, include_private = false)
-      if @options.respond_to? meth
+      unless @options.to_hash(true)[meth].nil?
         true
       else
         super
