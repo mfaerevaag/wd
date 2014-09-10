@@ -9,7 +9,7 @@ module Wd
     CONFIG_FILE_DEFAULT = "#{ENV['HOME']}/.wdrc"
 
     def initialize
-      @opts = Slop.new(help: true, strict: true) do
+      @opts = Slop.new(strict: true) do
         banner 'Usage: wd [options] <command> [<point>]'
 
         on :c, :config=,
@@ -22,6 +22,10 @@ module Wd
 
         on '-v', '--version', 'Print version' do
           Wd::print_and_exit "wd v#{Wd::VERSION}"
+        end
+
+        on '-h', '--help', 'Print this message' do
+          Wd::print_and_exit self.help
         end
 
         command :add do

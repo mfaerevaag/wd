@@ -5,10 +5,9 @@ wd() {
 
     if [ $? -eq 0 ]
     then
-        echo "Success!"
+        echo "TODO: cd"
         echo "$output"
     else
-        echo "Fail!"
         echo "$output"
     fi
 }
