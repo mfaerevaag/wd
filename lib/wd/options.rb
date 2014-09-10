@@ -1,6 +1,7 @@
 require 'slop'
 
 require 'wd/version'
+require 'wd/helpers'
 
 module Wd
   class Options
@@ -8,7 +9,7 @@ module Wd
     CONFIG_FILE_DEFAULT = "#{ENV['HOME']}/.wdrc"
 
     def initialize
-      @options = Slop.parse(help: true) do
+      @opts = Slop.new(help: true, strict: true) do
         banner 'Usage: wd [options] <command> [<point>]'
 
         on :c, :config=,
@@ -20,8 +21,7 @@ module Wd
         default: false
 
         on '-v', '--version', 'Print version' do
-          puts "wd v#{Wd::VERSION}"
-          exit 1
+          Wd::print_and_exit "wd v#{Wd::VERSION}"
         end
 
         command :add do
@@ -33,7 +33,7 @@ module Wd
           default: false
 
           run do |opts, args|
-            puts "Ran 'add' with options #{opts.to_hash} and args: #{args.inspect}"
+            self
           end
         end
 
@@ -78,21 +78,27 @@ module Wd
         end
       end
 
-      p @options.to_hash(true)
+      begin
+        @opts.parse!
+      rescue Slop::Error => e
+        Wd::print_and_exit e
+      end
+
+      p @opts.to_hash(true)
     end
 
     private
 
     def method_missing(meth, *args, &block)
-      unless @options.to_hash(true)[meth].nil?
-        @options.to_hash(true)[meth]
+      unless @opts.to_hash(true)[meth].nil?
+        @opts.to_hash(true)[meth]
       else
         super
       end
     end
 
     def respond_to?(meth, include_private = false)
-      unless @options.to_hash(true)[meth].nil?
+      unless @opts.to_hash(true)[meth].nil?
         true
       else
         super
