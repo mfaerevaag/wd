@@ -21,11 +21,7 @@ module Wd
       def rm(names)
         Wd::Points::remove! names
 
-        if names.is_a? Array
-          Wd::print_and_exit "Removed warp points #{names.join(', ')}"
-        else
-          Wd::print_and_exit "Removed warp point #{names}"
-        end
+        Wd::print_and_exit "Removed warp point(s): #{names.join(', ')}"
       end
 
       def ls
@@ -56,7 +52,13 @@ module Wd
       end
 
       def clean(force)
-        Wd::print_and_exit "TODO: CLEAN (force: #{force})"
+        orphans = Wd::Points::clean!
+
+        unless orphans
+          Wd::print_and_exit "No orphaned warp points"
+        else
+          Wd::print_and_exit "Removed warp point(s): #{orphans.join(', ')}"
+        end
       end
 
     end

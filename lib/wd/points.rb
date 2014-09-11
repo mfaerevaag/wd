@@ -70,6 +70,19 @@ module Wd
         self.persist!
       end
 
+      def clean!
+        orphans = points.select do |name, path|
+          !File.directory? path
+        end
+
+        unless orphans.empty?
+          self.remove! orphans.keys
+          orphans.keys
+        else
+          false
+        end
+      end
+
       def persist!
         config_file = Wd::opts[:config]
 
