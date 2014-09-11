@@ -13,7 +13,7 @@ module Wd
       }
 
       def run
-        opts = Slop.new(strict: true) do
+        Wd::opts = Slop.new(strict: true) do
           banner 'Usage: wd [options] <command> [<point>]'
 
           on :c, :config=,
@@ -32,9 +32,9 @@ module Wd
             Wd::print_and_exit help
           end
 
-          add_callback(:empty) do
-            Wd::print_and_exit help
-          end
+          # add_callback(:empty) do
+          #   Wd::print_and_exit help
+          # end
 
           command :add do
             description 'Add warp point'
@@ -49,7 +49,7 @@ module Wd
                 raise Slop::InvalidArgumentError.new 'add expects one and only one argument'
               end
 
-              Wd::Base::add args.shift, opts[:force]
+              Wd::Base::add args.shift.to_sym, opts[:force]
             end
           end
 
@@ -62,7 +62,7 @@ module Wd
                 raise Slop::InvalidArgumentError.new 'rm expects one or more arguments'
               end
 
-              Wd::Base::rm args
+              Wd::Base::rm args.map { |x| x.to_sym }
             end
           end
 
@@ -88,7 +88,7 @@ module Wd
                 raise Slop::InvalidArgumentError.new 'show takes only one (optional) argument'
               end
 
-              Wd::Base::show args.shift
+              Wd::Base::show (args.shift || '').to_sym
             end
           end
 
@@ -111,14 +111,18 @@ module Wd
         end
 
         begin
-          opts.parse!
+          Wd::opts.parse!
 
-          Wd::Base::warp ARGV.shift
+          if ARGV.empty?
+            Wd::print_and_exit Wd::opts.help
+          else
+            Wd::Base::warp ARGV.shift.to_sym
+          end
+
         rescue Slop::Error => e
           Wd::print_and_exit "Error: #{e}"
-        end
 
-        return opts.to_hash(true)
+        end
       end
 
     end

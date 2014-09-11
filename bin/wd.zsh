@@ -5,9 +5,10 @@ wd() {
 
     if [ $? -eq 0 ]
     then
-        echo "TODO: cd"
-        echo "$output"
+        cd "$output"
     else
         echo "$output"
     fi
+
+    unset output
 }
