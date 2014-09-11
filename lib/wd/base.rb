@@ -1,38 +1,62 @@
-require 'pp'
-
 require 'wd/helpers'
+require 'wd/points'
+require 'wd/error'
 
 module Wd
   class Base
     class << self
 
-      def warp(point)
-        puts "WARPING TO #{point.to_s}"
-        exit
+      def warp(name)
+        path = Wd::Points::get name: name
+
+        Wd::print_and_exit path, 0
       end
 
       def add(name, force)
-        Wd::print_and_exit "ADDING #{name} (force: #{force.to_s})"
+        Wd::Points::add! name, force: force
+
+        Wd::print_and_exit "Added warp point '#{name}'"
       end
 
       def rm(names)
-        if names.kind_of? Array
-          names = names.join(', ')
-        end
+        Wd::Points::remove! names
 
-        Wd::print_and_exit "REMOVING #{names}"
+        if names.is_a? Array
+          Wd::print_and_exit "Removed warp points #{names.join(', ')}"
+        else
+          Wd::print_and_exit "Removed warp point #{names}"
+        end
       end
 
       def ls
-        Wd::print_and_exit "LISTING"
+        points = Wd::Points::all
+
+        if points.empty?
+          puts "No warp points found"
+        else
+          puts "Warp points:"
+          Wd::print_points points
+        end
+
+        exit 1
       end
 
       def show(name)
-        Wd::print_and_exit "SHOWING #{name}"
+        if name.empty?
+          points = Wd::Points::get path: ENV['PWD']
+          Wd::print_points points
+
+        else
+          path = Wd::Points::get name: name
+
+          Wd::print_point name, path
+        end
+
+        exit 1
       end
 
       def clean(force)
-        Wd::print_and_exit "CLEANING (force: #{force.to_s})"
+        Wd::print_and_exit "TODO: CLEAN (force: #{force})"
       end
 
     end
