@@ -115,6 +115,8 @@ module Wd
 
           if ARGV.empty?
             Wd::print_and_exit Wd::opts.help
+          elsif ARGV.length > 1
+            raise Slop::InvalidArgumentError.new 'Invalid number of arguments'
           else
             Wd::Base::warp ARGV.shift.to_sym
           end
