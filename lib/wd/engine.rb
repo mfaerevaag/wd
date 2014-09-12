@@ -24,12 +24,16 @@ module Wd
           "Silence all output",
           default: false
 
-          on '-v', '--version', 'Print version' do
-            Wd::print_and_exit "wd v#{Wd::VERSION}"
+          on :v, :verbose,
+          "Verbose output",
+          default: false
+
+          on '--version', 'Print version' do
+            Wd::print_and_exit "wd v#{Wd::VERSION}", type: :critical
           end
 
-          on '-h', '--help', 'Print this message' do
-            Wd::print_and_exit help
+          on :h, :help, 'Print this message' do
+            Wd::print_and_exit help, type: :critical
           end
 
           # add_callback(:empty) do
@@ -94,11 +98,7 @@ module Wd
 
           command :clean do
             description 'Remove orphaned warp points (to non-existent directories)'
-            banner 'Usage: wd [--force] clean'
-
-            on :f, :force,
-            'Do not prompt with confirmation',
-            default: false
+            banner 'Usage: wd clean'
 
             run do |opts, args|
               if args.length > 0
@@ -114,7 +114,7 @@ module Wd
           Wd::opts.parse!
 
           if ARGV.empty?
-            Wd::print_and_exit Wd::opts.help
+            Wd::print_and_exit Wd::opts.help, type: :critical
           elsif ARGV.length > 1
             raise Slop::InvalidArgumentError.new 'Invalid number of arguments'
           else
@@ -122,7 +122,7 @@ module Wd
           end
 
         rescue Slop::Error => e
-          Wd::print_and_exit "Error: #{e}"
+          Wd::print_and_exit "Error: #{e}", type: :critical
 
         end
       end

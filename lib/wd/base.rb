@@ -9,7 +9,7 @@ module Wd
       def warp(name)
         path = Wd::Points::get name: name
 
-        Wd::print_and_exit path, 0
+        Wd::print_and_exit path, code: 0
       end
 
       def add(name, force)
@@ -28,9 +28,9 @@ module Wd
         points = Wd::Points::all
 
         if points.empty?
-          puts "No warp points found"
+          Wd::print "No warp points found", type: :critical
         else
-          puts "Warp points:"
+          Wd::print "Warp points:", type: :critical
           Wd::print_points points
         end
 
@@ -55,9 +55,9 @@ module Wd
         orphans = Wd::Points::clean!
 
         unless orphans
-          Wd::print_and_exit "No orphaned warp points"
+          Wd::print_and_exit "No orphaned warp points", type: :critical
         else
-          Wd::print_and_exit "Removed warp point(s): #{orphans.join(', ')}"
+          Wd::print_and_exit "Removed warp point(s): #{orphans.join(', ')}", type: :critical
         end
       end
 

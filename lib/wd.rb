@@ -12,7 +12,7 @@ module Wd extend self
       Wd::Engine::run
 
     rescue Wd::Error => e
-      puts "Error: #{e.message}"
+      Wd::print "Error: #{e.message}", type: :critical
 
     end
 
