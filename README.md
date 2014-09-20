@@ -33,7 +33,7 @@ Run either in terminal:
  * Add `wd` function to `.zshrc` (or `.profile` etc.):
 
         wd() {
-            . ~/paht/to/wd/wd.sh
+            . ~/path/to/cloned/repo/wd/wd.sh
         }
 
  * Install manpage. From `wd`'s base directory (requires root permissions):
