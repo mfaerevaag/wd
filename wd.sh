@@ -151,7 +151,7 @@ wd_add()
     elif [[ ${points[$2]} == "" ]] || $force
     then
         wd_remove $point > /dev/null
-        printf "%q:%q\n" "${point}" "${PWD}" >> $WD_CONFIG
+        printf "%q:%s\n" "${point}" "${PWD}" >> $WD_CONFIG
 
         wd_print_msg $WD_GREEN "Warp point added"
 
