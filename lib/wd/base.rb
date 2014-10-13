@@ -9,7 +9,7 @@ module Wd
       def warp(name)
         path = Wd::Points::get name: name
 
-        Wd::print_and_exit path, code: 0
+        Wd::print_and_exit path, code: 0, type: :critical
       end
 
       def add(name, force)
