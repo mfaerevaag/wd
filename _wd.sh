@@ -22,7 +22,6 @@ function _wd() {
     'rm:Removes the given warp point'
     'ls:Outputs all stored warp points'
     'show:Outputs all warp points that point to the current directory or shows a specific target directory for a point'
-    'show:Outputs all warp points that point to the current directory or shows a specific target directory for a point'
     'help:Show this extremely helpful text'
     '..:Go back to last directory'
   )
