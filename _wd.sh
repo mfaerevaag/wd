@@ -23,6 +23,8 @@ function _wd() {
     'ls:Outputs all stored warp points'
     'show:Outputs all warp points that point to the current directory or shows a specific target directory for a point'
     'help:Show this extremely helpful text'
+    'clean:Remove points warping to nonexistent directories'
+    'clean!:Remove nonexistent directories without confirmation'
     '..:Go back to last directory'
   )
 
