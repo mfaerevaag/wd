@@ -110,11 +110,13 @@ module Wd
 
         return points unless File.file?(config)
 
-        CSV.foreach(config) do |row|
-          key = row.shift.to_sym
-          value = row.shift
+        CSV.foreach(config, col_sep: ':') do |row|
+          unless row.empty?
+            key = row.shift.to_sym
+            value = row.shift
 
-          points[key] = value
+            points[key] = value
+          end
         end
 
         points

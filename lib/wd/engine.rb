@@ -9,7 +9,7 @@ module Wd
     class << self
 
       DEFAULTS = {
-        config: "#{ENV['HOME']}/.wdrc"
+        config: "#{ENV['HOME']}/.warprc"
       }
 
       def run
