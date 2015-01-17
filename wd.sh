@@ -217,12 +217,10 @@ getdir()
         wd_print_msg $WD_RED "Unknown warp point '$name_arg'"
         break
     fi
-
-    return dir
 }
 
-wd_ls() { getdir$1; ls $dir; }
-wd_path() { getdir$1; echo $dir; }
+wd_ls() { getdir $1; ls $dir; }
+wd_path() { getdir $1; echo $dir; }
 
 wd_show()
 {
