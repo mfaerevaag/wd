@@ -20,7 +20,9 @@ function _wd() {
     'add:Adds the current working directory to your warp points'
     'add!:Overwrites existing warp point'
     'rm:Removes the given warp point'
-    'ls:Outputs all stored warp points'
+    'list:Outputs all stored warp points'
+    'ls:Show files from given warp point'
+    'path:Show path to given warp point'
     'show:Outputs all warp points that point to the current directory or shows a specific target directory for a point'
     'help:Show this extremely helpful text'
     'clean:Remove points warping to nonexistent directories'
@@ -46,6 +48,12 @@ function _wd() {
           _message 'Write the name of your warp point' && ret=0
           ;;
         show)
+          _describe -t points "Warp points" warp_points && ret=0
+          ;;
+        ls)
+          _describe -t points "Warp points" warp_points && ret=0
+          ;;
+        path)
           _describe -t points "Warp points" warp_points && ret=0
           ;;
       esac
