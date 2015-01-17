@@ -203,7 +203,7 @@ wd_list_all()
     done <<< $(sed "s:${HOME}:~:g" $WD_CONFIG)
 }
 
-wd_ls()
+getdir()
 {
     local name_arg=$1
 
@@ -218,26 +218,11 @@ wd_ls()
         break
     fi
 
-    ls $dir
+    return dir
 }
 
-wd_path()
-{
-    local name_arg=$1
-
-    point=$(wd show $name_arg)
-    dir=${point:28+$#name_arg+7}
-
-    if [[ -z $name_arg ]]; then
-        wd_print_msg $WD_RED "You must enter a warp point"
-        break
-    elif [[ -z $dir ]]; then
-        wd_print_msg $WD_RED "Unknown warp point '$name_arg'"
-        break
-    fi
-
-    echo $dir
-}
+wd_ls() { getdir$1; ls $dir; }
+wd_path() { getdir$1; echo $dir; }
 
 wd_show()
 {
