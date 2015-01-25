@@ -4,8 +4,15 @@
 # warp points. We use `--quiet` to prevent the test output being
 # flooded by wd's output.
 
+
+### Variables
+
 # use a test config file, which is removed at the final test teardown.
 WD_TEST_CONFIG=~/.warprc_test
+
+# used when testing
+WD_TEST_DIR=test_dir
+WD_TEST_WP=test
 
 ### shUnit setup
 
@@ -21,6 +28,7 @@ setUp()
 
 oneTimeTearDown()
 {
+    rm -rf $WD_TEST_DIR
     rm $WD_TEST_CONFIG
 }
 
@@ -44,6 +52,23 @@ wp_exists()
 {
     wd list | grep -q "$1[[:space:]]*->"
     echo $?
+}
+
+create_test_wp()
+{
+    # create test dir
+    mkdir $WD_TEST_DIR
+
+    # create test wp
+    cd $WD_TEST_DIR
+    wd -q add $WD_TEST_WP
+    cd ..
+}
+
+destroy_test_wp()
+{
+    rm -rf $WD_TEST_DIR
+    wd -q rm $WD_TEST_DIR
 }
 
 
@@ -244,6 +269,42 @@ test_clean()
     then
         fail "should remove one warp point when using force"
     fi
+}
+
+test_ls()
+{
+    # set up
+    create_test_wp
+
+    # create test files in dir
+    touch $WD_TEST_DIR/foo
+    touch $WD_TEST_DIR/bar
+
+    # assert correct output
+    if [[ ! $(wd ls $WD_TEST_WP) =~ "bar.*foo" ]]
+    then
+        fail "should list correct files"
+    fi
+
+    # clean up
+    destroy_test_wp
+}
+
+test_path()
+{
+    # set up
+    create_test_wp
+
+    local pwd=$(echo $PWD | sed "s:${HOME}:~:g")
+
+    # assert correct output
+    if [[ ! $(wd path $WD_TEST_WP) =~ "${pwd}/${WD_TEST_DIR}" ]]
+    then
+        fail "should give correct path"
+    fi
+
+    # clean up
+    destroy_test_wp
 }
 
 
