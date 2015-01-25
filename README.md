@@ -5,6 +5,8 @@ wd
 
 `wd` (*warp directory*) lets you jump to custom directories in zsh, without using `cd`. Why? Because `cd` seems ineffecient when the folder is frequently visited or has a long path.
 
+*NOTE*: If you are not using zsh, check out the `ruby` branch which has `wd` implemented as a gem.
+
 
 ### Setup
 
