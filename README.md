@@ -84,7 +84,15 @@ Also, you may have to force a rebuild of `zcompdump` by running:
 
  * List all warp points (stored in `~/.warprc`):
 
-        $ wd ls
+        $ wd list
+
+ * List files in given warp point:
+
+        $ wd ls foo
+
+ * Show path of given warp point:
+
+        $ wd path foo
 
  * List warp points to current directory, or optionally, path to given warp point:
 
