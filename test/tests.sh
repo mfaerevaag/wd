@@ -42,7 +42,7 @@ total_wps()
 
 wp_exists()
 {
-    wd ls | grep -q "$1[[:space:]]*->"
+    wd list | grep -q "$1[[:space:]]*->"
     echo $?
 }
 
@@ -137,12 +137,12 @@ test_list()
 
     # add one to expected number of lines, because of header msg
     assertEquals "should only be one warp point" \
-        $(wd ls | wc -l) 2
+        $(wd list | wc -l) 2
 
     wd -q add bar
 
     assertEquals "should be more than one warp point" \
-        $(wd ls | wc -l) 3
+        $(wd list | wc -l) 3
 }
 
 test_show()
@@ -190,7 +190,7 @@ test_quiet()
         fail "should suppress all output from show"
     fi
 
-    if [[ ! $(wd --quiet ls) == "" ]]
+    if [[ ! $(wd -q list) == "" ]]
     then
         fail "should suppress all output from ls"
     fi
