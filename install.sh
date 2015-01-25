@@ -40,29 +40,31 @@ then
     echo "  . $DIR/wd.sh" >> $ZSHRC
     echo "}"              >> $ZSHRC
 
+    # TODO: we cannot process user input when piping the
+    # script to sh, see https://github.com/mfaerevaag/wd/issues/27
     # install man page
-    while true
-    do
-        echo "Would you like to install the man page? (requires root access) (Y/n)"
-        read -r answer
+    # while true
+    # do
+    #     echo "Would you like to install the man page? (requires root access) (Y/n)"
+    #     read -r answer
 
-        case "$answer" in
-            Y|y|YES|yes|Yes )
-                echo "Installing man page to ${MANLOC}/wd.1"
-                sudo mkdir -p ${MANLOC}
-                sudo cp -f ${DIR}/wd.1 ${MANLOC}/wd.1
-                sudo chmod 644 ${MANLOC}/wd.1
-                break
-                ;;
-            N|n|NO|no|No )
-                echo "If you change your mind, see README for instructions"
-                break
-                ;;
-            * )
-                echo "Please provide a valid answer (y or n)"
-                ;;
-        esac
-    done
+    #     case "$answer" in
+    #         Y|y|YES|yes|Yes )
+    #             echo "Installing man page to ${MANLOC}/wd.1"
+    #             sudo mkdir -p ${MANLOC}
+    #             sudo cp -f ${DIR}/wd.1 ${MANLOC}/wd.1
+    #             sudo chmod 644 ${MANLOC}/wd.1
+    #             break
+    #             ;;
+    #         N|n|NO|no|No )
+    #             echo "If you change your mind, see README for instructions"
+    #             break
+    #             ;;
+    #         * )
+    #             echo "Please provide a valid answer (y or n)"
+    #             ;;
+    #     esac
+    # done
 
     # remove log
     rm -rf $LOG
