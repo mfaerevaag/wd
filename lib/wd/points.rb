@@ -91,7 +91,7 @@ module Wd
           FileUtils.touch(config_file)
         end
 
-        CSV.open(config_file, 'wb') do |csv|
+        CSV.open(config_file, 'wb', col_sep: ':') do |csv|
           points.each do |key, value|
             csv << [key.to_s, value]
           end
