@@ -143,7 +143,7 @@ wd_warp()
         fi
     elif [[ ${points[$point]} != "" ]]
     then
-        cd ${points[$point]}
+        cd ${points[$point]/#\~/$HOME}
     else
         wd_exit_fail "Unknown warp point '${point}'"
     fi
@@ -169,7 +169,7 @@ wd_add()
     elif [[ ${points[$2]} == "" ]] || $force
     then
         wd_remove $point > /dev/null
-        printf "%q:%s\n" "${point}" "${PWD}" >> $WD_CONFIG
+        printf "%q:%s\n" "${point}" "${PWD/#$HOME/~}" >> $WD_CONFIG
 
         wd_print_msg $WD_GREEN "Warp point added"
 
