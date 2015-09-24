@@ -222,7 +222,7 @@ wd_list_all()
 wd_ls()
 {
     wd_getdir $1
-    ls $dir
+    ls ${dir/#\~/$HOME}
 }
 
 wd_path()
