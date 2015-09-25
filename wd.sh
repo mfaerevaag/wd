@@ -143,7 +143,7 @@ wd_warp()
         fi
     elif [[ ${points[$point]} != "" ]]
     then
-        cd ${points[$point]}
+        cd ${points[$point]/#\~/$HOME}
     else
         wd_exit_fail "Unknown warp point '${point}'"
     fi
@@ -169,7 +169,7 @@ wd_add()
     elif [[ ${points[$2]} == "" ]] || $force
     then
         wd_remove $point > /dev/null
-        printf "%q:%s\n" "${point}" "${PWD}" >> $WD_CONFIG
+        printf "%q:%s\n" "${point}" "${PWD/#$HOME/~}" >> $WD_CONFIG
 
         wd_print_msg $WD_GREEN "Warp point added"
 
@@ -222,7 +222,7 @@ wd_list_all()
 wd_ls()
 {
     wd_getdir $1
-    ls $dir
+    ls ${dir/#\~/$HOME}
 }
 
 wd_path()
@@ -248,6 +248,7 @@ wd_show()
         local wd_matches
         wd_matches=()
         # do a reverse lookup to check whether PWD is in $points
+        PWD="${PWD/$HOME/~}"
         if [[ ${points[(r)$PWD]} == $PWD ]]
         then
             for name in ${(k)points}
