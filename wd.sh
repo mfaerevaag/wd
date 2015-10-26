@@ -203,15 +203,15 @@ wd_list_all()
 {
     wd_print_msg $WD_BLUE "All warp points:"
 
-    local entries=$(sed "s:${HOME}:~:g" $WD_CONFIG)
+    entries=$(sed "s:${HOME}:~:g" $WD_CONFIG)
 
-    local max_warp_point_length=0
+    max_warp_point_length=0
     while IFS= read -r line
     do
-        local arr=(${(s,:,)line})
-        local key=${arr[1]}
+        arr=(${(s,:,)line})
+        key=${arr[1]}
 
-        local length=${#key}
+        length=${#key}
         if [[ length -gt max_warp_point_length ]]
         then
             max_warp_point_length=$length
