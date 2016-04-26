@@ -12,7 +12,7 @@ wd
 
 ### oh-my-zsh
 
-`wd` comes bundles with [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh)!
+`wd` comes bundled with [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh)!
 
 Just add the plugin in your `~/.zshrc` file:
 
