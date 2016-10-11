@@ -48,7 +48,7 @@ Run either in terminal:
 
 #### Completion
 
-If you're NOT using [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) and you want to utelize the zsh-completion feature, you will also need to add the path to your `wd` installation (`~/bin/wd` if you used the automatic installer) to your `fpath`. E.g. in your `~/.zshrc`:
+If you're NOT using [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) and you want to utilize the zsh-completion feature, you will also need to add the path to your `wd` installation (`~/bin/wd` if you used the automatic installer) to your `fpath`. E.g. in your `~/.zshrc`:
 
     fpath=(~/path/to/wd $fpath)
 
@@ -66,7 +66,7 @@ Also, you may have to force a rebuild of `zcompdump` by running:
 
     If a warp point with the same name exists, use `add!` to overwrite it.
 
-    Note, a warp point cannot contain colons, or only consist of only spaces and dots. The first will conflict in how `wd` stores the warp points, and the second will conflict other features, as below.
+    Note, a warp point cannot contain colons, or only consist of only spaces and dots. The first will conflict in how `wd` stores the warp points, and the second will conflict with other features, as below.
 
  * From an other directory (not necessarily), warp to `foo` with:
 
@@ -143,8 +143,8 @@ The project is licensed under the [MIT-license](https://github.com/mfaerevaag/wd
 
 ### Finally
 
-If you have issues, feedback or improvements, don't hesitate to report it or submit a pull-request. In the case of an issue, we would much appreciate if you would include a failing test in `test/tests.sh`. Explanation on how to run the tests, read the section "Testing" in this README.
+If you have issues, feedback or improvements, don't hesitate to report it or submit a pull-request. In the case of an issue, we would much appreciate if you would include a failing test in `test/tests.sh`. For an explanation on how to run the tests, read the section "Testing" in this README.
 
-Credit to [altschuler](https://github.com/altschuler) for awesome idea.
+Credit to [altschuler](https://github.com/altschuler) for an awesome idea.
 
 Hope you enjoy!
