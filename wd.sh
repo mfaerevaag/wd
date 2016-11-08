@@ -137,7 +137,7 @@ wd_warp()
 
     if [[ $point =~ "^\.+$" ]]
     then
-        if [ $#1 < 2 ]
+        if [[ $#1 < 2 ]]
         then
             wd_exit_warn "Warping to current directory?"
         else
