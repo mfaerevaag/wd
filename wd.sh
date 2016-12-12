@@ -5,7 +5,7 @@
 # Jump to custom directories in terminal
 # because `cd` takes too long...
 #
-# @github.com/mfaerevaag/wd
+# @github.com/Cretezy/wd
 
 # version
 readonly WD_VERSION=0.4.2
