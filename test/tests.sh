@@ -228,7 +228,7 @@ test_quiet()
 
 test_clean()
 {
-    dir=test_dir
+    dir="$HOME/.wdunittest"
 
     # create test dir
     mkdir $dir
@@ -251,15 +251,19 @@ test_clean()
         fail "should remove one warp point when answering yes"
     fi
 
-    # recreate the test dir
-    dir=test_dir
-
-    # create test dir
+    # recreate test dir
     mkdir $dir
     cd $dir
 
     # add warp point
     wd -q add test
+
+    if [[ ! $(echo "y" | wd clean) =~ "No warp points to clean, carry on!" ]]
+    then
+        fail "there should be no invalid warp point"
+    fi
+
+	wd -q add! test
 
     # remove test dir
     cd ..
