@@ -27,6 +27,10 @@ Run either in terminal:
 
  * `wget --no-check-certificate https://github.com/mfaerevaag/wd/raw/master/install.sh -O - | sh`
 
+##### Arch ([AUR](https://aur.archlinux.org/))
+
+    # yaourt -S zsh-plugin-wd-git
+
 
 #### Manual
 
