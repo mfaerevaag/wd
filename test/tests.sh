@@ -98,6 +98,25 @@ test_simple_add_remove()
         0 $(total_wps)
 }
 
+test_default_add_remove()
+{
+    cwd=$(basename $PWD)
+
+    wd -q add
+    assertTrue "should successfully add wp 'foo'" \
+               $pipestatus
+
+    assertEquals "should have 1 wps" \
+                 1 $(total_wps)
+
+    assertTrue "wp to PWD should exist" \
+               $(wp_exists $cwd)
+
+    wd -q rm
+    assertEquals "wps should be empty" \
+                 0 $(total_wps)
+}
+
 test_no_duplicates()
 {
     wd -q add foo
@@ -136,20 +155,18 @@ test_valid_identifiers()
         $pipestatus
 }
 
-
 test_removal()
 {
     wd -q add foo
 
     wd -q rm bar
     assertFalse "should fail when removing non-existing point" \
-        $pipestatus
+                $pipestatus
 
     wd -q rm foo
     assertTrue "should remove existing point" \
-        $pipestatus
+               $pipestatus
 }
-
 
 test_list()
 {
