@@ -109,7 +109,6 @@ test_no_duplicates()
         $pipestatus
 }
 
-
 test_valid_identifiers()
 {
     wd -q add .
@@ -134,10 +133,6 @@ test_valid_identifiers()
 
     wd -q add ":foo"
     assertFalse "should not allow colons" \
-        $pipestatus
-
-    wd -q add
-    assertFalse "should not allow empty name" \
         $pipestatus
 }
 
