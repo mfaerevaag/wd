@@ -188,7 +188,7 @@ wd_add()
 
 wd_remove()
 {
-    local point=$2
+    local point=$1
 
     if [[ $point == "" ]]
     then
