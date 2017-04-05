@@ -5,7 +5,7 @@
 # Jump to custom directories in terminal
 # because `cd` takes too long...
 #
-# @github.com/mfaerevaag/wd
+# @github.com/Cretezy/wd
 
 # version
 readonly WD_VERSION=0.4.2
@@ -194,7 +194,12 @@ wd_add()
 
 wd_remove()
 {
-    local point=$1
+    local point=$2
+
+    if [[ $point == "" ]]
+    then
+        point=$(basename $(pwd))
+    fi
 
     if [[ $point == "" ]]
     then

@@ -1,7 +1,7 @@
 wd
 ==
 
-[![Build Status](https://travis-ci.org/mfaerevaag/wd.png?branch=master)](https://travis-ci.org/mfaerevaag/wd)
+[![Build Status](https://travis-ci.org/Cretezy/wd.png?branch=master)](https://travis-ci.org/Cretezy/wd)
 
 `wd` (*warp directory*) lets you jump to custom directories in zsh, without using `cd`. Why? Because `cd` seems inefficient when the folder is frequently visited or has a long path.
 
@@ -22,9 +22,9 @@ Just add the plugin in your `~/.zshrc` file:
 
 Run either in terminal:
 
- * `curl -L https://github.com/mfaerevaag/wd/raw/master/install.sh | sh`
+ * `curl -L https://github.com/Cretzy/wd/raw/master/install.sh | sh`
 
- * `wget --no-check-certificate https://github.com/mfaerevaag/wd/raw/master/install.sh -O - | sh`
+ * `wget --no-check-certificate https://github.com/Cretzy/wd/raw/master/install.sh -O - | sh`
 
 ##### Arch ([AUR](https://aur.archlinux.org/))
 
@@ -145,7 +145,7 @@ To run, simply `cd` into the `test` directory and run the `tests.sh`.
 
 ### License
 
-The project is licensed under the [MIT-license](https://github.com/mfaerevaag/wd/blob/master/LICENSE).
+The project is licensed under the [MIT-license](https://github.com/Cretezy/wd/blob/master/LICENSE).
 
 
 ### Finally
