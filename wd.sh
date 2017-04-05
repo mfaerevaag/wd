@@ -134,6 +134,7 @@ wd_getdir()
 wd_warp()
 {
     local point=$1
+    local sub=$2
 
     if [[ $point =~ "^\.+$" ]]
     then
@@ -146,7 +147,12 @@ wd_warp()
         fi
     elif [[ ${points[$point]} != "" ]]
     then
-        cd ${points[$point]/#\~/$HOME}
+        if [[ $sub != "" ]]
+        then
+            cd ${points[$point]/#\~/$HOME}/$sub
+        else
+            cd ${points[$point]/#\~/$HOME}
+        fi
     else
         wd_exit_fail "Unknown warp point '${point}'"
     fi
@@ -434,7 +440,7 @@ else
                 break
                 ;;
             *)
-                wd_warp $o
+                wd_warp $o $2
                 break
                 ;;
             --)
