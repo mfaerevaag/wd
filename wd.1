@@ -14,11 +14,17 @@ wd [\fICOMMAND\fP] [\fINAME\fP]
 .
 .
 .SH COMMANDS
+.IP "add, -a, --add"
+Add a new warp point which will warp to the current working directory with current directory name as identifier.
+.
 .IP "add, -a, --add <name>"
 Add a new warp point which will warp to the current working directory with \fIname\fR as identifier.
 .
 .IP "add! <name>"
 Like \fBadd\fP, but will overwrite existing point with the same \fIname\fP.
+.
+.IP "rm, -r, --remove"
+Remove any warp point with current directory name as identifier.
 .
 .IP "rm, -r, --remove <name>"
 Remove any warp point with \fIname\fP as identifier.
