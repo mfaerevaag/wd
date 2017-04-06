@@ -177,7 +177,7 @@ wd_add()
     elif [[ $point == *:* ]]
     then
         wd_exit_fail "Warp point cannot contain colons"
-    elif [[ ${points[$2]} == "" ]] || $force
+    elif [[ ${points[$point]} == "" ]] || $force
     then
         wd_remove $point > /dev/null
         printf "%q:%s\n" "${point}" "${PWD/#$HOME/~}" >> $WD_CONFIG

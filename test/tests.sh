@@ -12,7 +12,9 @@ WD_TEST_CONFIG=~/.warprc_test
 
 # used when testing
 WD_TEST_DIR=test_dir
+WD_TEST_DIR_2=test_dir_2
 WD_TEST_WP=test
+WD_TEST_WP_2=test2
 
 ### shUnit setup
 
@@ -28,7 +30,7 @@ setUp()
 
 oneTimeTearDown()
 {
-    rm -rf $WD_TEST_DIR
+    rm -rf $WD_TEST_DIR $WD_TEST_DIR_2
     rm $WD_TEST_CONFIG
 }
 
@@ -103,7 +105,7 @@ test_default_add_remove()
     cwd=$(basename $PWD)
 
     wd -q add
-    assertTrue "should successfully add wp 'foo'" \
+    assertTrue "should successfully add wp to PWD" \
                $pipestatus
 
     assertEquals "should have 1 wps" \
@@ -126,6 +128,44 @@ test_no_duplicates()
     wd -q add foo
     assertFalse "should fail when adding duplicate of 'foo'" \
         $pipestatus
+}
+
+test_default_no_duplicates()
+{
+    cwd=$(basename $PWD)
+
+    wd -q add
+    assertTrue "should successfully add warp point to PWD" \
+               $pipestatus
+
+    wd -q add
+    assertFalse "should fail when adding duplicate of PWD" \
+                $pipestatus
+
+    wd -q add!
+    assertTrue "should successfully force-add warp point to PWD" \
+               $pipestatus
+}
+
+test_default_multiple_directories()
+{
+    rm -rf $WD_TEST_DIR
+    mkdir $WD_TEST_DIR
+    cd $WD_TEST_DIR
+    wd -q add
+    assertTrue "should successfully add warp point to PWD" \
+               $pipestatus
+    cd ..
+    rmdir $WD_TEST_DIR
+
+    rm -rf $WD_TEST_DIR_2
+    mkdir $WD_TEST_DIR_2
+    cd $WD_TEST_DIR_2
+    wd -q add
+    assertTrue "should successfully add warp point to another PWD" \
+               $pipestatus
+    cd ..
+    rmdir $WD_TEST_DIR_2
 }
 
 test_valid_identifiers()
