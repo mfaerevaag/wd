@@ -165,7 +165,7 @@ wd_add()
 
     if [[ $point == "" ]]
     then
-        point=$(basename $(pwd))
+        point=$(basename $PWD)
     fi
 
     if [[ $point =~ "^[\.]+$" ]]
@@ -198,7 +198,7 @@ wd_remove()
 
     if [[ $point == "" ]]
     then
-        point=$(basename $(pwd))
+        point=$(basename $PWD)
     fi
 
     if [[ ${points[$point]} != "" ]]
