@@ -91,7 +91,7 @@ Also, you may have to force a rebuild of `zcompdump` by running:
 
         $ wd rm foo
 
-        You can omit point name to use the current directory's name instead.
+    You can omit point name to use the current directory's name instead.
 
  * List all warp points (stored in `~/.warprc`):
 
