@@ -20,10 +20,13 @@ function _wd() {
   while read -r line
   do
     arr=(${(s,:,)line})
-    key=${arr[1]}
-    val=${arr[2]}
+    name=${arr[1]}
+    path=${arr[2]}
 
-    points[$key]=$val
+    # replace ~ from path to fix completion (#17)
+    path=${path/#\~/$HOME}
+
+    points[$name]=$path
   done < $CONFIG
 
   commands=(
