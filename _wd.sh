@@ -8,13 +8,13 @@ zstyle ':completion::complete:wd::' list-grouped
 zmodload zsh/mapfile
 
 function _wd() {
-  local CONFIG=$HOME/.warprc
+  local WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
   local ret=1
 
   local -a commands
   local -a warp_points
 
-  warp_points=( "${(f)mapfile[$CONFIG]//$HOME/~}" )
+  warp_points=( "${(f)mapfile[$WD_CONFIG]//$HOME/~}" )
 
   typeset -A points
   while read -r line
@@ -27,7 +27,7 @@ function _wd() {
     target_path=${target_path/#\~/$HOME}
 
     points[$name]=$target_path
-  done < $CONFIG
+  done < $WD_CONFIG
 
   commands=(
     'add:Adds the current working directory to your warp points'

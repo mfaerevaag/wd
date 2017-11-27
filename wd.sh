@@ -334,7 +334,7 @@ wd_clean() {
     fi
 }
 
-local WD_CONFIG=$HOME/.warprc
+local WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
 local WD_QUIET=0
 local WD_EXIT_CODE=0
 local WD_DEBUG=0
