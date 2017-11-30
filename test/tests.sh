@@ -8,7 +8,7 @@
 ### Variables
 
 # use a test config file, which is removed at the final test teardown.
-export WD_CONFIG=$(mktemp)
+export WD_CONFIG="$(mktemp)"
 
 # used when testing
 WD_TEST_DIR=test_dir
@@ -40,8 +40,8 @@ WD_PATH=${PWD}/..
 
 wd()
 {
-    # run the local wd with the test config
-    ${WD_PATH}/wd.sh -d -c $WD_CONFIG "$@"
+    # run the local wd in debug mode
+    ${WD_PATH}/wd.sh -d "$@"
 }
 
 total_wps()
@@ -361,6 +361,19 @@ test_path()
 
     # clean up
     destroy_test_wp
+}
+
+test_config()
+{
+    local arg_config="$(mktemp)"
+    local wd_config_lines=$(total_wps)
+
+    wd -q --config $arg_config add
+
+    assertEquals 1 $(wc -l < $arg_config)
+    assertEquals $wd_config_lines $(total_wps)
+
+    rm $arg_config
 }
 
 
