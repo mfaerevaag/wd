@@ -136,6 +136,15 @@ Also, you may have to force a rebuild of `zcompdump` by running:
         $ wd --quiet <action>
 
 
+### Configuration
+
+You can configure `wd` with the following environment variables:
+
+#### `WD_CONFIG`
+
+Defines the path where warp points get stored. Defaults to `$HOME/.warprc`.
+
+
 ### Testing
 
 `wd` comes with a small test suite, run with [shunit2](https://code.google.com/p/shunit2/). This can be used to confirm that things are working as it should on your setup, or to demonstrate an issue.

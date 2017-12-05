@@ -8,7 +8,7 @@
 ### Variables
 
 # use a test config file, which is removed at the final test teardown.
-WD_TEST_CONFIG=~/.warprc_test
+export WD_CONFIG="$(mktemp)"
 
 # used when testing
 WD_TEST_DIR=test_dir
@@ -25,13 +25,13 @@ SHUNIT_PARENT=$0
 # reset config for each test
 setUp()
 {
-    cat /dev/null > $WD_TEST_CONFIG
+    cat /dev/null > $WD_CONFIG
 }
 
 oneTimeTearDown()
 {
     rm -rf $WD_TEST_DIR $WD_TEST_DIR_2
-    rm $WD_TEST_CONFIG
+    rm $WD_CONFIG
 }
 
 ### Helpers
@@ -40,14 +40,14 @@ WD_PATH=${PWD}/..
 
 wd()
 {
-    # run the local wd with the test config
-    ${WD_PATH}/wd.sh -d -c $WD_TEST_CONFIG "$@"
+    # run the local wd in debug mode
+    ${WD_PATH}/wd.sh -d "$@"
 }
 
 total_wps()
 {
     # total wps is the number of (non-empty) lines in the config
-    echo $(cat $WD_TEST_CONFIG | sed '/^\s*$/d' | wc -l)
+    echo $(cat $WD_CONFIG | sed '/^\s*$/d' | wc -l)
 }
 
 wp_exists()
@@ -361,6 +361,19 @@ test_path()
 
     # clean up
     destroy_test_wp
+}
+
+test_config()
+{
+    local arg_config="$(mktemp)"
+    local wd_config_lines=$(total_wps)
+
+    wd -q --config $arg_config add
+
+    assertEquals 1 $(wc -l < $arg_config)
+    assertEquals $wd_config_lines $(total_wps)
+
+    rm $arg_config
 }
 
 
