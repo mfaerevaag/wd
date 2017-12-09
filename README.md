@@ -13,7 +13,7 @@ wd
 
 ### oh-my-zsh
 
-`wd` comes bundled with [oh-my-zshell](https://github.com/robbyrussell/oh-my-zsh)!
+`wd` comes bundled with [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)!
 
 Just add the plugin in your `~/.zshrc` file:
 
@@ -28,7 +28,7 @@ Run either in terminal:
 
  * `wget --no-check-certificate https://github.com/mfaerevaag/wd/raw/master/install.sh -O - | sh`
 
-##### Arch ([AUR](https://aur.archlinux.org/))
+##### Arch ([AUR](https://aur.archlinux.org/packages/zsh-plugin-wd-git/))
 
     # yaourt -S zsh-plugin-wd-git
 
