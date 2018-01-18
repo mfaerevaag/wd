@@ -32,6 +32,9 @@ Run either in terminal:
 
     # yaourt -S zsh-plugin-wd-git
 
+#### zplug ([zplug](https://github.com/zplug/zplug))
+
+    # zplug 'mfaerevaag/wd', as:command, use:"wd.sh", hook-load:"wd() { . $ZPLUG_REPOS/mfaerevaag/wd/wd.sh }"
 
 #### Manual
 
