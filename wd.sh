@@ -36,11 +36,11 @@ wd_yesorno()
         read -r answer
 
         case ${answer:=${default}} in
-            Y|y|YES|yes|Yes )
+            "Y"|"y"|"YES"|"yes"|"Yes" )
                 RETVAL=${yes_RETVAL} && \
                     break
                 ;;
-            N|n|NO|no|No )
+            "N"|"n"|"NO"|"no"|"No" )
                 RETVAL=${no_RETVAL} && \
                     break
                 ;;
@@ -400,43 +400,43 @@ else
     do
         case "$o"
             in
-            -a|--add|add)
+            "-a"|"--add"|"add")
                 wd_add false $2
                 break
                 ;;
-            -a!|--add!|add!)
+            "-a!"|"--add!"|"add!")
                 wd_add true $2
                 break
                 ;;
-            -r|--remove|rm)
+            "-r"|"--remove"|"rm")
                 wd_remove $2
                 break
                 ;;
-            -l|list)
+            "-l"|"list")
                 wd_list_all
                 break
                 ;;
-            -ls|ls)
+            "-ls"|"ls")
                 wd_ls $2
                 break
                 ;;
-            -p|--path|path)
+            "-p"|"--path"|"path")
                 wd_path $2
                 break
                 ;;
-            -h|--help|help)
+            "-h"|"--help"|"help")
                 wd_print_usage
                 break
                 ;;
-            -s|--show|show)
+            "-s"|"--show"|"show")
                 wd_show $2
                 break
                 ;;
-            -c|--clean|clean)
+            "-c"|"--clean"|"clean")
                 wd_clean false
                 break
                 ;;
-            -c!|--clean!|clean!)
+            "-c!"|"--clean!"|"clean!")
                 wd_clean true
                 break
                 ;;
