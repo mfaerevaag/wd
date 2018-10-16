@@ -203,8 +203,9 @@ wd_remove()
 
     if [[ ${points[$point]} != "" ]]
     then
-        local config_tmp=$WD_CONFIG.tmp
-        if sed -n "/^${point}:.*$/!p" $WD_CONFIG > $config_tmp && mv $config_tmp $WD_CONFIG
+        local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
+        # Copy and delete in two steps in order to preserve symlinks
+        if sed -n "/^${point}:.*$/!p" $WD_CONFIG > $config_tmp && cp $config_tmp $WD_CONFIG && rm $config_tmp
         then
             wd_print_msg $WD_GREEN "Warp point removed"
         else
