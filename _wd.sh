@@ -32,6 +32,7 @@ function _wd() {
   commands=(
     'add:Adds the current working directory to your warp points'
     'add!:Overwrites existing warp point'
+    'export:Export warp points as static named directories'
     'rm:Removes the given warp point'
     'list:Outputs all stored warp points'
     'ls:Show files from given warp point'
