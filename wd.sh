@@ -422,7 +422,7 @@ else
                 wd_add true $2
                 break
                 ;;
-            -e|export)
+            "-e"|"export")
                 wd_export_static_named_directories
                 break
                 ;;
