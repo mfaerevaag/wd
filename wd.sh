@@ -182,6 +182,8 @@ wd_add()
         wd_remove $point > /dev/null
         printf "%q:%s\n" "${point}" "${PWD/#$HOME/~}" >> $WD_CONFIG
 
+        wd_export_static_named_directories
+
         wd_print_msg $WD_GREEN "Warp point added"
 
         # override exit code in case wd_remove did not remove any points
@@ -335,6 +337,15 @@ wd_clean() {
     fi
 }
 
+wd_export_static_named_directories() {
+  if [[ -z $WD_SKIP_EXPORT ]]
+  then
+    for warpdir ($(grep '^[0-9a-zA-Z_-]\+:' "$WD_CONFIG" | sed -e "s,~,$HOME," -e 's/:/=/')) {
+      hash -d $warpdir
+    }
+  fi
+}
+
 local WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
 local WD_QUIET=0
 local WD_EXIT_CODE=0
@@ -365,6 +376,8 @@ if [ ! -e $WD_CONFIG ]
 then
     # if not, create config file
     touch $WD_CONFIG
+else
+    wd_export_static_named_directories
 fi
 
 # load warp points
@@ -407,6 +420,10 @@ else
                 ;;
             "-a!"|"--add!"|"add!")
                 wd_add true $2
+                break
+                ;;
+            "-e"|"export")
+                wd_export_static_named_directories
                 break
                 ;;
             "-r"|"--remove"|"rm")
@@ -467,6 +484,7 @@ unset wd_print_usage
 unset wd_alt_config
 unset wd_quiet_mode
 unset wd_print_version
+unset wd_export_static_named_directories
 
 unset args
 unset points
