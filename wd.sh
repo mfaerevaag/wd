@@ -410,9 +410,10 @@ then
 else
 
     # parse rest of options
-    for o
+    local wd_o;
+    for wd_o
     do
-        case "$o"
+        case "$wd_o"
             in
             "-a"|"--add"|"add")
                 wd_add false $2
@@ -485,6 +486,7 @@ unset wd_alt_config
 unset wd_quiet_mode
 unset wd_print_version
 unset wd_export_static_named_directories
+unset wd_o
 
 unset args
 unset points
