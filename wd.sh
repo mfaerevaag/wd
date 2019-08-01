@@ -410,7 +410,7 @@ then
 else
 
     # parse rest of options
-    local wd_o;
+    local wd_o
     for wd_o
     do
         case "$wd_o"
@@ -460,7 +460,7 @@ else
                 break
                 ;;
             *)
-                wd_warp $o $2
+                wd_warp $wd_o $2
                 break
                 ;;
             --)
