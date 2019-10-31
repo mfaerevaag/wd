@@ -143,7 +143,6 @@ Also, you may have to force a rebuild of `zcompdump` by running:
         $ wd --quiet <action>
 
 
-
 ### Configuration
 
 You can configure `wd` with the following environment variables:
