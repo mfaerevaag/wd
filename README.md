@@ -82,6 +82,10 @@ Also, you may have to force a rebuild of `zcompdump` by running:
 
         $ wd foo
 
+ * You can also warp to a directory within foo, with autocompletion:
+
+        $ wd foo some/inner/path
+
  * You can warp back to previous directory, and so on, with this dot syntax:
 
         $ wd ..

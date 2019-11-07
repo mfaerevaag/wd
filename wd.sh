@@ -75,6 +75,8 @@ wd_print_usage()
 Usage: wd [command] [point]
 
 Commands:
+    <point>         Warps to the directory specified by the warp point
+    <point> <path>  Warps to the directory specified by the warp point with path appended
     add <point>     Adds the current working directory to your warp points
     add             Adds the current working directory to your warp points with current directory's name
     add! <point>    Overwrites existing warp point
