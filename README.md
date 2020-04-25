@@ -20,6 +20,22 @@ Just add the plugin in your `~/.zshrc` file:
 plugins=(... wd)
 ```
 
+### [Antigen](https://github.com/zsh-users/antigen)
+
+In your `.zshrc`:
+
+```zsh
+antigen bundle mfaerevaag/wd
+```
+
+### [Antibody](https://github.com/getantibody/antibody)
+
+In your `.zshrc`:
+
+```zsh
+antibody bundle mfaerevaag/wd
+```
+
 ### Arch ([AUR](https://aur.archlinux.org/packages/zsh-plugin-wd-git/))
 
 ```zsh
