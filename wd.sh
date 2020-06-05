@@ -183,6 +183,11 @@ wd_add()
     then
         wd_remove $point > /dev/null
         printf "%q:%s\n" "${point}" "${PWD/#$HOME/~}" >> $WD_CONFIG
+        if (whence sort >/dev/null); then
+            local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
+            # use 'cat' below to ensure we respect $WD_CONFIG as a symlink
+            sort -o "${config_tmp}" $WD_CONFIG  && cat "${config_tmp}" > $WD_CONFIG && rm "${config_tmp}"
+        fi
 
         wd_export_static_named_directories
 
