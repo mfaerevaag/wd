@@ -10,7 +10,7 @@ wd [\fICOMMAND\fP] [\fINAME\fP]
 .
 .
 .SH DESCRIPTION
-\fBwd\fP (warp directory) lets you quickly jump to custom directories in zsh, without using \fBcd\fP. Why? Because \fBcd\fP is slow for  paths that are visited frequently or has a long path.
+\fBwd\fP (warp directory) lets you quickly jump to custom directories in zsh, without using \fBcd\fP. Why? Because \fBcd\fP is slow for paths that are visited frequently or has a long path.
 .
 .
 .SH COMMANDS
@@ -19,9 +19,6 @@ Add a new warp point which will warp to the current working directory with curre
 .
 .IP "add, -a, --add <name>"
 Add a new warp point which will warp to the current working directory with \fIname\fR as identifier.
-.
-.IP "add! <name>"
-Like \fBadd\fP, but will overwrite existing point with the same \fIname\fP.
 .
 .IP "rm, -r, --remove"
 Remove any warp point with current directory name as identifier.
@@ -41,9 +38,6 @@ Show path to given warp point.
 .IP "clean"
 Remove warp points to non-existent directories.
 .
-.IP "clean"
-Like \fBclean\fP, but will not prompt for confirmation (force).
-.
 .IP "help"
 Show help message with usage and commands.
 .
@@ -59,10 +53,12 @@ Force `exit` with return code after running. This is not default, as it will *ex
 .IP "-q, --quiet"
 Silence all output.
 .
+.IP "-f, --force"
+Allows overwriting without warning. Can be applied to `add` and `clean`
 .
 .SH EXAMPLES
 .
-.IP "\fBwd add! foo\fP"
+.IP "\fBwd add --force foo\fP"
 Add warp point named "foo" to current working directory, overwriting any existing points named "foo".
 .
 .IP "\fBwd rm foo\fP"
