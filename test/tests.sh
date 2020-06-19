@@ -142,7 +142,7 @@ test_default_no_duplicates()
     assertFalse "should fail when adding duplicate of PWD" \
                 "$pipestatus"
 
-    wd -q add!
+    wd -q -f add
     assertTrue "should successfully force-add warp point to PWD" \
                "$pipestatus"
 }
@@ -315,13 +315,13 @@ test_clean()
         fail "there should be no invalid warp point"
     fi
 
-	wd -q add! test
+	wd -q -f add test
 
     # remove test dir
     cd ..
     rmdir "$dir"
 
-    if [[ ! $(wd clean!) =~ ".*1 warp point\(s\) removed" ]]
+    if [[ ! $(wd clean -f) =~ ".*1 warp point\(s\) removed" ]]
     then
         fail "should remove one warp point when using force"
     fi

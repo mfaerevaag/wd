@@ -79,8 +79,6 @@ Commands:
     <point> <path>  Warps to the directory specified by the warp point with path appended
     add <point>     Adds the current working directory to your warp points
     add             Adds the current working directory to your warp points with current directory's name
-    add! <point>    Overwrites existing warp point
-    add!            Overwrites existing warp point with current directory's name
     rm <point>      Removes the given warp point
     rm              Removes the given warp point with current directory's name
     show <point>    Print path to given warp point
@@ -88,12 +86,13 @@ Commands:
     list            Print all stored warp points
     ls  <point>     Show files from given warp point (ls)
     path <point>    Show the path to given warp point (pwd)
-    clean!          Remove points warping to nonexistent directories
+    clean           Remove points warping to nonexistent directories
 
     -v | --version  Print version
     -d | --debug    Exit after execution with exit codes (for testing)
     -c | --config   Specify config file (default ~/.warprc)
     -q | --quiet    Suppress all output
+    -f | --force    Allow overwriting of warp points (for use with add)
 
     help            Show this extremely helpful text
 EOF
@@ -162,8 +161,8 @@ wd_warp()
 
 wd_add()
 {
-    local force=$1
-    local point=$2
+    local point=$1
+    local force=$2
 
     if [[ $point == "" ]]
     then
@@ -179,7 +178,7 @@ wd_add()
     elif [[ $point == *:* ]]
     then
         wd_exit_fail "Warp point cannot contain colons"
-    elif [[ ${points[$point]} == "" ]] || $force
+    elif [[ ${points[$point]} == "" ]] || [ ! -z "$force" ]
     then
         wd_remove "$point" > /dev/null
         printf "%q:%s\n" "${point}" "${PWD/#$HOME/~}" >> "$WD_CONFIG"
@@ -197,7 +196,7 @@ wd_add()
         # TODO: we should handle this kind of logic better
         WD_EXIT_CODE=0
     else
-        wd_exit_warn "Warp point '${point}' already exists. Use 'add!' to overwrite."
+        wd_exit_warn "Warp point '${point}' already exists. Use 'add --force' to overwrite."
     fi
 }
 
@@ -336,7 +335,7 @@ wd_clean() {
     then
         wd_print_msg "$WD_BLUE" "No warp points to clean, carry on!"
     else
-        if $force || wd_yesorno "Removing ${count} warp points. Continue? (Y/n)"
+        if [ ! -z "$force" ] || wd_yesorno "Removing ${count} warp points. Continue? (y/n)"
         then
             echo "$wd_tmp" >! "$WD_CONFIG"
             wd_print_msg "$WD_GREEN" "Cleanup complete. ${count} warp point(s) removed"
@@ -368,7 +367,8 @@ zparseopts -D -E \
     c:=wd_alt_config -config:=wd_alt_config \
     q=wd_quiet_mode -quiet=wd_quiet_mode \
     v=wd_print_version -version=wd_print_version \
-    d=wd_debug_mode -debug=wd_debug_mode
+    d=wd_debug_mode -debug=wd_debug_mode \
+    f=wd_force_mode -force=wd_force_mode
 
 if [[ ! -z $wd_print_version ]]
 then
@@ -402,7 +402,7 @@ do
 done < "$WD_CONFIG"
 
 # get opts
-args=$(getopt -o a:r:c:lhs -l add:,rm:,clean\!,list,ls:,path:,help,show -- $*)
+args=$(getopt -o a:r:c:lhs -l add:,rm:,clean,list,ls:,path:,help,show -- $*)
 
 # check if no arguments were given, and that version is not set
 if [[ ($? -ne 0 || $#* -eq 0) && -z $wd_print_version ]]
@@ -417,7 +417,6 @@ then
     wd_exit_fail "\'$WD_CONFIG\' is not writeable."
 
 else
-
     # parse rest of options
     local wd_o
     for wd_o
@@ -425,11 +424,7 @@ else
         case "$wd_o"
             in
             "-a"|"--add"|"add")
-                wd_add false "$2"
-                break
-                ;;
-            "-a!"|"--add!"|"add!")
-                wd_add true "$2"
+                wd_add "$2" "$wd_force_mode"
                 break
                 ;;
             "-e"|"export")
@@ -462,11 +457,7 @@ else
                 break
                 ;;
             "-c"|"--clean"|"clean")
-                wd_clean false
-                break
-                ;;
-            "-c!"|"--clean!"|"clean!")
-                wd_clean true
+                wd_clean "$wd_force_mode"
                 break
                 ;;
             *)
