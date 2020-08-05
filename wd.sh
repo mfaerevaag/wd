@@ -342,8 +342,8 @@ wd_clean() {
 wd_export_static_named_directories() {
   if [[ -z $WD_SKIP_EXPORT ]]
   then
-    grep '^[0-9a-zA-Z_-]\+:' "$WD_CONFIG" | sed -e "s,~,$HOME," -e 's/:/=/' | while read warpdir ; do
-	    hash -d "$warpdir"
+    command grep '^[0-9a-zA-Z_-]\+:' "$WD_CONFIG" | sed -e "s,~,$HOME," -e 's/:/=/' | while read warpdir ; do
+        hash -d "$warpdir"
     done
   fi
 }
