@@ -435,10 +435,15 @@ else
                 break
                 ;;
             "-r"|"--remove"|"rm")
-                # Loop over all arguments after "rm", separated by whitespace
-                for pointname in "${@:2}" ; do
-                    wd_remove $pointname
-                done
+                if [ -z "${@:2}" ]
+                then
+                    wd_remove ""
+                else
+                    # Loop over all arguments after "rm", separated by whitespace
+                    for point_name in "${@:2}" ; do
+                        wd_remove $point_name
+                    done
+                fi
                 break
                 ;;
             "-l"|"list")
