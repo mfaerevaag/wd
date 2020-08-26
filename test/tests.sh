@@ -25,13 +25,13 @@ SHUNIT_PARENT=$0
 # reset config for each test
 setUp()
 {
-    cat /dev/null > $WD_CONFIG
+    cat /dev/null > "$WD_CONFIG"
 }
 
 oneTimeTearDown()
 {
-    rm -rf $WD_TEST_DIR $WD_TEST_DIR_2
-    rm $WD_CONFIG
+    rm -rf "$WD_TEST_DIR" "$WD_TEST_DIR_2"
+    rm "$WD_CONFIG"
 }
 
 ### Helpers
@@ -41,13 +41,13 @@ WD_PATH=${PWD}/..
 wd()
 {
     # run the local wd in debug mode
-    ${WD_PATH}/wd.sh -d "$@"
+    "${WD_PATH}"/wd.sh -d "$@"
 }
 
 total_wps()
 {
     # total wps is the number of (non-empty) lines in the config
-    echo $(cat $WD_CONFIG | sed '/^\s*$/d' | wc -l)
+    echo "$(sed '/^\s*$/d' "$WD_CONFIG" | wc -l)"
 }
 
 wp_exists()
@@ -59,18 +59,18 @@ wp_exists()
 create_test_wp()
 {
     # create test dir
-    mkdir $WD_TEST_DIR
+    mkdir "$WD_TEST_DIR"
 
     # create test wp
-    cd $WD_TEST_DIR
-    wd -q add $WD_TEST_WP
+    cd "$WD_TEST_DIR"
+    wd -q add "$WD_TEST_WP"
     cd ..
 }
 
 destroy_test_wp()
 {
-    rm -rf $WD_TEST_DIR
-    wd -q rm $WD_TEST_DIR
+    rm -rf "$WD_TEST_DIR"
+    wd -q rm "$WD_TEST_DIR"
 }
 
 
@@ -80,119 +80,119 @@ destroy_test_wp()
 test_empty_config()
 {
     assertEquals "should initially be an empty config" \
-        0 $(total_wps)
+        0 "$(total_wps)"
 }
 
 test_simple_add_remove()
 {
     wd -q add foo
     assertTrue "should successfully add wp 'foo'" \
-        $pipestatus
+        "$pipestatus"
 
     assertEquals "should have 1 wps" \
-        1 $(total_wps)
+        1 "$(total_wps)"
 
     assertTrue "wp 'foo' should exist" \
-        $(wp_exists "foo")
+        "$(wp_exists "foo")"
 
     wd -q rm foo
     assertEquals "wps should be empty" \
-        0 $(total_wps)
+        0 "$(total_wps)"
 }
 
 test_default_add_remove()
 {
-    cwd=$(basename $PWD)
+    cwd=$(basename "$PWD")
 
     wd -q add
     assertTrue "should successfully add wp to PWD" \
-               $pipestatus
+               "$pipestatus"
 
     assertEquals "should have 1 wps" \
-                 1 $(total_wps)
+                 1 "$(total_wps)"
 
     assertTrue "wp to PWD should exist" \
-               $(wp_exists $cwd)
+               "$(wp_exists "$cwd")"
 
     wd -q rm
     assertEquals "wps should be empty" \
-                 0 $(total_wps)
+                 0 "$(total_wps)"
 }
 
 test_no_duplicates()
 {
     wd -q add foo
     assertTrue "should successfully add 'foo'" \
-        $pipestatus
+        "$pipestatus"
 
     wd -q add foo
     assertFalse "should fail when adding duplicate of 'foo'" \
-        $pipestatus
+        "$pipestatus"
 }
 
 test_default_no_duplicates()
 {
-    cwd=$(basename $PWD)
+    cwd=$(basename "$PWD")
 
     wd -q add
     assertTrue "should successfully add warp point to PWD" \
-               $pipestatus
+               "$pipestatus"
 
     wd -q add
     assertFalse "should fail when adding duplicate of PWD" \
-                $pipestatus
+                "$pipestatus"
 
     wd -q add!
     assertTrue "should successfully force-add warp point to PWD" \
-               $pipestatus
+               "$pipestatus"
 }
 
 test_default_multiple_directories()
 {
-    rm -rf $WD_TEST_DIR
-    mkdir $WD_TEST_DIR
-    cd $WD_TEST_DIR
+    rm -rf "$WD_TEST_DIR"
+    mkdir "$WD_TEST_DIR"
+    cd "$WD_TEST_DIR"
     wd -q add
     assertTrue "should successfully add warp point to PWD" \
-               $pipestatus
+               "$pipestatus"
     cd ..
-    rmdir $WD_TEST_DIR
+    rmdir "$WD_TEST_DIR"
 
-    rm -rf $WD_TEST_DIR_2
-    mkdir $WD_TEST_DIR_2
-    cd $WD_TEST_DIR_2
+    rm -rf "$WD_TEST_DIR_2"
+    mkdir "$WD_TEST_DIR_2"
+    cd "$WD_TEST_DIR_2"
     wd -q add
     assertTrue "should successfully add warp point to another PWD" \
-               $pipestatus
+               "$pipestatus"
     cd ..
-    rmdir $WD_TEST_DIR_2
+    rmdir "$WD_TEST_DIR_2"
 }
 
 test_valid_identifiers()
 {
     wd -q add .
     assertFalse "should not allow only dots" \
-        $pipestatus
+        "$pipestatus"
 
     wd -q add ..
     assertFalse "should not allow only dots" \
-        $pipestatus
+        "$pipestatus"
 
     wd -q add hej.
     assertTrue "should allow dots in name" \
-        $pipestatus
+        "$pipestatus"
 
     wd -q add "foo bar"
     assertFalse "should not allow whitespace" \
-        $pipestatus
+        "$pipestatus"
 
     wd -q add "foo:bar"
     assertFalse "should not allow colons" \
-        $pipestatus
+        "$pipestatus"
 
     wd -q add ":foo"
     assertFalse "should not allow colons" \
-        $pipestatus
+        "$pipestatus"
 }
 
 test_removal()
@@ -201,11 +201,11 @@ test_removal()
 
     wd -q rm bar
     assertFalse "should fail when removing non-existing point" \
-                $pipestatus
+                "$pipestatus"
 
     wd -q rm foo
     assertTrue "should remove existing point" \
-               $pipestatus
+               "$pipestatus"
 }
 
 test_list()
@@ -214,17 +214,17 @@ test_list()
 
     # add one to expected number of lines, because of header msg
     assertEquals "should only be one warp point" \
-        $(wd list | wc -l) 2
+        "$(wd list | wc -l)" 2
 
     wd -q add bar
 
     assertEquals "should be more than one warp point" \
-        $(wd list | wc -l) 3
+        "$(wd list | wc -l)" 3
 }
 
 test_show()
 {
-    if [[ ! $(wd show) =~ "No warp point to $(echo $PWD | sed "s:$HOME:~:")" ]]
+    if [[ ! $(wd show) =~ "No warp point to $(echo "$PWD" | sed "s:$HOME:~:")" ]]
     then
         fail "should show no warp points"
     fi
@@ -283,15 +283,15 @@ test_clean()
     dir="$HOME/.wdunittest"
 
     # create test dir
-    mkdir $dir
-    cd $dir
+    mkdir "$dir"
+    cd "$dir"
 
     # add warp point
     wd -q add test
 
     # remove test dir
     cd ..
-    rmdir $dir
+    rmdir "$dir"
 
     if [[ ! $(echo "n" | wd clean) =~ "Cleanup aborted" ]]
     then
@@ -304,8 +304,8 @@ test_clean()
     fi
 
     # recreate test dir
-    mkdir $dir
-    cd $dir
+    mkdir "$dir"
+    cd "$dir"
 
     # add warp point
     wd -q add test
@@ -319,7 +319,7 @@ test_clean()
 
     # remove test dir
     cd ..
-    rmdir $dir
+    rmdir "$dir"
 
     if [[ ! $(wd clean!) =~ ".*1 warp point\(s\) removed" ]]
     then
@@ -333,8 +333,8 @@ test_ls()
     create_test_wp
 
     # create test files in dir
-    touch $WD_TEST_DIR/foo
-    touch $WD_TEST_DIR/bar
+    touch "$WD_TEST_DIR/foo"
+    touch "$WD_TEST_DIR/bar"
 
     # assert correct output
     if [[ ! $(wd ls $WD_TEST_WP) =~ "bar.*foo" ]]
@@ -351,10 +351,10 @@ test_path()
     # set up
     create_test_wp
 
-    local pwd=$(echo $PWD | sed "s:${HOME}:~:g")
+    local pwd=$(echo "$PWD" | sed "s:${HOME}:~:g")
 
     # assert correct output
-    if [[ ! $(wd path $WD_TEST_WP) =~ "${pwd}/${WD_TEST_DIR}" ]]
+    if [[ ! $(wd path "$WD_TEST_WP") =~ "${pwd}/${WD_TEST_DIR}" ]]
     then
         fail "should give correct path"
     fi
@@ -368,12 +368,12 @@ test_config()
     local arg_config="$(mktemp)"
     local wd_config_lines=$(total_wps)
 
-    wd -q --config $arg_config add
+    wd -q --config "$arg_config" add
 
-    assertEquals 1 $(wc -l < $arg_config)
-    assertEquals $wd_config_lines $(total_wps)
+    assertEquals 1 "$(wc -l < "$arg_config")"
+    assertEquals "$wd_config_lines" "$(total_wps)"
 
-    rm $arg_config
+    rm "$arg_config"
 }
 
 
