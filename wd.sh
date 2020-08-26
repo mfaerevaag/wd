@@ -203,26 +203,28 @@ wd_add()
 
 wd_remove()
 {
-    local point=$1
+    local point_list=$1
 
-    if [[ $point == "" ]]
+    if [[ $point_list == "" ]]
     then
-        point=$(basename $PWD)
+        point_list=$(basename $PWD)
     fi
 
-    if [[ ${points[$point]} != "" ]]
-    then
-        local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
-        # Copy and delete in two steps in order to preserve symlinks
-        if sed -n "/^${point}:.*$/!p" $WD_CONFIG > $config_tmp && /bin/cp $config_tmp $WD_CONFIG && /bin/rm $config_tmp
+    for point_name in $point_list ; do
+        if [[ ${points[$point_name]} != "" ]]
         then
-            wd_print_msg $WD_GREEN "Warp point removed"
+            local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
+            # Copy and delete in two steps in order to preserve symlinks
+            if sed -n "/^${point_name}:.*$/!p" $WD_CONFIG > $config_tmp && command cp $config_tmp $WD_CONFIG && command rm $config_tmp
+            then
+                wd_print_msg $WD_GREEN "Warp point removed"
+            else
+                wd_exit_fail "Something bad happened! Sorry."
+            fi
         else
-            wd_exit_fail "Something bad happened! Sorry."
+            wd_exit_fail "Warp point was not found"
         fi
-    else
-        wd_exit_fail "Warp point was not found"
-    fi
+    done
 }
 
 wd_list_all()
@@ -435,10 +437,8 @@ else
                 break
                 ;;
             "-r"|"--remove"|"rm")
-                # Loop over all arguments after "rm", separated by whitespace
-                for pointname in "${@:2}" ; do
-                    wd_remove $pointname
-                done
+                # Passes all the arguments as a single string separated by whitespace to wd_remove
+                wd_remove "${@:2}"
                 break
                 ;;
             "-l"|"list")
