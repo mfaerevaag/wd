@@ -437,15 +437,8 @@ else
                 break
                 ;;
             "-r"|"--remove"|"rm")
-<<<<<<< HEAD
                 # Passes all the arguments as a single string separated by whitespace to wd_remove
                 wd_remove "${@:2}"
-=======
-                # Loop over all arguments after "rm", separated by whitespace
-                for pointname in "${@:2}" ; do
-                    wd_remove "$pointname"
-                done
->>>>>>> 297fa81... Add a lot of "quotation" marks
                 break
                 ;;
             "-l"|"list")
