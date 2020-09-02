@@ -351,7 +351,7 @@ test_path()
     # set up
     create_test_wp
 
-    local pwd=$(echo "$PWD" | sed "s:${HOME}:~:g")
+    local pwd=$(echo "$PWD" | sed "s:~:${HOME}:g")
 
     # assert correct output
     if [[ ! $(wd path "$WD_TEST_WP") =~ "${pwd}/${WD_TEST_DIR}" ]]
