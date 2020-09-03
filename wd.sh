@@ -334,7 +334,7 @@ wd_clean() {
 
     if [[ $count -eq 0 ]]
     then
-        wd_print_msg" $WD_BLUE" "No warp points to clean, carry on!"
+        wd_print_msg "$WD_BLUE" "No warp points to clean, carry on!"
     else
         if $force || wd_yesorno "Removing ${count} warp points. Continue? (Y/n)"
         then
