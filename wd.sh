@@ -175,9 +175,9 @@ wd_add()
     elif [[ $point =~ "[[:space:]]+" ]]
     then
         wd_exit_fail "Warp point should not contain whitespace"
-    elif [[ $point == *:* ]]
+    elif [[ $point =~ : ]] || [[ $point =~ / ]]
     then
-        wd_exit_fail "Warp point cannot contain colons"
+        wd_exit_fail "Warp point contains illegal character (:/)"
     elif [[ ${points[$point]} == "" ]] || [ ! -z "$force" ]
     then
         wd_remove "$point" > /dev/null
