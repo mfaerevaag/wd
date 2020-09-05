@@ -136,10 +136,16 @@ You can omit point name to automatically use the current directory's name instea
 wd foo
 ```
 
-* You can also warp to a directory within `foo`, with autocompletion:
+* You can also warp to a directory within `foo`:
 
 ```zsh
 wd foo some/inner/path
+```
+
+OR
+
+```zsh
+wd foo/some/inner/path
 ```
 
 * You can warp back to previous directory and higher, with this dot syntax:
