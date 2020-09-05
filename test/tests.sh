@@ -193,6 +193,22 @@ test_valid_identifiers()
     wd -q add ":foo"
     assertFalse "should not allow colons" \
         "$pipestatus"
+
+    wd -q add "foo:"
+    assertFalse "should not allow colons" \
+        "$pipestatus"
+
+    wd -q add "foo/bar"
+    assertFalse "should not allow slashes" \
+        "$pipestatus"
+
+    wd -q add "foo/"
+    assertFalse "should not allow slashes" \
+        "$pipestatus"
+
+    wd -q add "/foo"
+    assertFalse "should not allow slashes" \
+        "$pipestatus"
 }
 
 test_removal()

@@ -134,8 +134,24 @@ wd_getdir()
 
 wd_warp()
 {
-    local point=$1
-    local sub=$2
+    local point
+    local sub
+
+    # If no second arg (which would be the directories to change to)
+    # AND if there are subdirectories as part of the first argument
+    if [[ "$1" =~ / ]] && [ -z "$2" ]
+    then
+        # Split subdirectories from first arg using sh magic
+        # Case: wd foo/bar/baz
+        point="${1%%/*}" # foo/bar/baz -> foo
+        sub="${1#*/}" # foo/bar/baz -> bar/baz
+    else
+        # Otherwise, use arguments as they are
+        # Case: wd foo bar/baz
+        # Case: wd foo
+        point="$1"
+        sub="$2"
+    fi
 
     if [[ $point =~ "^\.+$" ]]
     then
@@ -175,9 +191,9 @@ wd_add()
     elif [[ $point =~ "[[:space:]]+" ]]
     then
         wd_exit_fail "Warp point should not contain whitespace"
-    elif [[ $point == *:* ]]
+    elif [[ $point =~ : ]] || [[ $point =~ / ]]
     then
-        wd_exit_fail "Warp point cannot contain colons"
+        wd_exit_fail "Warp point contains illegal character (:/)"
     elif [[ ${points[$point]} == "" ]] || [ ! -z "$force" ]
     then
         wd_remove "$point" > /dev/null
