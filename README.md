@@ -243,6 +243,16 @@ cd ./test
 ./tests.sh
 ```
 
+## Maintainers
+
+Following @mfaerevaag stepping away from active maintainership of this repository, the following users now are also maintainers of the repo:
+
+* @alpha-tango-kilo
+
+* @MattLewin
+
+Anyone else contributing is greatly appreciated and will be mentioned in the release notes!
+
 ---
 
 Credit to [altschuler](https://github.com/altschuler) for an awesome idea.
