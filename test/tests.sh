@@ -30,8 +30,8 @@ setUp()
 
 oneTimeTearDown()
 {
-    rm -rf "$WD_TEST_DIR" "$WD_TEST_DIR_2"
-    rm "$WD_CONFIG"
+    command rm -rf "$WD_TEST_DIR" "$WD_TEST_DIR_2"
+    command rm "$WD_CONFIG"
 }
 
 ### Helpers
@@ -52,7 +52,7 @@ total_wps()
 
 wp_exists()
 {
-    wd list | grep -q "$1[[:space:]]*->"
+    wd list | command grep -q "$1[[:space:]]*->"
     echo $?
 }
 
@@ -69,7 +69,7 @@ create_test_wp()
 
 destroy_test_wp()
 {
-    rm -rf "$WD_TEST_DIR"
+    command rm -rf "$WD_TEST_DIR"
     wd -q rm "$WD_TEST_DIR"
 }
 
@@ -149,23 +149,23 @@ test_default_no_duplicates()
 
 test_default_multiple_directories()
 {
-    rm -rf "$WD_TEST_DIR"
-    mkdir "$WD_TEST_DIR"
+    command rm -rf "$WD_TEST_DIR"
+    command mkdir "$WD_TEST_DIR"
     cd "$WD_TEST_DIR"
     wd -q add
     assertTrue "should successfully add warp point to PWD" \
                "$pipestatus"
     cd ..
-    rmdir "$WD_TEST_DIR"
+    command rmdir "$WD_TEST_DIR"
 
-    rm -rf "$WD_TEST_DIR_2"
-    mkdir "$WD_TEST_DIR_2"
+    command rm -rf "$WD_TEST_DIR_2"
+    command mkdir "$WD_TEST_DIR_2"
     cd "$WD_TEST_DIR_2"
     wd -q add
     assertTrue "should successfully add warp point to another PWD" \
                "$pipestatus"
     cd ..
-    rmdir "$WD_TEST_DIR_2"
+    command rmdir "$WD_TEST_DIR_2"
 }
 
 test_valid_identifiers()
@@ -299,7 +299,7 @@ test_clean()
     dir="$HOME/.wdunittest"
 
     # create test dir
-    mkdir "$dir"
+    command mkdir "$dir"
     cd "$dir"
 
     # add warp point
@@ -307,7 +307,7 @@ test_clean()
 
     # remove test dir
     cd ..
-    rmdir "$dir"
+    command rmdir "$dir"
 
     if [[ ! $(echo "n" | wd clean) =~ "Cleanup aborted" ]]
     then
@@ -320,7 +320,7 @@ test_clean()
     fi
 
     # recreate test dir
-    mkdir "$dir"
+    command mkdir "$dir"
     cd "$dir"
 
     # add warp point
@@ -335,7 +335,7 @@ test_clean()
 
     # remove test dir
     cd ..
-    rmdir "$dir"
+    command rmdir "$dir"
 
     if [[ ! $(wd clean -f) =~ ".*1 warp point\(s\) removed" ]]
     then
@@ -389,7 +389,7 @@ test_config()
     assertEquals 1 "$(wc -l < "$arg_config")"
     assertEquals "$wd_config_lines" "$(total_wps)"
 
-    rm "$arg_config"
+    command rm "$arg_config"
 }
 
 
