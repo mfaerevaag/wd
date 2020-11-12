@@ -163,7 +163,7 @@ wd_add()
 {
     local point=$1
     local force=$2
-    cmdnames=(add rm show list ls path clean)
+    cmdnames=(add rm show list ls path clean help)
 
     if [[ $point == "" ]]
     then
