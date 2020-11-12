@@ -163,6 +163,7 @@ wd_add()
 {
     local point=$1
     local force=$2
+    cmdnames=(add rm show list ls path clean help)
 
     if [[ $point == "" ]]
     then
@@ -178,6 +179,9 @@ wd_add()
     elif [[ $point =~ : ]] || [[ $point =~ / ]]
     then
         wd_exit_fail "Warp point contains illegal character (:/)"
+    elif (($cmdnames[(Ie)$point]))
+    then
+        wd_exit_fail "Warp point name cannot be a wd command (see wd -h for a full list)"
     elif [[ ${points[$point]} == "" ]] || [ ! -z "$force" ]
     then
         wd_remove "$point" > /dev/null
