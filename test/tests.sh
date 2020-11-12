@@ -209,6 +209,38 @@ test_valid_identifiers()
     wd -q add "/foo"
     assertFalse "should not allow slashes" \
         "$pipestatus"
+
+    wd -q add "add"
+    assertFalse "should not allow command names" \
+        "$pipestatus"
+
+    wd -q add "rm"
+    assertFalse "should not allow command names" \
+        "$pipestatus"
+
+    wd -q add "show"
+    assertFalse "should not allow command names" \
+        "$pipestatus"
+
+    wd -q add "list"
+    assertFalse "should not allow command names" \
+        "$pipestatus"
+
+    wd -q add "ls"
+    assertFalse "should not allow command names" \
+        "$pipestatus"
+
+    wd -q add "path"
+    assertFalse "should not allow command names" \
+        "$pipestatus"
+
+    wd -q add "clean"
+    assertFalse "should not allow command names" \
+        "$pipestatus"
+
+    wd -q add "help"
+    assertFalse "should not allow command names" \
+        "$pipestatus"
 }
 
 test_removal()
