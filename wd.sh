@@ -189,7 +189,7 @@ wd_add()
         if (whence sort >/dev/null); then
             local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
             # use 'cat' below to ensure we respect $WD_CONFIG as a symlink
-            command sort -o "${config_tmp}" "$WD_CONFIG" && command cat "${config_tmp}" > "$WD_CONFIG" && command rm "${config_tmp}"
+            command sort -o "${config_tmp}" "$WD_CONFIG" && command cat "${config_tmp}" >| "$WD_CONFIG" && command rm "${config_tmp}"
         fi
 
         wd_export_static_named_directories
@@ -218,7 +218,7 @@ wd_remove()
         then
             local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
             # Copy and delete in two steps in order to preserve symlinks
-            if sed -n "/^${point_name}:.*$/!p" "$WD_CONFIG" > "$config_tmp" && command cp "$config_tmp" "$WD_CONFIG" && command rm "$config_tmp"
+            if sed -n "/^${point_name}:.*$/!p" "$WD_CONFIG" >| "$config_tmp" && command cp "$config_tmp" "$WD_CONFIG" && command rm "$config_tmp"
             then
                 wd_print_msg "$WD_GREEN" "Warp point removed"
             else
