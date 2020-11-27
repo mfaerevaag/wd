@@ -1,6 +1,6 @@
 # wd
 
-[![Build Status](https://travis-ci.org/mfaerevaag/wd.png?branch=master)](https://travis-ci.org/mfaerevaag/wd)
+[![Build Status](https://travis-ci.com/mfaerevaag/wd.png?branch=master)](https://travis-ci.com/mfaerevaag/wd)
 
 `wd` (*warp directory*) lets you jump to custom directories in zsh, without using `cd`.
 Why?
