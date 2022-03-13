@@ -44,10 +44,17 @@ wd()
     "${WD_PATH}"/wd.sh -d "$@"
 }
 
+# MacOS's `wc` command adds extra padding to the front of the command.
+# This removes any excess spaces.
+wcl()
+{
+  wc -l | sed 's/^ *//'
+}
+
 total_wps()
 {
     # total wps is the number of (non-empty) lines in the config
-    echo "$(sed '/^\s*$/d' "$WD_CONFIG" | wc -l)"
+    echo "$(sed '/^\s*$/d' "$WD_CONFIG" | wcl)"
 }
 
 wp_exists()
@@ -262,12 +269,12 @@ test_list()
 
     # add one to expected number of lines, because of header msg
     assertEquals "should only be one warp point" \
-        "$(wd list | wc -l)" 2
+        "$(wd list | wcl)" 2
 
     wd -q add bar
 
     assertEquals "should be more than one warp point" \
-        "$(wd list | wc -l)" 3
+        "$(wd list | wcl)" 3
 }
 
 test_show()
@@ -418,7 +425,7 @@ test_config()
 
     wd -q --config "$arg_config" add
 
-    assertEquals 1 "$(wc -l < "$arg_config")"
+    assertEquals 1 "$(wcl < "$arg_config")"
     assertEquals "$wd_config_lines" "$(total_wps)"
 
     command rm "$arg_config"
