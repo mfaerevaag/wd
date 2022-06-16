@@ -36,6 +36,15 @@ In your `.zshrc`:
 antibody bundle mfaerevaag/wd
 ```
 
+### Fig
+
+[Fig](https://fig.io) adds apps, shortcuts, and autocomplete to your existing terminal.
+
+Install `wd` in just one click.
+
+<a href="https://fig.io/plugins/other/wd_mfaerevaag" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
+
+
 ### Arch ([AUR](https://aur.archlinux.org/packages/zsh-plugin-wd-git/))
 
 1. Install from the AUR
