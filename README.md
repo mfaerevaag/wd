@@ -36,6 +36,10 @@ In your `.zshrc`:
 antibody bundle mfaerevaag/wd
 ```
 
+### [Fig](https://fig.io)
+
+Install `wd` here: [![Fig plugin store](https://fig.io/badges/install-with-fig.svg)](https://fig.io/plugins/other/wd_mfaerevaag)
+
 ### Arch ([AUR](https://aur.archlinux.org/packages/zsh-plugin-wd-git/))
 
 1. Install from the AUR
