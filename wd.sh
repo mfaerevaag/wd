@@ -255,7 +255,7 @@ wd_list_all()
         then
             arr=(${(s,:,)line})
             key=${arr[1]}
-            val=${arr[2]}
+            val=${line#"${arr[1]}:"}
 
             if [[ -z $wd_quiet_mode ]]
             then
