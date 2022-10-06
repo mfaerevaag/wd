@@ -275,6 +275,20 @@ test_list()
 
     assertEquals "should be more than one warp point" \
         "$(wd list | wcl)" 3
+
+    mkdir test:dir
+    cd test:dir
+    wd -q add testdir
+    cd ..
+    rmdir test:dir
+
+    assertEquals "should be three warp points" \
+        "$(wd list | wcl)" 4
+
+    wd list | grep -q "test:dir"
+    assertTrue "should display the full colon-holding name" \
+        "$?"
+
 }
 
 test_show()
