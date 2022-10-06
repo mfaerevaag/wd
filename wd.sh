@@ -280,6 +280,8 @@ wd_path()
 wd_show()
 {
     local name_arg=$1
+    setopt | grep -q extendedglob
+    local extglob=$?
     # if there's an argument we look up the value
     if [[ -n $name_arg ]]
     then
@@ -290,6 +292,7 @@ wd_show()
             wd_print_msg "$WD_GREEN" "Warp point: ${WD_GREEN}$name_arg${WD_NOC} -> $points[$name_arg]"
         fi
     else
+        [[ $extglob ]] && setopt noextendedglob
         # hax to create a local empty array
         local wd_matches
         wd_matches=()
@@ -309,6 +312,7 @@ wd_show()
         else
             wd_print_msg "$WD_YELLOW" "No warp point to $(echo "$PWD" | sed "s:$HOME:~:")"
         fi
+        [[ $extglob ]] && setopt extendedglob
     fi
 }
 
