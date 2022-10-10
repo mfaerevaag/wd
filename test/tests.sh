@@ -322,6 +322,14 @@ test_show()
     then
         fail "should not show warp point 'qux'"
     fi
+
+    # test target in $HOME is listed/shown
+    cd ${HOME}
+    wd -q add home
+    if [[ ! $(wd show) =~ '1 warp point.*:.*home' ]]
+    then
+        fail "should show warp pont 'home'"
+    fi
 }
 
 test_quiet()
