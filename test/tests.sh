@@ -328,7 +328,7 @@ test_show()
     wd -q add home
     if [[ ! $(wd show) =~ '1 warp point.*:.*home' ]]
     then
-        fail "should show warp pont 'home'"
+        fail "should show warp point 'home'"
     fi
 }
 
