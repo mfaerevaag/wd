@@ -1,12 +1,12 @@
 # wd
 
-[![Build Status](https://travis-ci.com/mfaerevaag/wd.png?branch=master)](https://travis-ci.com/mfaerevaag/wd)
+[![Build Status](https://github.com/mfaerevaag/wd/actions/workflows/test.yml/badge.svg)](https://github.com/mfaerevaag/wd/actions)
 
 `wd` (*warp directory*) lets you jump to custom directories in zsh, without using `cd`.
 Why?
 Because `cd` seems inefficient when the folder is frequently visited or has a long path.
 
-![tty.gif](https://raw.githubusercontent.com/mfaerevaag/wd/master/tty.gif)
+![Demo](https://raw.githubusercontent.com/mfaerevaag/wd/master/tty.gif)
 
 ## Setup
 
