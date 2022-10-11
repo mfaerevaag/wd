@@ -1,7 +1,0 @@
-language: zsh
-
-before_script:
-  - "sudo apt-get --assume-yes install zsh"
-  - "cd test"
-
-script: zsh tests.sh
