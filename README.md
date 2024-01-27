@@ -57,6 +57,24 @@ wd() {
 }
 ```
 
+### [Home Manager](https://github.com/nix-community/home-manager)
+
+Add the following to your `home.nix` then run `home-manager switch`:
+
+```nix
+programs.zsh.plugins = [
+  {
+    name = "wd";
+    src = pkgs.fetchFromGitHub {
+      owner = "mfaerevaag";
+      repo = "wd";
+      rev = "v0.5.2";
+      sha256 = "sha256-4yJ1qhqhNULbQmt6Z9G22gURfDLe30uV1ascbzqgdhg=";
+    };
+  }
+];
+```
+
 ### [zplug](https://github.com/zplug/zplug)
 
 ```zsh
