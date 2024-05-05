@@ -240,7 +240,6 @@ wd_browse() {
     fi
 }
 
-
 wd_list_all()
 {
     wd_print_msg "$WD_BLUE" "All warp points:"
