@@ -53,7 +53,6 @@ wd_yesorno()
     return ${RETVAL}
 }
 
-
 wd_print_msg()
 {
     if [[ -z $wd_quiet_mode ]]
