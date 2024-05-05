@@ -11,11 +11,11 @@
 readonly WD_VERSION=0.5.2
 
 # colors
-readonly WD_BLUE="\033[96m"
-readonly WD_GREEN="\033[92m"
-readonly WD_YELLOW="\033[93m"
-readonly WD_RED="\033[91m"
-readonly WD_NOC="\033[m"
+WD_BLUE="\033[96m"
+WD_GREEN="\033[92m"
+WD_YELLOW="\033[93m"
+WD_RED="\033[91m"
+WD_NOC="\033[m"
 
 ## functions
 
@@ -53,21 +53,19 @@ wd_yesorno()
     return ${RETVAL}
 }
 
-wd_print_msg()
-{
-    if [[ -z $wd_quiet_mode ]]
-    then
-        local color=$1
-        local msg=$2
 
-        if [[ $color == "" || $msg == "" ]]
-        then
-            print " ${WD_RED}*${WD_NOC} Could not print message. Sorry!"
-        else
-            print " ${color}*${WD_NOC} ${msg}"
-        fi
+wd_print_msg() {
+    local color="${1:-$WD_BLUE}"  # Default to blue if no color is provided
+    local msg="$2"
+    
+    if [[ -z "$msg" ]]; then
+        print "${WD_RED}*${WD_NOC} Could not print message. Sorry!"
+    else
+        print "${color}*${WD_NOC} ${msg}"
     fi
 }
+
+
 
 wd_print_usage()
 {
@@ -239,6 +237,7 @@ wd_browse() {
         eval "wd $selected_point"
     fi
 }
+
 
 wd_list_all()
 {
