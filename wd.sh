@@ -527,7 +527,6 @@ unset args
 unset points
 unset val &> /dev/null # fixes issue #1
 
-
 if [[ -n $wd_debug_mode ]]
 then
     exit $WD_EXIT_CODE
