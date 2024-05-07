@@ -235,7 +235,7 @@ wd_browse() {
         return 1
     fi
     local entries=("${(@f)$(sed "s:${HOME}:~:g" "$WD_CONFIG" | awk -F ':' '{print $1 " -> " $2}')}")
-    local selected_entry=$(printf '%s\n' "${entries[@]}" | fzf-tmux --height 40% --reverse)
+    local selected_entry=$(printf '%s\n' "${entries[@]}" | fzf --height 40% --reverse)
     if [[ -n $selected_entry ]]; then
         local selected_point="${selected_entry%% ->*}"
         selected_point=$(echo "$selected_point" | xargs)
