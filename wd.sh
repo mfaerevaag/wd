@@ -11,11 +11,11 @@
 readonly WD_VERSION=0.5.2
 
 # colors
-WD_BLUE="\033[96m"
-WD_GREEN="\033[92m"
-WD_YELLOW="\033[93m"
-WD_RED="\033[91m"
-WD_NOC="\033[m"
+readonly WD_BLUE="\033[96m"
+readonly WD_GREEN="\033[92m"
+readonly WD_YELLOW="\033[93m"
+readonly WD_RED="\033[91m"
+readonly WD_NOC="\033[m"
 
 ## functions
 
@@ -56,14 +56,15 @@ wd_yesorno()
 wd_print_msg()
 {
     if [[ -z $wd_quiet_mode ]]
+    then
+        local color=$1
+        local msg=$2
+
+        if [[ $color == "" || $msg == "" ]]
         then
-        local color="${1:-$WD_BLUE}"  # Default to blue if no color is provided
-        local msg="$2"
-        
-        if [[ -z "$msg" ]]; then
-            print "${WD_RED}*${WD_NOC} Could not print message. Sorry!"
+            print " ${WD_RED}*${WD_NOC} Could not print message. Sorry!"
         else
-            print "${color}*${WD_NOC} ${msg}"
+            print " ${color}*${WD_NOC} ${msg}"
         fi
     fi
 }
@@ -230,6 +231,10 @@ wd_remove()
 }
 
 wd_browse() {
+    if ! command -v fzf >/dev/null; then
+        echo "This functionality requires fzf. Please install fzf first."
+        return 1
+    fi
     local entries=("${(@f)$(sed "s:${HOME}:~:g" "$WD_CONFIG" | awk -F ':' '{print $1 " -> " $2}')}")
     local selected_entry=$(printf '%s\n' "${entries[@]}" | fzf-tmux --height 40% --reverse)
     if [[ -n $selected_entry ]]; then
@@ -367,8 +372,6 @@ wd_export_static_named_directories() {
   fi
 }
 
-# Main wd function to handle different commands
-wd() {
 local WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
 local WD_QUIET=0
 local WD_EXIT_CODE=0
@@ -495,11 +498,15 @@ else
     done
 fi
 
+
 ## garbage collection
 # if not, next time warp will pick up variables from this run
 # remember, there's no sub shell
 
-(( ! $wd_extglob_is_set )) && setopt extendedglob
+wd_extglob_is_set=0
+setopt | grep -q extendedglob && wd_extglob_is_set=1
+# Use a default value in your condition to ensure it doesn't fail
+(( ! ${wd_extglob_is_set:-0} )) && setopt extendedglob
 
 unset wd_extglob_is_set
 unset wd_warp
@@ -520,10 +527,10 @@ unset args
 unset points
 unset val &> /dev/null # fixes issue #1
 
+
 if [[ -n $wd_debug_mode ]]
 then
     exit $WD_EXIT_CODE
 else
     unset wd_debug_mode
 fi
-}
