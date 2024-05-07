@@ -57,14 +57,13 @@ wd_print_msg()
 {
     if [[ -z $wd_quiet_mode ]]
     then
-        local color=$1
-        local msg=$2
-
-        if [[ $color == "" || $msg == "" ]]
-        then
-            print " ${WD_RED}*${WD_NOC} Could not print message. Sorry!"
+        local color="${1:-$WD_BLUE}"  # Default to blue if no color is provided
+        local msg="$2"
+        
+        if [[ -z "$msg" ]]; then
+            print "${WD_RED}*${WD_NOC} Could not print message. Sorry!"
         else
-            print " ${color}*${WD_NOC} ${msg}"
+            print "${color}*${WD_NOC} ${msg}"
         fi
     fi
 }
