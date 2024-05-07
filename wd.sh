@@ -68,7 +68,6 @@ wd_print_msg()
     fi
 }
 
-
 wd_print_usage()
 {
     command cat <<- EOF
