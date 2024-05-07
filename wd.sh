@@ -498,7 +498,6 @@ else
     done
 fi
 
-
 ## garbage collection
 # if not, next time warp will pick up variables from this run
 # remember, there's no sub shell
