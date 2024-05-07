@@ -63,7 +63,7 @@ wd_print_msg()
         if [[ -z "$msg" ]]; then
             print "${WD_RED}*${WD_NOC} Could not print message. Sorry!"
         else
-            print "${color}*${WD_NOC} ${msg}"
+            print " ${color}*${WD_NOC} ${msg}"
         fi
     fi
 }
@@ -409,7 +409,9 @@ fi
 # disable extendedglob for the complete wd execution time
 setopt | grep -q extendedglob
 wd_extglob_is_set=$?
-(( ! $wd_extglob_is_set )) && setopt noextendedglob
+if (( wd_extglob_is_set == 0 )); then
+    setopt noextendedglob
+fi
 
 # load warp points
 typeset -A points
@@ -501,10 +503,9 @@ fi
 # if not, next time warp will pick up variables from this run
 # remember, there's no sub shell
 
-wd_extglob_is_set=0
-setopt | grep -q extendedglob && wd_extglob_is_set=1
-# Use a default value in your condition to ensure it doesn't fail
-(( ! ${wd_extglob_is_set:-0} )) && setopt extendedglob
+if (( wd_extglob_is_set == 0 )); then
+    setopt extendedglob
+fi
 
 unset wd_extglob_is_set
 unset wd_warp
