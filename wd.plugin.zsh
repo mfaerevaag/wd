@@ -7,8 +7,8 @@
 #
 # @github.com/mfaerevaag/wd
 
-source ${0:A:h}/wd.sh
-
+eval "wd() { source '${0:A:h}/wd.sh' }"
+wd > /dev/null
 # Register the function as a Zsh widget
 zle -N wd_browse
 # Bind the widget to a key combination
