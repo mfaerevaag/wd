@@ -68,6 +68,7 @@ wd_print_msg()
     fi
 }
 
+
 wd_print_usage()
 {
     command cat <<- EOF
@@ -239,7 +240,7 @@ wd_browse() {
     if [[ -n $selected_entry ]]; then
         local selected_point="${selected_entry%% ->*}"
         selected_point=$(echo "$selected_point" | xargs)
-        eval "wd $selected_point"
+        wd_warp $selected_point
     fi
 }
 
