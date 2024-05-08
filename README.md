@@ -137,6 +137,14 @@ Also, you may have to force a rebuild of `zcompdump` by running:
 rm -f ~/.zcompdump; compinit
 ```
 
+## Browse
+
+If you want to make use of the `fzf`-powered browse feature to fuzzy search through all your warp points, set up a keybind in your `.zshrc`:
+
+```zsh
+bindkey '^G' wd_browse
+```
+
 ## Usage
 
 * Add warp point to current working directory:
