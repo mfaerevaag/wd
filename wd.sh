@@ -205,66 +205,34 @@ wd_add()
     fi
 }
 
-wd_addcd()
-{
+wd_addcd() {
     local folder=$1
     local point=$2
     local force=$3
-    cmdnames=(add rm show list ls path clean help)
+    local currentdir=$PWD
 
-    # Check if the path is actually provided, if not, exit with an error
-    if [[ -z "$folder" ]]
-    then
+    if [[ "$2" == "-f" ]] || [[ "$2" == "--force" ]]; then
+        point=""
+        force="$2"
+    elif [[ "$3" == "-f" ]] || [[ "$3" == "--force" ]]; then
+        point="$2"
+        force="$3"
+    fi
+
+    if [[ -z "$folder" ]]; then
         wd_exit_fail "You must specify a path"
         return
     fi
 
-    # Check if the directory exists
-    if [[ ! -d "$folder" ]]
-    then
+    if [[ ! -d "$folder" ]]; then
         wd_exit_fail "The directory does not exist"
         return
     fi
-    
-    if [[ $point == "" ]]
-    then
-        point=$(basename $folder)
-    fi
 
-    if [[ $point =~ "^[\.]+$" ]]
-    then
-        wd_exit_fail "Warp point cannot be just dots"
-    elif [[ $point =~ "[[:space:]]+" ]]
-    then
-        wd_exit_fail "Warp point should not contain whitespace"
-    elif [[ $point =~ : ]] || [[ $point =~ / ]]
-    then
-        wd_exit_fail "Warp point contains illegal character (:/)"
-    elif (($cmdnames[(Ie)$point]))
-    then
-        wd_exit_fail "Warp point name cannot be a wd command (see wd -h for a full list)"
-    elif [[ ${points[$point]} == "" ]] || [ ! -z "$force" ]
-    then
-        wd_remove "$point" > /dev/null
-        printf "%q:%s\n" "${point}" "${folder/#$HOME/~}" >> "$WD_CONFIG"
-        if (whence sort >/dev/null); then
-            local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
-            # use 'cat' below to ensure we respect $WD_CONFIG as a symlink
-            command sort -o "${config_tmp}" "$WD_CONFIG" && command cat "${config_tmp}" >| "$WD_CONFIG" && command rm "${config_tmp}"
-        fi
-
-        wd_export_static_named_directories
-
-        wd_print_msg "$WD_GREEN" "Warp point '$point' added for path '$folder'"
-
-        # override exit code in case wd_remove did not remove any points
-        # TODO: we should handle this kind of logic better
-        WD_EXIT_CODE=0
-    else
-        wd_exit_warn "Warp point '${point}' already exists. Use 'add --force' to overwrite."
-    fi
+    cd "$folder" || return
+    wd_add "$point" "$force"
+    cd "$currentdir" || return
 }
-
 
 wd_remove()
 {
