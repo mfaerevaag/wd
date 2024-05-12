@@ -243,6 +243,23 @@ wd_browse() {
     fi
 }
 
+wd_browse_widget() {
+  if [[ -e $WD_CONFIG ]]; then
+    wd_browse
+    saved_buffer=$BUFFER
+    saved_cursor=$CURSOR
+    BUFFER=
+    zle redisplay
+    zle accept-line
+  fi
+}
+
+wd_restore_buffer() {
+  BUFFER=$saved_buffer
+  CURSOR=$saved_cursor
+  saved_buffer=
+  saved_cursor=1
+}
 wd_list_all()
 {
     wd_print_msg "$WD_BLUE" "All warp points:"
