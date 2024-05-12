@@ -250,6 +250,44 @@ test_valid_identifiers()
         "$pipestatus"
 }
 
+test_wd_addcd_path_only()
+{
+    create_test_wp
+    wd -q addcd "$WD_TEST_DIR"
+    assertTrue "should successfully add default wp for directory" \
+        "$(wp_exists "$(basename "$WD_TEST_DIR")")"
+    destroy_test_wp
+}
+
+test_wd_addcd_path_and_point()
+{
+    create_test_wp
+    wd -q addcd "$WD_TEST_DIR" "$WD_TEST_WP_2"
+    assertTrue "should successfully add specified wp for directory" \
+        "$(wp_exists "$WD_TEST_WP_2")"
+    destroy_test_wp
+}
+
+test_wd_addcd_path_forced()
+{
+    create_test_wp
+    wd -q addcd "$WD_TEST_DIR"
+    wd -q addcd "$WD_TEST_DIR" -f
+    assertTrue "should successfully force-add wp for directory" \
+        "$(wp_exists "$(basename "$WD_TEST_DIR")")"
+    destroy_test_wp
+}
+
+test_wd_addcd_path_and_point_forced()
+{
+    create_test_wp
+    wd -q addcd "$WD_TEST_DIR" "$WD_TEST_WP_2"
+    wd -q addcd "$WD_TEST_DIR" "$WD_TEST_WP_2" -f
+    assertTrue "should successfully force-add specified wp for directory" \
+        "$(wp_exists "$WD_TEST_WP_2")"
+    destroy_test_wp
+}
+
 test_removal()
 {
     wd -q add foo
