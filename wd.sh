@@ -74,18 +74,20 @@ wd_print_usage()
 Usage: wd [command] [point]
 
 Commands:
-    <point>         Warps to the directory specified by the warp point
-    <point> <path>  Warps to the directory specified by the warp point with path appended
-    add <point>     Adds the current working directory to your warp points
-    add             Adds the current working directory to your warp points with current directory's name
-    rm <point>      Removes the given warp point
-    rm              Removes the given warp point with current directory's name
-    show <point>    Print path to given warp point
-    show            Print warp points to current directory
-    list            Print all stored warp points
-    ls  <point>     Show files from given warp point (ls)
-    path <point>    Show the path to given warp point (pwd)
-    clean           Remove points warping to nonexistent directories (will prompt unless --force is used)
+    <point>              Warps to the directory specified by the warp point
+    <point> <path>       Warps to the directory specified by the warp point with path appended
+    add <point>          Adds the current working directory to your warp points
+    add                  Adds the current working directory to your warp points with current directory's name
+    addcd <path>         Adds a path to your warp points with the directory's name
+    addcd <path> <point> Adds a path to your warp points with a custom name
+    rm <point>           Removes the given warp point
+    rm                   Removes the given warp point with current directory's name
+    show <point>         Print path to given warp point
+    show                 Print warp points to current directory
+    list                 Print all stored warp points
+    ls  <point>          Show files from given warp point (ls)
+    path <point>         Show the path to given warp point (pwd)
+    clean                Remove points warping to nonexistent directories (will prompt unless --force is used)
 
     -v | --version  Print version
     -d | --debug    Exit after execution with exit codes (for testing)
@@ -203,6 +205,67 @@ wd_add()
     fi
 }
 
+wd_addcd()
+{
+    local folder=$1
+    local point=$2
+    local force=$3
+    cmdnames=(add rm show list ls path clean help)
+
+    # Check if the path is actually provided, if not, exit with an error
+    if [[ -z "$folder" ]]
+    then
+        wd_exit_fail "You must specify a path"
+        return
+    fi
+
+    # Check if the directory exists
+    if [[ ! -d "$folder" ]]
+    then
+        wd_exit_fail "The directory does not exist"
+        return
+    fi
+    
+    if [[ $point == "" ]]
+    then
+        point=$(basename $folder)
+    fi
+
+    if [[ $point =~ "^[\.]+$" ]]
+    then
+        wd_exit_fail "Warp point cannot be just dots"
+    elif [[ $point =~ "[[:space:]]+" ]]
+    then
+        wd_exit_fail "Warp point should not contain whitespace"
+    elif [[ $point =~ : ]] || [[ $point =~ / ]]
+    then
+        wd_exit_fail "Warp point contains illegal character (:/)"
+    elif (($cmdnames[(Ie)$point]))
+    then
+        wd_exit_fail "Warp point name cannot be a wd command (see wd -h for a full list)"
+    elif [[ ${points[$point]} == "" ]] || [ ! -z "$force" ]
+    then
+        wd_remove "$point" > /dev/null
+        printf "%q:%s\n" "${point}" "${folder/#$HOME/~}" >> "$WD_CONFIG"
+        if (whence sort >/dev/null); then
+            local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
+            # use 'cat' below to ensure we respect $WD_CONFIG as a symlink
+            command sort -o "${config_tmp}" "$WD_CONFIG" && command cat "${config_tmp}" >| "$WD_CONFIG" && command rm "${config_tmp}"
+        fi
+
+        wd_export_static_named_directories
+
+        wd_print_msg "$WD_GREEN" "Warp point '$point' added for path '$folder'"
+
+        # override exit code in case wd_remove did not remove any points
+        # TODO: we should handle this kind of logic better
+        WD_EXIT_CODE=0
+    else
+        wd_exit_warn "Warp point '${point}' already exists. Use 'add --force' to overwrite."
+    fi
+}
+
+
 wd_remove()
 {
     local point_list=$1
@@ -241,6 +304,24 @@ wd_browse() {
         selected_point=$(echo "$selected_point" | xargs)
         wd $selected_point
     fi
+}
+
+wd_browse_widget() {
+  if [[ -e $WD_CONFIG ]]; then
+    wd_browse
+    saved_buffer=$BUFFER
+    saved_cursor=$CURSOR
+    BUFFER=
+    zle redisplay
+    zle accept-line
+  fi
+}
+
+wd_restore_buffer() {
+  BUFFER=$saved_buffer
+  CURSOR=$saved_cursor
+  saved_buffer=
+  saved_cursor=1
 }
 
 wd_list_all()
@@ -371,7 +452,7 @@ wd_export_static_named_directories() {
   fi
 }
 
-local WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
+WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
 local WD_QUIET=0
 local WD_EXIT_CODE=0
 local WD_DEBUG=0
@@ -455,6 +536,10 @@ else
                 wd_browse
                 break
                 ;;
+            "-c"|"--addcd"|"addcd")
+                wd_addcd "$2" "$3" "$wd_force_mode"
+                break
+                ;;
             "-e"|"export")
                 wd_export_static_named_directories
                 break
@@ -510,6 +595,7 @@ fi
 unset wd_extglob_is_set
 unset wd_warp
 unset wd_add
+unset wd_addcd
 unset wd_remove
 unset wd_show
 unset wd_list_all
