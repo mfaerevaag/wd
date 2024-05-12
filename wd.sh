@@ -184,22 +184,25 @@ wd_add()
     then
         wd_exit_fail "Warp point name cannot be a wd command (see wd -h for a full list)"
     elif [[ ${points[$point]} == "" ]] || [ ! -z "$force" ]
-     then
-         wd_remove "$point" > /dev/null
-         printf "%q:%s\n" "${point}" "${PWD/#$HOME/~}" >> "$WD_CONFIG"
-         if (whence sort >/dev/null); then
-             local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
-             # use 'cat' below to ensure we respect $WD_CONFIG as a symlink
-             command sort -o "${config_tmp}" "$WD_CONFIG" && command cat "${config_tmp}" >| "$WD_CONFIG" && command rm "${config_tmp}"
-         fi
-         wd_export_static_named_directories
-         wd_print_msg "$WD_GREEN" "Warp point added"
-         # override exit code in case wd_remove did not remove any points
-         # TODO: we should handle this kind of logic better
-         WD_EXIT_CODE=0
-     else
-         wd_exit_warn "Warp point '${point}' already exists. Use 'add --force' to overwrite."
-     fi
+    then
+        wd_remove "$point" > /dev/null
+        printf "%q:%s\n" "${point}" "${PWD/#$HOME/~}" >> "$WD_CONFIG"
+        if (whence sort >/dev/null); then
+            local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
+            # use 'cat' below to ensure we respect $WD_CONFIG as a symlink
+            command sort -o "${config_tmp}" "$WD_CONFIG" && command cat "${config_tmp}" >| "$WD_CONFIG" && command rm "${config_tmp}"
+        fi
+
+        wd_export_static_named_directories
+
+        wd_print_msg "$WD_GREEN" "Warp point added"
+
+        # override exit code in case wd_remove did not remove any points
+        # TODO: we should handle this kind of logic better
+        WD_EXIT_CODE=0
+    else
+        wd_exit_warn "Warp point '${point}' already exists. Use 'add --force' to overwrite."
+    fi
 }
 
 wd_addcd() {
