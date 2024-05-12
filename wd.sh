@@ -388,7 +388,7 @@ wd_export_static_named_directories() {
   fi
 }
 
-local WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
+WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
 local WD_QUIET=0
 local WD_EXIT_CODE=0
 local WD_DEBUG=0
