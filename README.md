@@ -139,7 +139,7 @@ rm -f ~/.zcompdump; compinit
 
 ## Browse
 
-If you want to make use of the `fzf`-powered browse feature to fuzzy search through all your warp points, use the provided keybind, or change it:
+If you want to make use of the `fzf`-powered browse feature to fuzzy search through all your warp points, set up a keybind in your `.zshrc`:
 
 ```zsh
 bindkey ${FZF_WD_BINDKEY:-'^B'} fuzzy_wd_widget
