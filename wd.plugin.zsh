@@ -9,7 +9,8 @@
 
 eval "wd() { source '${0:A:h}/wd.sh' }"
 wd > /dev/null
-# Register the function as a Zsh widget
-zle -N wd_browse
-# Bind the widget to a key combination
-bindkey '^G' wd_browse
+zle -N wd_browse_widget
+zle -N wd_restore_buffer
+autoload -Uz add-zle-hook-widget
+add-zle-hook-widget line-init wd_restore_buffer
+bindkey ${FZF_WD_BINDKEY:-'^B'} fuzzy_wd_widget
