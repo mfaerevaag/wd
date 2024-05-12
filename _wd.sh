@@ -64,7 +64,7 @@ function _wd() {
         add)
           _message 'Write the name of your warp point' && ret=0
           ;;
-	add)
+	addcd)
           _message 'Write the name of your path' && ret=0
           ;;
         show)
