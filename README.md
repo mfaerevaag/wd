@@ -158,6 +158,19 @@ If a warp point with the same name exists, use `wd add foo --force` to overwrite
 **Note:** a warp point cannot contain colons, or consist of only spaces and dots.
 The first will conflict in how `wd` stores the warp points, and the second will conflict with other features, as below.
 
+* Add warp point to any directory with default name:
+
+```zsh
+wd addcd /foo/ bar
+```
+
+* Add warp point to any directory with a custom name:
+
+```zsh
+wd addcd /foo/
+```
+
+
 You can omit point name to automatically use the current directory's name instead.
 
 * From any directory, warp to `foo` with:

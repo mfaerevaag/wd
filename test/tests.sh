@@ -250,6 +250,57 @@ test_valid_identifiers()
         "$pipestatus"
 }
 
+test_wd_addcd()
+{
+    # Create a base directory for testing
+    create_test_wp
+
+    # Test with basic directory
+    wd -q addcd "$WD_TEST_DIR"
+    assertTrue "should successfully add default wp for directory" \
+        "$(wp_exists "$(basename "$WD_TEST_DIR")")"
+
+    # Test with a specific warp point name
+    wd -q addcd "$WD_TEST_DIR" "$WD_TEST_WP_2"
+    assertTrue "should successfully add specified wp for directory" \
+        "$(wp_exists "$WD_TEST_WP_2")"
+
+    # Test with force option
+    wd -q addcd "$WD_TEST_DIR" -f
+    assertTrue "should successfully force-add wp for directory" \
+        "$(wp_exists "$(basename "$WD_TEST_DIR")")"
+
+    # Test with a specific warp point name and force option
+    wd -q addcd "$WD_TEST_DIR" "$WD_TEST_WP_2" -f
+    assertTrue "should successfully force-add specified wp for directory" \
+        "$(wp_exists "$WD_TEST_WP_2")"
+
+    # Test with absolute path
+    local abs_path="$PWD/$WD_TEST_DIR"
+    wd -q addcd "$abs_path"
+    assertTrue "should successfully add default wp for absolute directory path" \
+        "$(wp_exists "$(basename "$abs_path")")"
+
+    # Test with relative path including navigation
+    mkdir -p "$WD_TEST_DIR/nested/extra"
+    local rel_path="../$(basename "$PWD")/$WD_TEST_DIR"
+    cd "$WD_TEST_DIR/nested/extra"
+    wd -q addcd "$rel_path"
+    assertTrue "should successfully add wp for relative path with navigation" \
+        "$(wp_exists "$(basename "$rel_path")")"
+    cd - > /dev/null
+
+    # Test with nested directory paths
+    local nested_path="$WD_TEST_DIR/nested/extra"
+    wd -q addcd "$nested_path"
+    assertTrue "should successfully add wp for nested directory path" \
+        "$(wp_exists "$(basename "$nested_path")")"
+
+    # Cleanup
+    destroy_test_wp
+}
+
+
 test_removal()
 {
     wd -q add foo

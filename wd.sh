@@ -8,7 +8,7 @@
 # @github.com/mfaerevaag/wd
 
 # version
-readonly WD_VERSION=0.6.1
+readonly WD_VERSION=0.5.2
 
 # colors
 readonly WD_BLUE="\033[96m"
@@ -59,7 +59,7 @@ wd_print_msg()
     then
         local color="${1:-$WD_BLUE}"  # Default to blue if no color is provided
         local msg="$2"
-
+        
         if [[ -z "$msg" ]]; then
             print "${WD_RED}*${WD_NOC} Could not print message. Sorry!"
         else
@@ -74,18 +74,20 @@ wd_print_usage()
 Usage: wd [command] [point]
 
 Commands:
-    <point>         Warps to the directory specified by the warp point
-    <point> <path>  Warps to the directory specified by the warp point with path appended
-    add <point>     Adds the current working directory to your warp points
-    add             Adds the current working directory to your warp points with current directory's name
-    rm <point>      Removes the given warp point
-    rm              Removes the given warp point with current directory's name
-    show <point>    Print path to given warp point
-    show            Print warp points to current directory
-    list            Print all stored warp points
-    ls  <point>     Show files from given warp point (ls)
-    path <point>    Show the path to given warp point (pwd)
-    clean           Remove points warping to nonexistent directories (will prompt unless --force is used)
+    <point>              Warps to the directory specified by the warp point
+    <point> <path>       Warps to the directory specified by the warp point with path appended
+    add <point>          Adds the current working directory to your warp points
+    add                  Adds the current working directory to your warp points with current directory's name
+    addcd <path>         Adds a path to your warp points with the directory's name
+    addcd <path> <point> Adds a path to your warp points with a custom name
+    rm <point>           Removes the given warp point
+    rm                   Removes the given warp point with current directory's name
+    show <point>         Print path to given warp point
+    show                 Print warp points to current directory
+    list                 Print all stored warp points
+    ls  <point>          Show files from given warp point (ls)
+    path <point>         Show the path to given warp point (pwd)
+    clean                Remove points warping to nonexistent directories (will prompt unless --force is used)
 
     -v | --version  Print version
     -d | --debug    Exit after execution with exit codes (for testing)
@@ -203,6 +205,28 @@ wd_add()
     fi
 }
 
+wd_addcd() {
+    local folder=$1
+    local point=$2
+    local force=$3
+    local currentdir=$PWD
+
+    if [[ -z "$folder" ]]; then
+        wd_exit_fail "You must specify a path"
+        return
+    fi
+
+    if [[ ! -d "$folder" ]]; then
+        wd_exit_fail "The directory does not exist"
+        return
+    fi
+
+    cd "$folder" || return
+    wd_add "$point" "$force"
+    cd "$currentdir" || return
+}
+
+
 wd_remove()
 {
     local point_list=$1
@@ -260,6 +284,7 @@ wd_restore_buffer() {
   saved_buffer=
   saved_cursor=1
 }
+
 wd_list_all()
 {
     wd_print_msg "$WD_BLUE" "All warp points:"
@@ -472,6 +497,10 @@ else
                 wd_browse
                 break
                 ;;
+            "-c"|"--addcd"|"addcd")
+                wd_addcd "$2" "$3" "$wd_force_mode"
+                break
+                ;;
             "-e"|"export")
                 wd_export_static_named_directories
                 break
@@ -527,6 +556,7 @@ fi
 unset wd_extglob_is_set
 unset wd_warp
 unset wd_add
+unset wd_addcd
 unset wd_remove
 unset wd_show
 unset wd_list_all
