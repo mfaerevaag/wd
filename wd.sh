@@ -260,13 +260,12 @@ wd_browse() {
     fi
     local entries=("${(@f)$(sed "s:${HOME}:~:g" "$WD_CONFIG" | awk -F ':' '{print $1 " -> " $2}')}")
     local script_path="${${(%):-%x}:h}"
-    if [[ -e /tmp/wd_remove_output ]]; then
-        rm -rf /tmp/wd_remove_output > /dev/null
-    fi
-    local fzf_bind="delete:execute(echo {} | awk -F ' -> ' '{print \$1}' | xargs -I {} $script_path/wd.sh rm {} > /tmp/wd_remove_output)+abort"
+    local wd_remove_output=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
+
+    local fzf_bind="delete:execute(echo {} | awk -F ' -> ' '{print \$1}' | xargs -I {} $script_path/wd.sh rm {} > $wd_remove_output)+abort"
     local fzf_command=$(printf '%s\n' "${entries[@]}" |  fzf --height 40% --reverse --header='All warp points:' --bind="$fzf_bind")   
-    if [[ -e /tmp/wd_remove_output ]]; then
-        cat /tmp/wd_remove_output
+    if [[ -e $wd_remove_output ]]; then
+        cat $wd_remove_output
     fi
     if [[ -n $selected_entry ]]; then
         local selected_point="${selected_entry%% ->*}"
