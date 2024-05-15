@@ -266,6 +266,7 @@ wd_browse() {
     local fzf_command=$(printf '%s\n' "${entries[@]}" |  fzf --height 40% --reverse --header='All warp points:' --bind="$fzf_bind")   
     if [[ -e $wd_remove_output ]]; then
         cat $wd_remove_output
+        rm $wd_remove_output
     fi
     if [[ -n $selected_entry ]]; then
         local selected_point="${selected_entry%% ->*}"
