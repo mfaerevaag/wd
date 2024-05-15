@@ -8,14 +8,15 @@
 # @github.com/mfaerevaag/wd
 
 # version
+readonly WD_VERSION=0.5.2
 WD_VERSION=0.5.2
 
 # colors
-WD_BLUE="\033[96m"
-WD_GREEN="\033[92m"
-WD_YELLOW="\033[93m"
-WD_RED="\033[91m"
-WD_NOC="\033[m"
+readonly WD_BLUE="\033[96m"
+readonly WD_GREEN="\033[92m"
+readonly WD_YELLOW="\033[93m"
+readonly WD_RED="\033[91m"
+readonly WD_NOC="\033[m"
 
 ## functions
 
@@ -253,7 +254,6 @@ wd_remove()
     done
 }
 
-
 wd_browse() {
     if ! command -v fzf >/dev/null; then
         echo "This functionality requires fzf. Please install fzf first."
@@ -271,8 +271,6 @@ wd_browse() {
         wd $selected_point
     fi
 }
-
-
 
 wd_browse_widget() {
   if [[ -e $WD_CONFIG ]]; then
