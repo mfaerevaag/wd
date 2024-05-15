@@ -8,8 +8,7 @@
 # @github.com/mfaerevaag/wd
 
 # version
-readonly WD_VERSION=0.5.2
-WD_VERSION=0.5.2
+readonly WD_VERSION=0.7.0
 
 # colors
 readonly WD_BLUE="\033[96m"
@@ -255,15 +254,20 @@ wd_remove()
 }
 
 wd_browse() {
-    if ! command -v fzf >/dev/null; then
+if ! command -v fzf >/dev/null; then
         echo "This functionality requires fzf. Please install fzf first."
         return 1
     fi
     local entries=("${(@f)$(sed "s:${HOME}:~:g" "$WD_CONFIG" | awk -F ':' '{print $1 " -> " $2}')}")
     local script_path="${${(%):-%x}:h}"
+    if [[ -e /tmp/wd_remove_output ]]; then
+        rm -rf /tmp/wd_remove_output > /dev/null
+    fi
     local fzf_bind="delete:execute(echo {} | awk -F ' -> ' '{print \$1}' | xargs -I {} $script_path/wd.sh rm {} > /tmp/wd_remove_output)+abort"
     local fzf_command=$(printf '%s\n' "${entries[@]}" |  fzf --height 40% --reverse --header='All warp points:' --bind="$fzf_bind")   
-    cat /tmp/wd_remove_output
+    if [[ -e /tmp/wd_remove_output ]]; then
+        cat /tmp/wd_remove_output
+    fi
     local selected_point=""
     if [[ -n $selected_entry ]]; then
         selected_point="${selected_entry%% ->*}"
