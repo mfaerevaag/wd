@@ -254,7 +254,7 @@ wd_remove()
 }
 
 wd_browse() {
-if ! command -v fzf >/dev/null; then
+    if ! command -v fzf >/dev/null; then
         echo "This functionality requires fzf. Please install fzf first."
         return 1
     fi
@@ -268,9 +268,8 @@ if ! command -v fzf >/dev/null; then
     if [[ -e /tmp/wd_remove_output ]]; then
         cat /tmp/wd_remove_output
     fi
-    local selected_point=""
     if [[ -n $selected_entry ]]; then
-        selected_point="${selected_entry%% ->*}"
+        local selected_point="${selected_entry%% ->*}"
         selected_point=$(echo "$selected_point" | xargs)
         wd $selected_point
     fi
