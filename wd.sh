@@ -287,8 +287,10 @@ wd_browse_widget() {
 }
 
 wd_restore_buffer() {
-  BUFFER=$saved_buffer
-  CURSOR=$saved_cursor
+  if [[ -n $saved_buffer ]]; then
+    BUFFER=$saved_buffer
+    CURSOR=$saved_cursor
+  fi
   saved_buffer=
   saved_cursor=1
 }
