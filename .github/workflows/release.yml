@@ -11,8 +11,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ inputs.version }}
     steps:
       - name: checkout code
         uses: actions/checkout@v4
@@ -22,6 +20,11 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: parse input
+        run: |
+          VERSION=$(echo "${{ inputs.version }}" | sed -E "s/^v//g")
+          echo $VERSION
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: bump versions
         run: |
           DATE=$(date +"%B %d %Y")
