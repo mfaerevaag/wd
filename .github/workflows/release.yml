@@ -14,8 +14,6 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: configure git
         run: |
           git config --global user.name 'github-actions[bot]'
