@@ -20,10 +20,9 @@ jobs:
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
       - name: parse input
         run: |
-          VERSION=$(echo "${{ inputs.version }}" | sed -E "s/^v//g")
-          echo $VERSION
+          VERSION=$(echo "${{ inputs.version }}" | sed -E "s/^v//g") # Ex: 1.2.3
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          DATE=$(date +"%Y-%m-%d")
+          DATE=$(date +"%Y-%m-%d") # Ex: 2022-02-22
           echo "DATE=$DATE" >> $GITHUB_ENV
       - name: bump versions
         run: |
