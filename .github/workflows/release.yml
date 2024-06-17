@@ -1,0 +1,42 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version of the release"
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+      - name: configure git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: parse input
+        run: |
+          VERSION=$(echo "${{ inputs.version }}" | sed -E "s/^v//g") # Ex: 1.2.3
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          DATE=$(date +"%Y-%m-%d") # Ex: 2022-02-22
+          echo "DATE=$DATE" >> $GITHUB_ENV
+      - name: bump versions
+        run: |
+          MANPAGE=".TH wd \"1\" \"$DATE\" \"wd $VERSION\" \"wd Manual\""
+          sed -i -E "1 s/.*/$MANPAGE/" wd.1
+          sed -i -E "s/WD_VERSION=.*/WD_VERSION=$VERSION/" wd.sh
+      - name: commit changes
+        run: |
+          git add wd.1 wd.sh
+          git commit -m "chore(update): bump current version to v$VERSION"
+          git tag "v$VERSION"
+          git push -u origin master --tags
+      - name: release latest
+        run: |
+          gh release create "v$VERSION" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
