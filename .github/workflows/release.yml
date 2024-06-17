@@ -23,9 +23,10 @@ jobs:
           VERSION=$(echo "${{ inputs.version }}" | sed -E "s/^v//g")
           echo $VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          DATE=$(date +"%Y-%m-%d")
+          echo "DATE=$DATE" >> $GITHUB_ENV
       - name: bump versions
         run: |
-          DATE=$(date +"%B %d %Y")
           MANPAGE=".TH wd \"1\" \"$DATE\" \"wd $VERSION\" \"wd Manual\""
           sed -i -E "1 s/.*/$MANPAGE/" wd.1
           sed -i -E "s/WD_VERSION=.*/WD_VERSION=$VERSION/" wd.sh
