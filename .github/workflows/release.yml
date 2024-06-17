@@ -33,10 +33,10 @@ jobs:
         run: |
           git add wd.1 wd.sh
           git commit -m "chore(update): bump current version to v$VERSION"
-          git tag v$VERSION
+          git tag "v$VERSION"
           git push -u origin master --tags
       - name: release latest
         run: |
-          gh release create v$VERSION --generate-notes
+          gh release create "v$VERSION" --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
