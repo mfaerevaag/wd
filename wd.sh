@@ -255,7 +255,10 @@ wd_remove()
 
 wd_browse() {
     if ! command -v fzf >/dev/null; then
-        echo "This functionality requires fzf. Please install fzf first."
+        echo "This functionality of wd requires fzf. Please install fzf" \
+             "first or disable the use of fzf setting" \
+             "`bindkey ${FZF_WD_BINDKEY:-'^B'} backward-char` in your" \
+             ".zshrc after the wd plugin is loaded."
         return 1
     fi
     local entries=("${(@f)$(sed "s:${HOME}:~:g" "$WD_CONFIG" | awk -F ':' '{print $1 " -> " $2}')}")
