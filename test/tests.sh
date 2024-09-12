@@ -1,4 +1,4 @@
-#! /bin/zsh
+#!/usr/bin/env zsh
 
 # The tests avoid using wd's internal functions to check the state of
 # warp points. We use `--quiet` to prevent the test output being
