@@ -40,8 +40,7 @@ WD_PATH=${PWD}/..
 
 wd()
 {
-    # run the local wd in debug mode
-    "${WD_PATH}"/wd.sh -d "$@"
+    "${WD_PATH}"/wd.sh "$@"
 }
 
 # MacOS's `wc` command adds extra padding to the front of the command.

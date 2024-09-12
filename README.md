@@ -256,12 +256,6 @@ wd --version
 wd --config ./file <command>
 ```
 
-* Force `exit` with return code after running. This is not default, as it will *exit your terminal*, though required for testing/debugging.
-
-```zsh
-wd --debug <command>
-```
-
 * Silence all output:
 
 ```zsh
