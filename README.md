@@ -115,9 +115,11 @@ wd() {
 
 3. Install manpage (optional):
 
+Move manpage into an appropriate directory, then trigger `mandb` to discover it
+
 ```zsh
-sudo cp ~/.local/wd/wd.1 /usr/share/man/man1/wd.1
-sudo chmod 644 /usr/share/man/man1/wd.1
+sudo install -m 644 ~/.local/wd/wd.1 /usr/share/man/man1/wd.1
+sudo mandb /usr/share/man/man1
 ```
 
 **Note:** when pulling and updating `wd`, you'll need to repeat step 3 should the manpage change
