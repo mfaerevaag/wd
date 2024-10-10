@@ -344,7 +344,7 @@ wd_path()
 wd_show()
 {
     local name_arg=$1
-    local SHOW_PWD
+    local show_pwd
     # if there's an argument we look up the value
     if [[ -n $name_arg ]]
     then
@@ -359,12 +359,12 @@ wd_show()
         local wd_matches
         wd_matches=()
         # do a reverse lookup to check whether PWD is in $points
-        SHOW_PWD="${PWD/$HOME/~}"
-        if [[ ${points[(r)$SHOW_PWD]} == "$SHOW_PWD" ]]
+        show_pwd="${PWD/$HOME/~}"
+        if [[ ${points[(r)$show_pwd]} == "$show_pwd" ]]
         then
             for name in ${(k)points}
             do
-                if [[ $points[$name] == "$SHOW_PWD" ]]
+                if [[ $points[$name] == "$show_pwd" ]]
                 then
                     wd_matches[$(($#wd_matches+1))]=$name
                 fi
