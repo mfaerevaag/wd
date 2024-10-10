@@ -372,7 +372,7 @@ wd_show()
 
             wd_print_msg "$WD_BLUE" "$#wd_matches warp point(s) to current directory: ${WD_GREEN}$wd_matches${WD_NOC}"
         else
-            wd_print_msg "$WD_YELLOW" "No warp point to $(echo "$PWD" | sed "s:$HOME:~:")"
+            wd_print_msg "$WD_YELLOW" "No warp point to $show_pwd"
         fi
     fi
 }
