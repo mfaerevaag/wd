@@ -59,7 +59,7 @@ wd_print_msg()
     then
         local color="${1:-$WD_BLUE}"  # Default to blue if no color is provided
         local msg="$2"
-        
+
         if [[ -z "$msg" ]]; then
             print "${WD_RED}*${WD_NOC} Could not print message. Sorry!"
         else
@@ -344,6 +344,7 @@ wd_path()
 wd_show()
 {
     local name_arg=$1
+    local SHOW_PWD
     # if there's an argument we look up the value
     if [[ -n $name_arg ]]
     then
@@ -358,12 +359,12 @@ wd_show()
         local wd_matches
         wd_matches=()
         # do a reverse lookup to check whether PWD is in $points
-        PWD="${PWD/$HOME/~}"
-        if [[ ${points[(r)$PWD]} == "$PWD" ]]
+        SHOW_PWD="${PWD/$HOME/~}"
+        if [[ ${points[(r)$SHOW_PWD]} == "$SHOW_PWD" ]]
         then
             for name in ${(k)points}
             do
-                if [[ $points[$name] == "$PWD" ]]
+                if [[ $points[$name] == "$SHOW_PWD" ]]
                 then
                     wd_matches[$(($#wd_matches+1))]=$name
                 fi
