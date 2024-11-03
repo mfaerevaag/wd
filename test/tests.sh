@@ -40,7 +40,7 @@ WD_PATH=${PWD}/..
 
 wd()
 {
-    "${WD_PATH}"/wd.sh "$@"
+    source "${WD_PATH}"/wd.sh "$@"
 }
 
 # MacOS's `wc` command adds extra padding to the front of the command.
@@ -497,8 +497,13 @@ test_config()
 
     wd -q --config "$arg_config" add
 
-    assertEquals 1 "$(wcl < "$arg_config")"
+    # confirm $WD_CONFIG was unchanged
     assertEquals "$wd_config_lines" "$(total_wps)"
+    assertEquals "$wd_config_lines" 0
+
+    # confirm --config was changed
+    assertEquals 1 "$(wcl < "$arg_config")"
+    assertEquals 1 "$(WD_CONFIG=$arg_config total_wps)"
 
     command rm "$arg_config"
 }
