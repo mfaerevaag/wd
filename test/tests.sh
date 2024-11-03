@@ -119,6 +119,9 @@ test_wd_point()
     wd -q moon
     assertFalse "should fail to warp to a point that does not exist" \
         "$pipestatus"
+    wd -q "$WD_TEST_DIR" pluto 2&> /dev/null
+    assertFalse "should fail warping to nonexistent nested directories" \
+        "$pipestatus"
     command rm -rf "$WD_TEST_DIR"
 }
 
