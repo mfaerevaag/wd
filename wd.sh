@@ -574,6 +574,7 @@ unset wd_print_usage
 unset wd_alt_config
 unset wd_quiet_mode
 unset wd_print_version
+unset wd_force_mode
 unset wd_export_static_named_directories
 unset wd_o
 
