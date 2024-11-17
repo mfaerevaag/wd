@@ -89,6 +89,42 @@ test_empty_config()
         0 "$(total_wps)"
 }
 
+test_wd_point()
+{
+    cwd="$PWD"
+    wd -q add cwd
+    assertTrue "should add the working directory as a custom warp point" \
+        "$pipestatus"
+    command rm -rf "$WD_TEST_DIR"
+    command mkdir "$WD_TEST_DIR"
+    cd "$WD_TEST_DIR"
+    wd -q add
+    assertTrue "should add another directory using a default warp point" \
+        "$pipestatus"
+    command mkdir "$WD_TEST_DIR_2"
+    cd ..
+    wd "$WD_TEST_DIR"
+    assertTrue "should successfully warp to a default point" \
+        "$pipestatus"
+    assertEquals "should be in the default warped directory" \
+        "$cwd/$WD_TEST_DIR" "$(pwd)"
+    wd cwd
+    assertEquals "should successfully return to cwd with a warp point" \
+        "$cwd" "$(pwd)"
+    wd "$WD_TEST_DIR" "$WD_TEST_DIR_2"
+    assertTrue "should successfully warp to nested directory of point" \
+        "$pipestatus"
+    assertEquals "should be in the nested directory of the warp point" \
+        "$cwd/$WD_TEST_DIR/$WD_TEST_DIR_2" "$(pwd)"
+    wd -q moon
+    assertFalse "should fail to warp to a point that does not exist" \
+        "$pipestatus"
+    wd -q "$WD_TEST_DIR" pluto 2&> /dev/null
+    assertFalse "should fail warping to nonexistent nested directories" \
+        "$pipestatus"
+    command rm -rf "$WD_TEST_DIR"
+}
+
 test_simple_add_remove()
 {
     wd -q add foo

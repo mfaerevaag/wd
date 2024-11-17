@@ -145,14 +145,17 @@ wd_warp()
         else
             (( n = $#1 - 1 ))
             cd -$n > /dev/null
+            WD_EXIT_CODE=$?
         fi
     elif [[ ${points[$point]} != "" ]]
     then
         if [[ $sub != "" ]]
         then
             cd ${points[$point]/#\~/$HOME}/$sub
+            WD_EXIT_CODE=$?
         else
             cd ${points[$point]/#\~/$HOME}
+            WD_EXIT_CODE=$?
         fi
     else
         wd_exit_fail "Unknown warp point '${point}'"
