@@ -268,7 +268,7 @@ wd_browse() {
     local selected_entry=$(printf '%s\n' "${entries[@]}" | fzf --height 100% --reverse --header-lines=2 --bind="$fzf_bind")
     if [[ -e $wd_remove_output ]]; then
         cat "$wd_remove_output"
-        rm "$wd_remove_output"
+        rm -f "$wd_remove_output"
     fi
     if [[ -n $selected_entry ]]; then
         local selected_point="${selected_entry%% ->*}"
