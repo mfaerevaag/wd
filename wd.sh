@@ -256,20 +256,38 @@ wd_remove()
 }
 
 wd_browse() {
-    if ! command -v fzf >/dev/null; then
-        echo "This functionality requires fzf. Please install fzf first."
+    # Ensure wd_config_file is properly set
+    if [[ -z $wd_config_file ]]; then
+        wd_config_file="${WD_CONFIG:-$HOME/.warprc}"
+    fi
+
+    # Check if config file exists
+    if [[ ! -f $wd_config_file ]]; then
         return 1
     fi
+
+    # Read entries from the config file
     local entries=("${(@f)$(sed "s:${HOME}:~:g" "$wd_config_file" | awk -F ':' '{print $1 " -> " $2}')}")
+    if [[ -z $entries ]]; then
+        return 1
+    fi
+
+    # Temp file for remove operations
     local script_path="${${(%):-%x}:h}"
     local wd_remove_output=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
+
+    # Create fzf bindings
     entries=("All warp points:" "Press enter to select. Press delete to remove" "${entries[@]}")
-    local fzf_bind="delete:execute(echo {} | awk -F ' -> ' '{print \$1}' | xargs -I {} "$script_path/wd.sh" rm {} > "$wd_remove_output")+abort"
+    local fzf_bind="delete:execute(echo {} | awk -F ' -> ' '{print \$1}' | xargs -I {} \"$script_path/wd.sh\" rm {} > \"$wd_remove_output\")+abort"
+
+    # Run fzf
     local selected_entry=$(printf '%s\n' "${entries[@]}" | fzf --height 100% --reverse --header-lines=2 --bind="$fzf_bind")
+
+    # Handle selection
     if [[ -e $wd_remove_output ]]; then
-        cat "$wd_remove_output"
         rm -f "$wd_remove_output"
     fi
+
     if [[ -n $selected_entry ]]; then
         local selected_point="${selected_entry%% ->*}"
         selected_point=$(echo "$selected_point" | xargs)
@@ -278,14 +296,26 @@ wd_browse() {
 }
 
 wd_browse_widget() {
-  if [[ -e $wd_config_file ]]; then
+    # Ensure wd_config_file is properly set
+    if [[ -z $wd_config_file ]]; then
+        wd_config_file="${WD_CONFIG:-$HOME/.warprc}"
+    fi
+
+    # Check if config file exists
+    if [[ ! -f $wd_config_file ]]; then
+        echo "Config file $wd_config_file does not exist. Please create it first."
+        return 1
+    fi
+
+    # Call wd_browse to handle the selection
     wd_browse
+
+    # Restore the zsh buffer and cursor after running wd_browse
     saved_buffer=$BUFFER
     saved_cursor=$CURSOR
     BUFFER=
     zle redisplay
     zle accept-line
-  fi
 }
 
 wd_restore_buffer() {
