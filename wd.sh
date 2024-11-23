@@ -256,15 +256,14 @@ wd_remove()
 }
 
 wd_browse() {
-    # Ensure wd_config_file is properly set
-    if [[ -z $wd_config_file ]]; then
-        wd_config_file="${WD_CONFIG:-$HOME/.warprc}"
-    fi
-
     # Check if fzf is installed
     if ! command -v fzf >/dev/null; then
         echo "This functionality requires fzf. Please install fzf first."
         return 1
+    fi
+    # Ensure wd_config_file is properly set
+    if [[ -z $wd_config_file ]]; then
+        wd_config_file="${WD_CONFIG:-$HOME/.warprc}"
     fi
 
     # Check if config file exists
