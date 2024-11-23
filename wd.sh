@@ -261,6 +261,12 @@ wd_browse() {
         wd_config_file="${WD_CONFIG:-$HOME/.warprc}"
     fi
 
+    # Check if fzf is installed
+    if ! command -v fzf >/dev/null; then
+        echo "This functionality requires fzf. Please install fzf first."
+        return 1
+    fi
+
     # Check if config file exists
     if [[ ! -f $wd_config_file ]]; then
         return 1
