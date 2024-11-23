@@ -291,7 +291,7 @@ wd_browse() {
 
     # Handle selection
     if [[ -e $wd_remove_output ]]; then
-        cat "$wd_remove_output"  # Display the result of delete operations
+        cat "$wd_remove_output"
         rm -f "$wd_remove_output"
     fi
 
