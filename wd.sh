@@ -256,25 +256,19 @@ wd_remove()
 }
 
 wd_browse() {
+echo "DEBUG: wd_config_file is set to $wd_config_file"
+
+
     # Check if fzf is installed
     if ! command -v fzf >/dev/null; then
-        echo "This functionality requires fzf. Please install fzf first."
-        return 1
-    fi
-
-    # Ensure wd_config_file is properly set
-    if [[ -z $wd_config_file ]]; then
-        wd_config_file="${WD_CONFIG:-$HOME/.warprc}"
-    fi
-
-    # Check if config file exists
-    if [[ ! -f $wd_config_file ]]; then
+        wd_print_msg "$WD_RED" "This functionality requires fzf. Please install fzf first."
         return 1
     fi
 
     # Read entries from the config file
     local entries=("${(@f)$(sed "s:${HOME}:~:g" "$wd_config_file" | awk -F ':' '{print $1 " -> " $2}')}")
     if [[ -z $entries ]]; then
+        wd_print_msg "$WD_YELLOW" "You don't have any warp points to browse"
         return 1
     fi
 
@@ -303,17 +297,6 @@ wd_browse() {
 }
 
 wd_browse_widget() {
-    # Ensure wd_config_file is properly set
-    if [[ -z $wd_config_file ]]; then
-        wd_config_file="${WD_CONFIG:-$HOME/.warprc}"
-    fi
-
-    # Check if config file exists
-    if [[ ! -f $wd_config_file ]]; then
-        echo "Config file $wd_config_file does not exist. Please create it first."
-        return 1
-    fi
-
     # Call wd_browse to handle the selection
     wd_browse
 
@@ -483,7 +466,7 @@ then
 fi
 
 # set the config file from variable or default
-typeset wd_config_file=${WD_CONFIG:-$HOME/.warprc}
+export  wd_config_file=${WD_CONFIG:-$HOME/.warprc}
 if [[ ! -z $wd_alt_config ]]
 then
     # prefer the flag if provided
@@ -604,6 +587,9 @@ if (( wd_extglob_is_set == 0 )); then
     setopt extendedglob
 fi
 
+# Do NOT unset wd_config_file to ensure widget functionality
+#unset wd_config_file
+
 unset wd_extglob_is_set
 unset wd_warp
 unset wd_add
@@ -615,7 +601,6 @@ unset wd_print_msg
 unset wd_yesorno
 unset wd_print_usage
 unset wd_alt_config
-unset wd_config_file
 unset wd_quiet_mode
 unset wd_print_version
 unset wd_force_mode
