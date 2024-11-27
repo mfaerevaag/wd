@@ -256,9 +256,6 @@ wd_remove()
 }
 
 wd_browse() {
-echo "DEBUG: wd_config_file is set to $wd_config_file"
-
-
     # Check if fzf is installed
     if ! command -v fzf >/dev/null; then
         wd_print_msg "$WD_RED" "This functionality requires fzf. Please install fzf first."
