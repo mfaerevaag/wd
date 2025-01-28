@@ -269,6 +269,7 @@ wd_browse() {
 
     # Check if config file exists
     if [[ ! -f $wd_config_file ]]; then
+        wd_print_msg "$WD_RED" "Config file $wd_config_file does not exist. Please create it first."
         return 1
     fi
 
@@ -311,7 +312,7 @@ wd_browse_widget() {
 
     # Check if config file exists
     if [[ ! -f $wd_config_file ]]; then
-        echo "Config file $wd_config_file does not exist. Please create it first."
+        wd_print_msg "$WD_RED" "Config file $wd_config_file does not exist. Please create it first."
         return 1
     fi
 
@@ -616,7 +617,7 @@ unset wd_print_msg
 unset wd_yesorno
 unset wd_print_usage
 unset wd_alt_config
-unset wd_config_file
+#unset wd_config_file do not unset this - breaks keybind
 unset wd_quiet_mode
 unset wd_print_version
 unset wd_force_mode
