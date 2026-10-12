@@ -5,29 +5,35 @@ zstyle ':completion::complete:wd:*:commands' group-name commands
 zstyle ':completion::complete:wd:*:warp_points' group-name warp_points
 zstyle ':completion::complete:wd::' list-grouped
 
-zmodload zsh/mapfile
-
 function _wd() {
   local WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
   local ret=1
 
   local -a commands
   local -a warp_points
-
-  warp_points=( "${(f)mapfile[$WD_CONFIG]//$HOME/~}" )
+  local line name target_path display_path
 
   typeset -A points
-  while read -r line
+  while IFS= read -r line || [[ -n $line ]]
   do
-    arr=(${(s,:,)line})
-    name=${arr[1]}
-    target_path=${arr[2]}
+    [[ -z $line ]] && continue
+
+    name=${line%%:*}
+    target_path=${line#*:}
+
+    display_path=$target_path
+    if [[ $display_path == "$HOME" || $display_path == "$HOME/"* ]]; then
+      display_path="~${display_path#"$HOME"}"
+    fi
+    warp_points+=("$name:$display_path")
 
     # replace ~ from path to fix completion (#17)
-    target_path=${target_path/#\~/$HOME}
+    if [[ $target_path == '~' || $target_path == '~/'* ]]; then
+      target_path="${HOME}${target_path#\~}"
+    fi
 
     points[$name]=$target_path
-  done < $WD_CONFIG
+  done < "$WD_CONFIG"
 
   commands=(
     'add:Adds the current working directory to your warp points'
@@ -83,7 +89,8 @@ function _wd() {
         *)
           if [[ -v points[$target] ]]; then
             # complete sub directories from the warp point
-            _path_files -W "(${points[$target]})" -/ && ret=0
+            local -a target_paths=("${points[$target]}")
+            _path_files -W target_paths -/ && ret=0
           fi
 
           # don't complete anything if warp point is not valid

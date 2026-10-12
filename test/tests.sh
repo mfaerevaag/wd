@@ -45,6 +45,37 @@ wd()
     source "${WD_PATH}"/wd.sh "$@"
 }
 
+# Capture completion descriptions or search roots without an interactive terminal.
+# Keep the completion stubs scoped to a subshell.
+wd_completion()
+(
+    local state=$1
+    local -a words=(wd "$2" '')
+    _arguments() { return 1; }
+    _describe()
+    {
+        if [[ $3 == 'Warp points' ]]; then
+            printf '%s\n' "${(@P)4}"
+        fi
+        return 0
+    }
+    _path_files()
+    {
+        local base=$2
+        local -a roots
+        # Resolve the three -W forms: a word list, an absolute path, or an array name.
+        if [[ $base == \(*\) ]]; then
+            roots=( ${=base[2,-2]} )
+        elif [[ $base == /* ]]; then
+            roots=( "$base" )
+        else
+            roots=( "${(@P)base}" )
+        fi
+        printf '%s\n' "${roots[@]}"
+    }
+    source "${WD_PATH}"/_wd.sh
+)
+
 # MacOS's `wc` command adds extra padding to the front of the command.
 # This removes any excess spaces.
 wcl()
@@ -560,6 +591,8 @@ test_home_path_expansion()
         printf 'point:%s\n' "${stored[$i]}" > "$WD_CONFIG"
         assertEquals "should expand only a complete leading home component: ${stored[$i]}" \
             "${expected[$i]}" "$(wd path point)"
+        assertEquals "completion should search one intact, correctly expanded directory: ${stored[$i]}" \
+            "${expected[$i]}" "$(wd_completion second_arg point)"
     done
 }
 
@@ -642,6 +675,10 @@ test_home_with_pattern_characters()
         'point:~/Documents' "$(< "$WD_CONFIG")"
     assertEquals "should treat HOME literally when expanding" \
         "$target" "$(wd path point)"
+    assertEquals "completion should treat HOME literally when abbreviating" \
+        'point:~/Documents' "$(wd_completion first_arg '')"
+    assertEquals "completion should preserve spaces and pattern characters in HOME" \
+        "$target" "$(wd_completion second_arg point)"
     local output=$(wd show)
     [[ $output == *'1 warp point(s) to current directory:'*'point'* ]]
     assertTrue "should find a path beneath a home with pattern characters" "$?"
@@ -688,11 +725,14 @@ test_list_and_browse_home_boundaries()
 
     local listed=$(wd list)
     local browsed=$(< "$WD_TEST_ROOT/browse-entries")
+    local completed=$(wd_completion first_arg '')
     for (( i = 1; i <= ${#stored}; i++ )); do
         [[ $listed == *"point_$i  ->  ${expected[$i]}"* ]]
         assertTrue "list should abbreviate only the home component of path values" "$?"
         [[ $browsed == *"point_$i -> ${expected[$i]}"* ]]
         assertTrue "browse should preserve the full path and abbreviate only its home component" "$?"
+        [[ $completed == *"point_$i:${expected[$i]}"* ]]
+        assertTrue "completion descriptions should preserve literal paths and home boundaries" "$?"
     done
     [[ $browsed == *'last -> ~/Documents' ]]
     assertTrue "browse should include a final entry without a newline" "$?"
@@ -700,6 +740,10 @@ test_list_and_browse_home_boundaries()
     assertTrue "list should include a final entry without a newline" "$?"
     assertEquals "path should load a final entry without a newline" \
         "$HOME/Documents" "$(wd path last)"
+    [[ $completed == *'last:~/Documents' ]]
+    assertTrue "completion should describe a final entry without a newline" "$?"
+    assertEquals "completion should search a final entry without a newline" \
+        "$HOME/Documents" "$(wd_completion second_arg last)"
 }
 
 test_path_consumers_and_cleanup()
