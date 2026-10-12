@@ -11,15 +11,39 @@
 readonly WD_VERSION=0.10.1
 
 # colors
-readonly WD_BLUE="\033[96m"
-readonly WD_GREEN="\033[92m"
-readonly WD_YELLOW="\033[93m"
-readonly WD_RED="\033[91m"
-readonly WD_NOC="\033[m"
+readonly WD_BLUE=$'\033[96m'
+readonly WD_GREEN=$'\033[92m'
+readonly WD_YELLOW=$'\033[93m'
+readonly WD_RED=$'\033[91m'
+readonly WD_NOC=$'\033[m'
 
 ## functions
 
 # helpers
+# Home-path helpers take a path and the name of a caller-local output variable.
+# typeset -g updates that existing variable rather than creating a helper-local one.
+wd_expand_home()
+{
+    local wd_dir=$1
+
+    if [[ $wd_dir == '~' || $wd_dir == '~/'* ]]; then
+        wd_dir="${HOME}${wd_dir#\~}"
+    fi
+
+    typeset -g "$2=$wd_dir"
+}
+
+wd_abbreviate_home()
+{
+    local wd_dir=$1
+
+    if [[ $wd_dir == "$HOME" || $wd_dir == "$HOME/"* ]]; then
+        wd_dir="~${wd_dir#"$HOME"}"
+    fi
+
+    typeset -g "$2=$wd_dir"
+}
+
 wd_yesorno()
 {
     # variables
@@ -61,9 +85,9 @@ wd_print_msg()
         local msg="$2"
 
         if [[ -z "$msg" ]]; then
-            print "${WD_RED}*${WD_NOC} Could not print message. Sorry!"
+            print -r -- "${WD_RED}*${WD_NOC} Could not print message. Sorry!"
         else
-            print " ${color}*${WD_NOC} ${msg}"
+            print -r -- " ${color}*${WD_NOC} ${msg}"
         fi
     fi
 }
@@ -119,8 +143,7 @@ wd_getdir()
 {
     local name_arg=$1
 
-    point=$(wd_show "$name_arg")
-    dir=${point:28+$#name_arg+7}
+    dir=${points[$name_arg]}
 
     if [[ -z $name_arg ]]; then
         wd_exit_fail "You must enter a warp point"
@@ -137,6 +160,7 @@ wd_warp()
 {
     local point=$1
     local sub=$2
+    local warp_dir
 
     if [[ $point =~ "^\.+$" ]]
     then
@@ -150,12 +174,13 @@ wd_warp()
         fi
     elif [[ ${points[$point]} != "" ]]
     then
+        wd_expand_home "${points[$point]}" warp_dir
         if [[ $sub != "" ]]
         then
-            cd ${points[$point]/#\~/$HOME}/$sub
+            cd "$warp_dir/$sub"
             WD_EXIT_CODE=$?
         else
-            cd ${points[$point]/#\~/$HOME}
+            cd "$warp_dir"
             WD_EXIT_CODE=$?
         fi
     else
@@ -167,6 +192,7 @@ wd_add()
 {
     local point=$1
     local force=$2
+    local warp_dir
     cmdnames=(add rm show list ls path clean help)
 
     if [[ $point == "" ]]
@@ -175,7 +201,7 @@ wd_add()
     fi
 
     if [ ! -w "$wd_config_file" ]; then
-        wd_exit_fail "\'$wd_config_file\' is not writeable."
+        wd_exit_fail "'$wd_config_file' is not writeable."
         return
     fi
 
@@ -194,7 +220,8 @@ wd_add()
     elif [[ ${points[$point]} == "" ]] || [ ! -z "$force" ]
     then
         wd_remove "$point" > /dev/null
-        printf "%q:%s\n" "${point}" "${PWD/#$HOME/~}" >> "$wd_config_file"
+        wd_abbreviate_home "$PWD" warp_dir
+        printf "%q:%s\n" "${point}" "$warp_dir" >> "$wd_config_file"
         if (whence sort >/dev/null); then
             local config_tmp=$(mktemp "${TMPDIR:-/tmp}/wd.XXXXXXXXXX")
             # use 'cat' below to ensure we respect $wd_config_file as a symlink
@@ -245,7 +272,7 @@ wd_remove()
     fi
 
     if [ ! -w "$wd_config_file" ]; then
-        wd_exit_fail "\'$wd_config_file\' is not writeable."
+        wd_exit_fail "'$wd_config_file' is not writeable."
         return
     fi
 
@@ -285,7 +312,16 @@ wd_browse() {
     fi
 
     # Read entries from the config file
-    local entries=("${(@f)$(sed "s:${HOME}:~:g" "$wd_config_file" | awk -F ':' '{print $1 " -> " $2}')}")
+    local entries=()
+    local line key val
+    while IFS= read -r line || [[ -n $line ]]
+    do
+        if [[ -n $line ]]; then
+            key=${line%%:*}
+            wd_abbreviate_home "${line#*:}" val
+            entries+=("$key -> $val")
+        fi
+    done < "$wd_config_file"
     if [[ -z $entries ]]; then
         wd_print_msg "$WD_YELLOW" "You don't have any warp points to browse"
         return 1
@@ -349,15 +385,15 @@ wd_restore_buffer() {
 
 wd_list_all()
 {
+    local val
     wd_print_msg "$WD_BLUE" "All warp points:"
 
-    entries=$(sed "s:${HOME}:~:g" "$wd_config_file")
+    entries=$(< "$wd_config_file")
 
     max_warp_point_length=0
     while IFS= read -r line
     do
-        arr=(${(s,:,)line})
-        key=${arr[1]}
+        key=${line%%:*}
 
         length=${#key}
         if [[ length -gt max_warp_point_length ]]
@@ -370,9 +406,8 @@ wd_list_all()
     do
         if [[ $line != "" ]]
         then
-            arr=(${(s,:,)line})
-            key=${arr[1]}
-            val=${line#"${arr[1]}:"}
+            key=${line%%:*}
+            wd_abbreviate_home "${line#*:}" val
 
             if [[ -z $wd_quiet_mode ]]
             then
@@ -384,19 +419,23 @@ wd_list_all()
 
 wd_ls()
 {
+    local dir
     wd_getdir "$1"
-    ls "${dir/#\~/$HOME}"
+    wd_expand_home "$dir" dir
+    ls "$dir"
 }
 
 wd_open()
 {
+    local dir
     wd_getdir "$1"
+    wd_expand_home "$dir" dir
     if command -v open >/dev/null 2>&1; then
         # MacOS, Ubuntu (alias)
-        open "${dir/#\~/$HOME}"
+        open "$dir"
     elif command -v xdg-open >/dev/null 2>&1; then
         # Most Linux desktops
-        xdg-open "${dir/#\~/$HOME}"
+        xdg-open "$dir"
     else
         echo "No known file opener found (need 'open' or 'xdg-open')." >&2
         exit 1
@@ -405,8 +444,10 @@ wd_open()
 
 wd_path()
 {
+    local dir
     wd_getdir "$1"
-    echo "$(echo "$dir" | sed "s:~:${HOME}:g")"
+    wd_expand_home "$dir" dir
+    print -r -- "$dir"
 }
 
 wd_show()
@@ -427,8 +468,8 @@ wd_show()
         local wd_matches
         wd_matches=()
         # do a reverse lookup to check whether PWD is in $points
-        show_pwd="${PWD/$HOME/~}"
-        if [[ ${points[(r)$show_pwd]} == "$show_pwd" ]]
+        wd_abbreviate_home "$PWD" show_pwd
+        if [[ ${points[(re)$show_pwd]} == "$show_pwd" ]]
         then
             for name in ${(k)points}
             do
@@ -449,23 +490,24 @@ wd_clean() {
     local force=$1
     local count=0
     local wd_tmp=""
+    local expanded_dir
 
     if [ ! -w "$wd_config_file" ]; then
-        wd_exit_fail "\'$wd_config_file\' is not writeable."
+        wd_exit_fail "'$wd_config_file' is not writeable."
         return
     fi
 
-    while read -r line
+    while IFS= read -r line || [[ -n $line ]]
     do
         if [[ $line != "" ]]
         then
-            arr=(${(s,:,)line})
-            key=${arr[1]}
-            val=${arr[2]}
+            key=${line%%:*}
+            val=${line#*:}
+            wd_expand_home "$val" expanded_dir
 
-            if [ -d "${val/#\~/$HOME}" ]
+            if [ -d "$expanded_dir" ]
             then
-                wd_tmp=$wd_tmp"\n"`echo "$line"`
+                wd_tmp+="$line"$'\n'
             else
                 wd_print_msg "$WD_YELLOW" "Nonexistent directory: ${key} -> ${val}"
                 count=$((count+1))
@@ -479,7 +521,7 @@ wd_clean() {
     else
         if [ ! -z "$force" ] || wd_yesorno "Removing ${count} warp points. Continue? (y/n)"
         then
-            echo "$wd_tmp" >! "$wd_config_file"
+            printf '%s' "$wd_tmp" >! "$wd_config_file"
             wd_print_msg "$WD_GREEN" "Cleanup complete. ${count} warp point(s) removed"
         else
             wd_print_msg "$WD_BLUE" "Cleanup aborted"
@@ -490,9 +532,16 @@ wd_clean() {
 wd_export_static_named_directories() {
   if [[ ! -z $WD_EXPORT ]]
   then
-    command grep '^[0-9a-zA-Z_-]\+:' "$wd_config_file" | sed -e "s,~,$HOME," -e 's/:/=/' | while read -r warpdir ; do
-        hash -d "$warpdir"
-    done
+    local line key val
+    while IFS= read -r line || [[ -n $line ]]
+    do
+        key=${line%%:*}
+        val=${line#*:}
+        if [[ $key =~ "^[0-9a-zA-Z_-]+$" ]]; then
+            wd_expand_home "$val" val
+            hash -d "$key=$val"
+        fi
+    done < "$wd_config_file"
   fi
 }
 
@@ -541,12 +590,11 @@ fi
 
 # load warp points
 typeset -A points
-while read -r line
+while IFS= read -r line || [[ -n $line ]]
 do
-    arr=(${(s,:,)line})
-    key=${arr[1]}
-    # join the rest, in case the path contains colons
-    val=${(j,:,)arr[2,-1]}
+    key=${line%%:*}
+    # keep the rest intact, in case the path contains colons
+    val=${line#*:}
 
     points[$key]=$val
 done < "$wd_config_file"
@@ -649,6 +697,8 @@ unset wd_quiet_mode
 unset wd_print_version
 unset wd_force_mode
 unset wd_export_static_named_directories
+unset wd_expand_home
+unset wd_abbreviate_home
 unset wd_o
 
 unset args
