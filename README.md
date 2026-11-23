@@ -173,6 +173,16 @@ wd addcd /foo/
 
 You can omit point name to automatically use the current directory's name instead.
 
+* Move or rename a directory and update all warp points to it and its subdirectories:
+
+```zsh
+wd mv ./projects/old-name ./archive
+```
+
+If `./archive` already exists as a directory, the new path is `./archive/old-name`. Otherwise the directory is renamed to `./archive`. Warp point names stay the same, and the config is updated only if the move succeeds.
+
+`wd mv` takes one source directory (not a symlink) and one destination. It rejects `mv` options. Put `wd` options such as `--quiet` or `--config` before `mv`, and use `wd mv --` before paths that start with `-`.
+
 * From any directory, warp to `foo` with:
 
 ```zsh

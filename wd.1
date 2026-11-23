@@ -26,6 +26,12 @@ Add a new warp point which will warp to the current working directory with curre
 .IP "addcd, -c, --addcd <path> <point>"
 Add a new warp point which will warp to the current working directory with \fIname\fR as identifier.
 .
+.IP "mv [--] <source> <destination>"
+Move one directory (not a symlink) and update all warp points to it and its subdirectories after a successful move.
+If the destination is an existing directory, move the source into it.
+Use \fB--\fP before paths that start with a hyphen.
+\fBmv\fP options are rejected. Put \fBwd\fP options such as \fB--quiet\fP or \fB--config\fP before \fBmv\fP.
+.
 .IP "rm, -r, --remove"
 Remove any warp point with current directory name as identifier.
 .
