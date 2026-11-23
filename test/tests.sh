@@ -22,6 +22,12 @@ WD_TEST_WP_2=test2
 setopt shwordsplit
 SHUNIT_PARENT=$0
 
+oneTimeSetUp()
+{
+    WD_MOVE_TEST_DIR=$(mktemp -d "${TMPDIR:-/tmp}/wd-move.XXXXXXXXXX") || exit 1
+    WD_MOVE_TEST_DIR=${WD_MOVE_TEST_DIR:P}
+}
+
 # reset config for each test
 setUp()
 {
@@ -31,6 +37,7 @@ setUp()
 oneTimeTearDown()
 {
     command rm -rf "$WD_TEST_DIR" "$WD_TEST_DIR_2"
+    command rm -rf -- "$WD_MOVE_TEST_DIR"
     command rm "$WD_CONFIG"
 }
 
@@ -260,6 +267,10 @@ test_valid_identifiers()
     assertFalse "should not allow command names" \
         "$pipestatus"
 
+    wd -q add "mv"
+    assertFalse "should not allow mv as a warp point name" \
+        "$pipestatus"
+
     wd -q add "show"
     assertFalse "should not allow command names" \
         "$pipestatus"
@@ -333,6 +344,118 @@ test_wd_addcd()
 
     # Cleanup
     destroy_test_wp
+}
+
+test_wd_mv_renames_directory_and_updates_all_affected_points()
+{
+    local HOME="$WD_MOVE_TEST_DIR/rename"
+    mkdir -p "$HOME/old [name]/nested" "$HOME/old [name]-other"
+    touch "$HOME/old [name]/nested/file"
+    wd -q addcd "$HOME/old [name]" main
+    wd -q addcd "$HOME/old [name]" alternate
+    wd -q addcd "$HOME/old [name]/nested" child
+    wd -q addcd "$HOME/old [name]-other" other
+
+    (cd "$HOME" && wd -q mv './old [name]/' 'new :: name')
+    assertTrue "should rename the directory" "$?"
+    assertFalse "should remove the old directory" '[[ -e "$HOME/old [name]" ]]'
+    assertTrue "should move directory contents" '[[ -f "$HOME/new :: name/nested/file" ]]'
+    assertEquals "$HOME/new :: name" "$(wd main && pwd -P)"
+    assertEquals "$HOME/new :: name" "$(wd alternate && pwd -P)"
+    assertEquals "$HOME/new :: name/nested" "$(wd child && pwd -P)"
+    assertEquals "$HOME/old [name]-other" "$(wd other && pwd -P)"
+    assertTrue "should save paths under HOME with a tilde" \
+        'grep -Fxq "child:~/new :: name/nested" "$WD_CONFIG"'
+}
+
+test_wd_mv_into_existing_directory_uses_selected_config()
+{
+    local fixture="$WD_MOVE_TEST_DIR/into-existing"
+    local selected_config="$fixture/linked-config"
+    mkdir -p "$fixture/source" "$fixture/destination"
+    touch "$fixture/config"
+    ln -s config "$selected_config"
+    wd -q --config "$selected_config" addcd "$fixture/source" selected
+    wd -q addcd "$fixture/source" default
+    local before=$(<"$WD_CONFIG")
+
+    wd -q --config "$selected_config" mv "$fixture/source" "$fixture/destination/"
+    assertTrue "should move the source into the destination" "$?"
+    assertTrue '[[ -d "$fixture/destination/source" ]]'
+    assertTrue "should preserve the config symlink" '[[ -L "$selected_config" ]]'
+    assertEquals "$fixture/destination/source" "$(wd -c "$selected_config" selected && pwd -P)"
+    assertEquals "should not change the default config" "$before" "$(<"$WD_CONFIG")"
+}
+
+test_wd_mv_leaves_config_unchanged_when_move_fails()
+{
+    local fixture="$WD_MOVE_TEST_DIR/failed"
+    mkdir -p "$fixture/source/nested"
+    touch "$fixture/file"
+    wd -q addcd "$fixture/source" main
+    wd -q addcd "$fixture/source/nested" child
+    local before=$(<"$WD_CONFIG")
+
+    wd -q mv "$fixture/source" "$fixture/file"
+    assertFalse "should fail to move a directory over a file" "$?"
+    assertTrue '[[ -d "$fixture/source/nested" ]]'
+    assertTrue '[[ -f "$fixture/file" ]]'
+    assertEquals "$before" "$(<"$WD_CONFIG")"
+}
+
+test_wd_mv_rejects_invalid_operands()
+{
+    local fixture="$WD_MOVE_TEST_DIR/invalid"
+    mkdir -p "$fixture/source"
+    touch "$fixture/file"
+    ln -s source "$fixture/link"
+    wd -q addcd "$fixture/source" main
+    local before=$(<"$WD_CONFIG")
+
+    wd -q mv "$fixture/source"
+    assertFalse "should require a destination" "$?"
+    wd -q mv "$fixture/source" "$fixture/destination" extra
+    assertFalse "should reject extra operands" "$?"
+    wd -q mv "$fixture/file" "$fixture/destination"
+    assertFalse "should reject a file as the source" "$?"
+    wd -q mv "$fixture/link//" "$fixture/destination"
+    assertFalse "should reject a symlink as the source" "$?"
+    assertTrue '[[ -d "$fixture/source" && ! -e "$fixture/destination" ]]'
+    assertEquals "$before" "$(<"$WD_CONFIG")"
+}
+
+test_wd_mv_refuses_to_break_points_in_read_only_config()
+{
+    local fixture="$WD_MOVE_TEST_DIR/read-only"
+    mkdir -p "$fixture/source"
+    wd -q addcd "$fixture/source" main
+    local before=$(<"$WD_CONFIG")
+    chmod a-w "$WD_CONFIG"
+    if [[ -w $WD_CONFIG ]]; then
+        # Privileged users can still write to this file.
+        chmod u+w "$WD_CONFIG"
+        return
+    fi
+
+    wd -q mv "$fixture/source" "$fixture/destination"
+    local move_status=$?
+    chmod u+w "$WD_CONFIG"
+    assertFalse "should fail before moving if a point cannot be updated" "$move_status"
+    assertTrue '[[ -d "$fixture/source" && ! -e "$fixture/destination" ]]'
+    assertEquals "$before" "$(<"$WD_CONFIG")"
+}
+
+test_wd_mv_without_matching_points_accepts_dash_prefixed_paths()
+{
+    local fixture="$WD_MOVE_TEST_DIR/untracked"
+    mkdir -p "$fixture/-f" "$fixture/unrelated"
+    wd -q addcd "$fixture/unrelated" other
+    local before=$(<"$WD_CONFIG")
+
+    (cd "$fixture" && wd -q mv -- -f -q)
+    assertTrue "should move a directory without warp points" "$?"
+    assertTrue '[[ -d "$fixture/-q" && ! -e "$fixture/-f" ]]'
+    assertEquals "$before" "$(<"$WD_CONFIG")"
 }
 
 

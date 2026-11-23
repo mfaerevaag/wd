@@ -80,6 +80,7 @@ Commands:
     add                  Adds the current working directory to your warp points with current directory's name
     addcd <path>         Adds a path to your warp points with the directory's name
     addcd <path> <point> Adds a path to your warp points with a custom name
+    mv [--] <src> <dst>   Moves a directory and updates warp points to it and its subdirectories
     rm <point>           Removes the given warp point
     rm                   Removes the given warp point with current directory's name
     show <point>         Print path to given warp point
@@ -152,10 +153,10 @@ wd_warp()
     then
         if [[ $sub != "" ]]
         then
-            cd ${points[$point]/#\~/$HOME}/$sub
+            cd "${points[$point]/#\~/$HOME}/$sub"
             WD_EXIT_CODE=$?
         else
-            cd ${points[$point]/#\~/$HOME}
+            cd "${points[$point]/#\~/$HOME}"
             WD_EXIT_CODE=$?
         fi
     else
@@ -167,7 +168,7 @@ wd_add()
 {
     local point=$1
     local force=$2
-    cmdnames=(add rm show list ls path clean help)
+    cmdnames=(add mv rm show list ls path clean help)
 
     if [[ $point == "" ]]
     then
@@ -232,6 +233,106 @@ wd_addcd() {
     cd "$folder" || return
     wd_add "$point" "$force"
     cd "$currentdir" || return
+}
+
+wd_move()
+{
+    if [[ $1 == -- ]]; then
+        shift
+    elif [[ $1 == -* || $2 == -* ]]; then
+        wd_exit_fail "Usage: wd mv [--] <source> <destination>"
+        return
+    fi
+    if [[ $# -ne 2 || -z $1 || -z $2 ]]; then
+        wd_exit_fail "Usage: wd mv [--] <source> <destination>"
+        return
+    fi
+
+    local source_dir=$1 destination=$2
+    # Strip trailing slashes for the symlink check, but pass the original path to mv.
+    while [[ $source_dir == ?*/ ]]; do
+        source_dir=${source_dir%/}
+    done
+    if [[ ! -d $source_dir || -L $source_dir ]]; then
+        wd_exit_fail "Source must be a directory, not a symlink: $1"
+        return
+    fi
+    source_dir=${source_dir:P}
+
+    local parent moved_dir
+    if [[ -d $destination ]]; then
+        parent=${destination:P}
+        moved_dir="${parent%/}/${1:t}"
+    else
+        parent=${destination:h:P}
+        moved_dir="${parent%/}/${destination:t}"
+    fi
+
+    local wd_config_file=${wd_config_file:P}
+    local home_dir=${HOME:P}
+    local line target match updated=0
+    local -a config_lines
+    # Match before moving, while paths through symlinks can still be resolved.
+    if ! while IFS= read -r line || [[ -n $line ]]; do
+        if [[ $line == ?*:* && $source_dir != "$moved_dir" ]]; then
+            target=${line#*:}
+            case $target in
+                '~'|'~/'*) target=${target/#\~/$HOME} ;;
+            esac
+            if [[ $target == /* ]]; then
+                # Keep paths through symlinks inside the moved tree, unless
+                # a '..' component requires resolving the physical path.
+                match=${target:a}
+                if [[ $target == */../* || $target == */.. ]] ||
+                   [[ $match != "$source_dir" && $match != "$source_dir"/* ]]; then
+                    match=${target:P}
+                fi
+                if [[ $match == "$source_dir" || $match == "$source_dir"/* ]]; then
+                    target="$moved_dir${match#"$source_dir"}"
+                    if [[ $target == "$home_dir" || $target == "$home_dir"/* ]]; then
+                        target="~${target#"$home_dir"}"
+                    fi
+                    if [[ $target == *$'\n'* ]]; then
+                        wd_exit_fail "Warp point paths cannot contain newlines"
+                        return
+                    fi
+                    line="${line%%:*}:$target"
+                    updated=$((updated + 1))
+                fi
+            fi
+        fi
+        config_lines+=("$line")
+    done < "$wd_config_file"; then
+        wd_exit_fail "Could not read '$wd_config_file'"
+        return
+    fi
+
+    if (( updated )) && [[ ! -w $wd_config_file ]]; then
+        wd_exit_fail "'$wd_config_file' is not writeable."
+        return
+    fi
+
+    (
+        [[ -z $wd_quiet_mode ]] || exec </dev/null >/dev/null 2>&1
+        command mv -- "$@"
+    ) || { WD_EXIT_CODE=$?; return; }
+
+    # mv can return success without moving anything if overwrite is declined.
+    if [[ -e $source_dir ]]; then
+        return
+    fi
+
+    if (( updated )); then
+        if [[ $wd_config_file == "$source_dir"/* ]]; then
+            wd_config_file="$moved_dir${wd_config_file#"$source_dir"}"
+        fi
+        if ! printf '%s\n' "${config_lines[@]}" >| "$wd_config_file"; then
+            wd_exit_fail "Directory moved, but could not update '$wd_config_file'"
+            return
+        fi
+        wd_export_static_named_directories
+    fi
+    wd_print_msg "$WD_GREEN" "Directory moved. Updated $updated warp point(s)."
 }
 
 
@@ -539,20 +640,20 @@ if (( wd_extglob_is_set == 0 )); then
     setopt noextendedglob
 fi
 
-# load warp points
+# mv reads config lines itself and accepts its operands verbatim.
 typeset -A points
-while read -r line
-do
-    arr=(${(s,:,)line})
-    key=${arr[1]}
-    # join the rest, in case the path contains colons
-    val=${(j,:,)arr[2,-1]}
+if [[ $1 != mv ]]; then
+    while IFS= read -r line || [[ -n $line ]]
+    do
+        if [[ $line == ?*:* ]]; then
+            key=${line%%:*}
+            val=${line#*:}
+            points[$key]=$val
+        fi
+    done < "$wd_config_file"
 
-    points[$key]=$val
-done < "$wd_config_file"
-
-# get opts
-args=$(getopt -o a:r:c:lhs -l add:,rm:,clean,list,ls:,open:,path:,help,show -- $*)
+    args=$(getopt -o a:r:c:lhs -l add:,rm:,clean,list,ls:,open:,path:,help,show -- $*)
+fi
 
 # check if no arguments were given, and that version is not set
 if [[ ($? -ne 0 || $#* -eq 0) && -z $wd_print_version ]]
@@ -575,6 +676,10 @@ else
                 ;;
             "-c"|"--addcd"|"addcd")
                 wd_addcd "$2" "$3" "$wd_force_mode"
+                break
+                ;;
+            "mv")
+                wd_move "${@:2}"
                 break
                 ;;
             "-e"|"export")
@@ -637,6 +742,7 @@ unset wd_extglob_is_set
 unset wd_warp
 unset wd_add
 unset wd_addcd
+unset wd_move
 unset wd_remove
 unset wd_show
 unset wd_list_all

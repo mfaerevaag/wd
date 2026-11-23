@@ -17,11 +17,11 @@ function _wd() {
   warp_points=( "${(f)mapfile[$WD_CONFIG]//$HOME/~}" )
 
   typeset -A points
-  while read -r line
+  while IFS= read -r line || [[ -n $line ]]
   do
-    arr=(${(s,:,)line})
-    name=${arr[1]}
-    target_path=${arr[2]}
+    [[ $line == ?*:* ]] || continue
+    name=${line%%:*}
+    target_path=${line#*:}
 
     # replace ~ from path to fix completion (#17)
     target_path=${target_path/#\~/$HOME}
@@ -34,6 +34,7 @@ function _wd() {
     'addcd:Adds a directory to your warp points'
     'add!:Overwrites existing warp point'
     'export:Export warp points as static named directories'
+    'mv:Moves a directory and updates its warp points'
     'rm:Removes the given warp point'
     'list:Outputs all stored warp points'
     'ls:Show files from given warp point'
@@ -48,7 +49,8 @@ function _wd() {
 
   _arguments -C \
     '1: :->first_arg' \
-    '2: :->second_arg' && ret=0
+    '2: :->second_arg' \
+    '3: :->third_arg' && ret=0
 
   local target=$words[2]
 
@@ -67,6 +69,9 @@ function _wd() {
           ;;
 	addcd)
           _message 'Write the name of your path' && ret=0
+          ;;
+        mv)
+          _directories && ret=0
           ;;
         show)
           _describe -t points "Warp points" warp_points && ret=0
@@ -89,6 +94,11 @@ function _wd() {
           # don't complete anything if warp point is not valid
           ;;
       esac
+      ;;
+    third_arg)
+      if [[ $target == mv ]]; then
+        _directories && ret=0
+      fi
       ;;
   esac
 
