@@ -424,6 +424,26 @@ test_wd_mv_rejects_invalid_operands()
     assertEquals "$before" "$(<"$WD_CONFIG")"
 }
 
+test_wd_mv_rejects_options_without_moving_the_directory()
+{
+    local fixture="$WD_MOVE_TEST_DIR/options"
+    mkdir -p "$fixture/source"
+    wd -q addcd "$fixture/source" main
+    local before=$(<"$WD_CONFIG")
+    local option
+    for option in -f --force -i -n -q --quiet -v --version; do
+        wd -q mv "$option" "$fixture/source" "$fixture/destination"
+        assertFalse "should reject $option after mv" "$?"
+    done
+
+    wd -q mv "$fixture/source" "$fixture/destination" --config "$WD_CONFIG"
+    assertFalse "should reject --config after the operands" "$?"
+    wd -q -f mv "$fixture/source" "$fixture/destination"
+    assertFalse "should reject the wd force option for mv" "$?"
+    assertTrue '[[ -d "$fixture/source" && ! -e "$fixture/destination" ]]'
+    assertEquals "$before" "$(<"$WD_CONFIG")"
+}
+
 test_wd_mv_refuses_to_break_points_in_read_only_config()
 {
     local fixture="$WD_MOVE_TEST_DIR/read-only"

@@ -237,11 +237,20 @@ wd_addcd() {
 
 wd_move()
 {
+    if [[ -n $wd_force_mode ]]; then
+        wd_exit_fail "--force applies only to wd add and wd clean"
+        return
+    fi
     if [[ $1 == -- ]]; then
         shift
-    elif [[ $1 == -* || $2 == -* ]]; then
-        wd_exit_fail "Usage: wd mv [--] <source> <destination>"
-        return
+    else
+        local operand
+        for operand; do
+            if [[ $operand == -* ]]; then
+                wd_exit_fail "wd mv does not accept options. Put wd options before mv, and use -- before paths starting with a hyphen."
+                return
+            fi
+        done
     fi
     if [[ $# -ne 2 || -z $1 || -z $2 ]]; then
         wd_exit_fail "Usage: wd mv [--] <source> <destination>"
@@ -601,15 +610,22 @@ WD_CONFIG=${WD_CONFIG:-$HOME/.warprc}
 local WD_QUIET=0
 local WD_EXIT_CODE=0
 
-# Parse 'meta' options first to avoid the need to have them before
-# other commands. The `-D` flag consumes recognized options so that
-# the actual command parsing won't be affected.
-
-zparseopts -D -E \
-    c:=wd_alt_config -config:=wd_alt_config \
-    q=wd_quiet_mode -quiet=wd_quiet_mode \
-    v=wd_print_version -version=wd_print_version \
-    f=wd_force_mode -force=wd_force_mode
+# Keep accepting wd options after other commands, but stop parsing at mv
+# so flags meant for mv are rejected rather than consumed as wd options.
+local -a wd_meta_options=(
+    'c:=wd_alt_config' '-config:=wd_alt_config'
+    'q=wd_quiet_mode' '-quiet=wd_quiet_mode'
+    'v=wd_print_version' '-version=wd_print_version'
+    'f=wd_force_mode' '-force=wd_force_mode'
+)
+if () {
+    local -a wd_alt_config wd_quiet_mode wd_print_version wd_force_mode
+    zparseopts -D "${wd_meta_options[@]}" 2>/dev/null && [[ $1 == mv ]]
+} "$@"; then
+    zparseopts -D "${wd_meta_options[@]}"
+else
+    zparseopts -D -E "${wd_meta_options[@]}"
+fi
 
 if [[ ! -z $wd_print_version ]]
 then

@@ -181,7 +181,7 @@ wd mv ./projects/old-name ./archive
 
 If `./archive` already exists as a directory, the new path is `./archive/old-name`. Otherwise the directory is renamed to `./archive`. Warp point names stay the same, and the config is updated only if the move succeeds.
 
-`wd mv` takes one source directory and one destination. It does not accept a symlink as the source or pass options to `mv`. Use `wd mv --` before paths that start with `-`.
+`wd mv` takes one source directory (not a symlink) and one destination. It rejects `mv` options. Put `wd` options such as `--quiet` or `--config` before `mv`, and use `wd mv --` before paths that start with `-`.
 
 * From any directory, warp to `foo` with:
 
